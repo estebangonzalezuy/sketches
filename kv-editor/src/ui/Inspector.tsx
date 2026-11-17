@@ -15,8 +15,6 @@ const shapeOpts: [ShapeKind, string][] = [
   ['semicircle', 'Semicírculo'],
   ['arrow', 'Flecha'],
   ['plus', 'Cruz'],
-  ['ghost', 'Fantasma'],
-  ['badge', 'Marca M'],
 ];
 
 export function LayerInspector({
@@ -130,15 +128,11 @@ export function LayerInspector({
               <Num label="Punta / raíz" value={layer.flare} min={0.4} max={2.5} step={0.01} onChange={P('flare')} />
             </>
           )}
-          {['asterisk', 'arrow', 'plus', 'ghost'].includes(layer.shape) && (
+          {['asterisk', 'arrow', 'plus'].includes(layer.shape) && (
             <Num label="Grosor" value={layer.thickness} min={0.05} max={0.8} step={0.01} onChange={P('thickness')} />
           )}
-          {!['ghost', 'badge'].includes(layer.shape) && (
-            <>
-              <Num label="Tinta irregular" value={layer.rough} min={0} max={1.5} step={0.01} onChange={P('rough')} />
-              <Num label="Esquinas suaves" value={layer.soft} min={0} max={1.5} step={0.01} onChange={P('soft')} />
-            </>
-          )}
+          <Num label="Tinta irregular" value={layer.rough} min={0} max={1.5} step={0.01} onChange={P('rough')} />
+          <Num label="Esquinas suaves" value={layer.soft} min={0} max={1.5} step={0.01} onChange={P('soft')} />
           <Swatches label="Color" value={layer.fill} palette={pal} onChange={(t) => t && P('fill')(t)} />
         </Section>
       )}
@@ -149,11 +143,7 @@ export function LayerInspector({
             <input type="text" value={layer.text} onChange={(e) => P('text')(e.target.value)} />
           </Row>
           <Num label="Alto" value={round(layer.h)} min={16} max={400} onChange={P('h')} />
-          <Toggle label="Marca M" value={layer.badge !== false} onChange={P('badge')} />
-          <Toggle label="Ícono" value={layer.icon !== false} onChange={P('icon')} />
-          {layer.badge !== false && <Swatches label="Fondo marca" value={layer.c1} palette={pal} onChange={(t) => t && P('c1')(t)} />}
-          <Swatches label="Fondo texto" value={layer.c2} palette={pal} onChange={(t) => t && P('c2')(t)} />
-          {layer.icon !== false && <Swatches label="Fondo ícono" value={layer.c3} palette={pal} onChange={(t) => t && P('c3')(t)} />}
+          <Swatches label="Fondo" value={layer.c2} palette={pal} onChange={(t) => t && P('c2')(t)} />
         </Section>
       )}
 

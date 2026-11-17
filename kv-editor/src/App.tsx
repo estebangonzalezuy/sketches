@@ -157,9 +157,8 @@ function Editor() {
     shape: (shape: ShapeKind) => {
       const s = asterisk(Math.round(cx), Math.round(cy), Math.round(140 * S), '');
       s.shape = shape;
-      s.name = { asterisk: 'Asterisco', circle: 'Círculo', semicircle: 'Semicírculo', arrow: 'Flecha', plus: 'Cruz', ghost: 'Fantasma', badge: 'Marca M' }[shape];
-      if (shape !== 'asterisk') s.thickness = shape === 'ghost' ? 0.2 : 0.34;
-      if (shape === 'ghost' || shape === 'badge') s.fill = 'ink';
+      s.name = { asterisk: 'Asterisco', circle: 'Círculo', semicircle: 'Semicírculo', arrow: 'Flecha', plus: 'Cruz' }[shape];
+      if (shape !== 'asterisk') s.thickness = 0.34;
       addLayer(s);
     },
     lockup: () => addLayer({ ...lockup(Math.round(doc.width * 0.08), Math.round(doc.height * 0.85), Math.round(80 * S)), role: undefined }),
@@ -445,8 +444,6 @@ function Editor() {
                 <button type="button" onClick={() => add.shape('semicircle')}>Semicírculo</button>
                 <button type="button" onClick={() => add.shape('arrow')}>Flecha</button>
                 <button type="button" onClick={() => add.shape('plus')}>Cruz</button>
-                <button type="button" onClick={() => add.shape('ghost')}>Fantasma</button>
-                <button type="button" onClick={() => add.shape('badge')}>Marca M</button>
                 <button type="button" onClick={add.lockup}>Lockup</button>
                 <button type="button" onClick={add.image}>Imagen / personaje…</button>
               </div>
