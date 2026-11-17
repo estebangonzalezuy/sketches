@@ -174,9 +174,9 @@ function textWidth(text: string, h: number) {
 
 export function lockupGeometry(l: LockupLayer) {
   const h = l.h;
-  const w1 = h * LK.sq1;
+  const w1 = l.badge === false ? 0 : h * LK.sq1;
   const w2 = h * (LK.padL + LK.padR) + textWidth(l.text, h);
-  const w3 = h * LK.sq3;
+  const w3 = l.icon === false ? 0 : h * LK.sq3;
   return { w1, w2, w3, w: w1 + w2 + w3 };
 }
 
@@ -194,7 +194,7 @@ export function drawLockup(ctx: CanvasRenderingContext2D, l: LockupLayer, color:
   ctx.fillRect(l.x + g.w1, l.y, g.w2, h);
   ctx.fillStyle = color(l.c3);
   ctx.fillRect(l.x + g.w1 + g.w2, l.y, g.w3, h);
-  drawBadge(ctx, l.x + g.w1 / 2, l.y + h / 2, h * 0.33, ink);
+  if (g.w1 > 0) drawBadge(ctx, l.x + g.w1 / 2, l.y + h / 2, h * 0.33, ink);
   // wordmark: clean, never pixelated
   ctx.fillStyle = ink;
   ctx.font = lockupFont(h);
@@ -203,12 +203,14 @@ export function drawLockup(ctx: CanvasRenderingContext2D, l: LockupLayer, color:
   const tx = l.x + g.w1 + h * LK.padL;
   const ty = l.y + h * 0.5 + h * LK.text * 0.727 * 0.5;
   fillTracked(ctx, l.text, tx, ty, LK.track * h * LK.text);
-  ctx.strokeStyle = ink;
-  ctx.lineWidth = h * 0.06;
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ghostPath(ctx, l.x + g.w1 + g.w2 + g.w3 / 2, l.y + h * 0.47, h * 0.33);
-  ctx.stroke();
+  if (g.w3 > 0) {
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = h * 0.06;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ghostPath(ctx, l.x + g.w1 + g.w2 + g.w3 / 2, l.y + h * 0.47, h * 0.33);
+    ctx.stroke();
+  }
   ctx.restore();
 }
 

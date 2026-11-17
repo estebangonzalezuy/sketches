@@ -351,7 +351,7 @@ export function adaptTo(cur: Composition, format: FormatId): Composition {
       }
       return [fitted];
     }
-    if (nl.type === 'lockup' && old.type === 'lockup') return [{ ...nl, text: old.text, c1: old.c1, c2: old.c2, c3: old.c3 }];
+    if (nl.type === 'lockup' && old.type === 'lockup') return [{ ...nl, text: old.text, c1: old.c1, c2: old.c2, c3: old.c3, badge: old.badge, icon: old.icon }];
     if (nl.type === 'block' && old.type === 'block') return [{ ...nl, fill: old.fill }];
     if (nl.type === 'bracket' && old.type === 'bracket') return [{ ...nl, fill: old.fill, corner: old.corner }];
     if (nl.type === 'shape' && old.type === 'shape')

@@ -147,9 +147,11 @@ export function LayerInspector({
             <input type="text" value={layer.text} onChange={(e) => P('text')(e.target.value)} />
           </Row>
           <Num label="Alto" value={round(layer.h)} min={16} max={400} onChange={P('h')} />
-          <Swatches label="Módulo 1" value={layer.c1} palette={pal} onChange={(t) => t && P('c1')(t)} />
-          <Swatches label="Módulo 2" value={layer.c2} palette={pal} onChange={(t) => t && P('c2')(t)} />
-          <Swatches label="Módulo 3" value={layer.c3} palette={pal} onChange={(t) => t && P('c3')(t)} />
+          <Toggle label="Marca M" value={layer.badge !== false} onChange={P('badge')} />
+          <Toggle label="Ícono" value={layer.icon !== false} onChange={P('icon')} />
+          {layer.badge !== false && <Swatches label="Fondo marca" value={layer.c1} palette={pal} onChange={(t) => t && P('c1')(t)} />}
+          <Swatches label="Fondo texto" value={layer.c2} palette={pal} onChange={(t) => t && P('c2')(t)} />
+          {layer.icon !== false && <Swatches label="Fondo ícono" value={layer.c3} palette={pal} onChange={(t) => t && P('c3')(t)} />}
         </Section>
       )}
 

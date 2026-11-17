@@ -208,6 +208,9 @@ export interface LockupLayer extends Base {
   c1: Token;
   c2: Token;
   c3: Token;
+  /** side modules: the "M" mark square and the icon square (undefined = shown, as in the master) */
+  badge?: boolean;
+  icon?: boolean;
 }
 
 export interface ImageLayer extends Base {
