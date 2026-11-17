@@ -207,7 +207,7 @@ export function masterKV(): Composition {
       asterisk(1655, 809, 140),
       l1,
       l2,
-      lockup(518, 828, 87),
+      lockup(610, 828, 87),
     ],
     { xs: [77, 519, 959, 1402, 1843].map((v) => v / 1920), ys: [62, 386, 693, 1018].map((v) => v / 1080) },
   );
@@ -351,7 +351,7 @@ export function adaptTo(cur: Composition, format: FormatId): Composition {
       }
       return [fitted];
     }
-    if (nl.type === 'lockup' && old.type === 'lockup') return [{ ...nl, text: old.text, c1: old.c1, c2: old.c2, c3: old.c3, badge: old.badge, icon: old.icon }];
+    if (nl.type === 'lockup' && old.type === 'lockup') return [{ ...nl, text: old.text, c1: old.c1, c2: old.c2, c3: old.c3 }];
     if (nl.type === 'block' && old.type === 'block') return [{ ...nl, fill: old.fill }];
     if (nl.type === 'bracket' && old.type === 'bracket') return [{ ...nl, fill: old.fill, corner: old.corner }];
     if (nl.type === 'shape' && old.type === 'shape')

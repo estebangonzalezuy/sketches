@@ -55,52 +55,7 @@ function shapePath(ctx: CanvasRenderingContext2D, l: ShapeLayer) {
       ctx.closePath();
       break;
     }
-    case 'ghost':
-      ghostPath(ctx, 0, 0, 1);
-      break;
-    case 'badge':
-      break;
   }
-}
-
-/** The outline "ghost / bell" icon of the lockup's pink module. Unit radius, centred. */
-export function ghostPath(ctx: CanvasRenderingContext2D | Path2D, cx: number, cy: number, r: number) {
-  const P = (x: number, y: number): [number, number] => [cx + x * r, cy + y * r];
-  ctx.moveTo(...P(-0.4, -0.12));
-  ctx.bezierCurveTo(...P(-0.5, -1.05), ...P(0.5, -1.05), ...P(0.4, -0.12));
-  ctx.bezierCurveTo(...P(0.6, -0.06), ...P(0.9, 0.04), ...P(1.0, 0.2));
-  ctx.bezierCurveTo(...P(0.82, 0.3), ...P(0.64, 0.36), ...P(0.6, 0.52));
-  ctx.lineTo(...P(0.6, 0.84));
-  ctx.quadraticCurveTo(...P(0, 1.0), ...P(-0.6, 0.84));
-  ctx.lineTo(...P(-0.6, 0.52));
-  ctx.bezierCurveTo(...P(-0.64, 0.36), ...P(-0.82, 0.3), ...P(-1.0, 0.2));
-  ctx.bezierCurveTo(...P(-0.9, 0.04), ...P(-0.6, -0.06), ...P(-0.4, -0.12));
-  ctx.closePath();
-}
-
-/** The circular "M" mark with its ring broken at the bottom. */
-export function drawBadge(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: string) {
-  const sw = r * 0.26;
-  const gap = 0.16;
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = sw;
-  ctx.lineCap = 'butt';
-  ctx.beginPath();
-  ctx.arc(cx, cy, r - sw / 2, Math.PI / 2 + gap, Math.PI / 2 - gap + Math.PI * 2);
-  ctx.stroke();
-  // short stem closing the break, as in the crop
-  ctx.fillRect(cx - sw * 0.28, cy + r - sw * 1.75, sw * 0.56, sw * 1.75);
-  const f = TEXT_FONTS.inter600;
-  ctx.font = `${f.weight} ${r * 1.12}px "${f.family}"`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'alphabetic';
-  ctx.lineWidth = r * 0.07;
-  ctx.lineJoin = 'miter';
-  ctx.strokeText('M', cx, cy + r * 0.4);
-  ctx.fillText('M', cx, cy + r * 0.4);
-  ctx.restore();
 }
 
 export function shapeBounds(l: ShapeLayer): Rect {
@@ -110,21 +65,6 @@ export function shapeBounds(l: ShapeLayer): Rect {
 const shapeCache = new RasterCache<InkResult>(40);
 
 export function drawShape(ctx: CanvasRenderingContext2D, l: ShapeLayer, scale: number, color: string) {
-  if (l.shape === 'badge') {
-    drawBadge(ctx, l.x, l.y, l.size, color);
-    return;
-  }
-  if (l.shape === 'ghost') {
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = l.size * l.thickness * 0.35;
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ghostPath(ctx, l.x, l.y, l.size);
-    ctx.stroke();
-    ctx.restore();
-    return;
-  }
   const fx = l.x - Math.floor(l.x);
   const fy = l.y - Math.floor(l.y);
   const key = JSON.stringify([l.id, l.shape, l.size, l.rotation, l.arms, l.flare, l.thickness, l.rough, l.soft, fx, fy, scale, color]);
@@ -157,7 +97,7 @@ export function drawShape(ctx: CanvasRenderingContext2D, l: ShapeLayer, scale: n
 // ---------------------------------------------------------------- lockup
 
 /** Proportions measured on refs/lockup-crop.png (h = 1). */
-const LK = { sq1: 1.045, padL: 0.37, padR: 0.36, sq3: 1.08, text: 0.775, track: -0.016 };
+const LK = { padL: 0.37, padR: 0.36, text: 0.775, track: -0.016 };
 
 function lockupFont(h: number) {
   const f = TEXT_FONTS.inter600;
@@ -174,43 +114,25 @@ function textWidth(text: string, h: number) {
 
 export function lockupGeometry(l: LockupLayer) {
   const h = l.h;
-  const w1 = l.badge === false ? 0 : h * LK.sq1;
-  const w2 = h * (LK.padL + LK.padR) + textWidth(l.text, h);
-  const w3 = l.icon === false ? 0 : h * LK.sq3;
-  return { w1, w2, w3, w: w1 + w2 + w3 };
+  return { w: h * (LK.padL + LK.padR) + textWidth(l.text, h) };
 }
 
 export function lockupBounds(l: LockupLayer): Rect {
   return { x: l.x, y: l.y, w: lockupGeometry(l).w, h: l.h };
 }
 
-export function drawLockup(ctx: CanvasRenderingContext2D, l: LockupLayer, color: (t: LockupLayer['c1']) => string, ink: string) {
+export function drawLockup(ctx: CanvasRenderingContext2D, l: LockupLayer, color: (t: LockupLayer['c2']) => string, ink: string) {
   const g = lockupGeometry(l);
   const h = l.h;
   ctx.save();
-  ctx.fillStyle = color(l.c1);
-  ctx.fillRect(l.x, l.y, g.w1, h);
   ctx.fillStyle = color(l.c2);
-  ctx.fillRect(l.x + g.w1, l.y, g.w2, h);
-  ctx.fillStyle = color(l.c3);
-  ctx.fillRect(l.x + g.w1 + g.w2, l.y, g.w3, h);
-  if (g.w1 > 0) drawBadge(ctx, l.x + g.w1 / 2, l.y + h / 2, h * 0.33, ink);
+  ctx.fillRect(l.x, l.y, g.w, h);
   // wordmark: clean, never pixelated
   ctx.fillStyle = ink;
   ctx.font = lockupFont(h);
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left';
-  const tx = l.x + g.w1 + h * LK.padL;
-  const ty = l.y + h * 0.5 + h * LK.text * 0.727 * 0.5;
-  fillTracked(ctx, l.text, tx, ty, LK.track * h * LK.text);
-  if (g.w3 > 0) {
-    ctx.strokeStyle = ink;
-    ctx.lineWidth = h * 0.06;
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ghostPath(ctx, l.x + g.w1 + g.w2 + g.w3 / 2, l.y + h * 0.47, h * 0.33);
-    ctx.stroke();
-  }
+  fillTracked(ctx, l.text, l.x + h * LK.padL, l.y + h * 0.5 + h * LK.text * 0.727 * 0.5, LK.track * h * LK.text);
   ctx.restore();
 }
 

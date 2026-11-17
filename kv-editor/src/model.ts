@@ -177,7 +177,7 @@ export interface TextLayer extends Base {
   fill: Token;
 }
 
-export type ShapeKind = 'asterisk' | 'circle' | 'arrow' | 'ghost' | 'badge' | 'plus' | 'semicircle';
+export type ShapeKind = 'asterisk' | 'circle' | 'arrow' | 'plus' | 'semicircle';
 
 export interface ShapeLayer extends Base {
   type: 'shape';
@@ -208,9 +208,6 @@ export interface LockupLayer extends Base {
   c1: Token;
   c2: Token;
   c3: Token;
-  /** side modules: the "M" mark square and the icon square (undefined = shown, as in the master) */
-  badge?: boolean;
-  icon?: boolean;
 }
 
 export interface ImageLayer extends Base {
