@@ -83,6 +83,14 @@ const SKETCHES: Sketch[] = [
     build: 'vite',
     dir: 'vitro',
   },
+  {
+    slug: 'kv-editor',
+    name: 'KV Editor',
+    what: 'Editor del key visual Motion, Now: arranca del KV exacto, copy editable con el tratamiento tipográfico del KV (facetas, muescas, tinta), elementos, 5 formatos y PNG.',
+    stack: 'Vite · React · TypeScript · opentype.js',
+    build: 'vite',
+    dir: 'kv-editor',
+  },
 ];
 
 const run = (cmd: string, cwd: string) => execSync(cmd, { cwd, stdio: 'inherit' });
