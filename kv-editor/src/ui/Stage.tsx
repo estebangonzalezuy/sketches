@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Composition, Layer } from '../model';
 import type { Rect } from '../render/ink';
-import { layerBounds, render, setImageLoadListener } from '../render/render';
+import { hasMedia, layerBounds, render, setImageLoadListener } from '../render/render';
+import { setMediaListener } from '../media';
 import { TEXT_FONTS } from '../fonts';
 import type { ViewState } from './Inspector';
 
@@ -28,6 +29,7 @@ export function Stage({
   onCommit,
   editing,
   setEditing,
+  paused,
 }: {
   doc: Composition;
   selected: string | null;
@@ -39,6 +41,8 @@ export function Stage({
   onCommit: (before: Layer) => void;
   editing: string | null;
   setEditing: (id: string | null) => void;
+  /** media playback paused in the preview */
+  paused: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -56,7 +60,11 @@ export function Stage({
     return () => ro.disconnect();
   }, []);
 
-  useEffect(() => setImageLoadListener(() => setTick((t) => t + 1)), []);
+  useEffect(() => {
+    setImageLoadListener(() => setTick((t) => t + 1));
+    setMediaListener(() => setTick((t) => t + 1));
+  }, []);
+  const clock = useRef({ start: performance.now(), base: 0 });
 
   const pad = 32;
   const fit = Math.min((box.w - pad * 2) / doc.width, (box.h - pad * 2) / doc.height);
@@ -71,11 +79,18 @@ export function Stage({
     cv.width = Math.round(cw * dpr);
     cv.height = Math.round(ch * dpr);
     const ctx = cv.getContext('2d')!;
-    const raf = requestAnimationFrame(() => {
-      render(ctx, doc, { scale: (cw * dpr) / doc.width, hide: editing ? new Set([editing]) : undefined });
-    });
+    const opts = { scale: (cw * dpr) / doc.width, hide: editing ? new Set([editing]) : undefined };
+    const animated = hasMedia(doc) && !paused;
+    let raf = 0;
+    const frame = () => {
+      const dur = doc.video?.duration ?? 6;
+      const t = clock.current.base + (paused ? 0 : (performance.now() - clock.current.start) / 1000);
+      render(ctx, doc, { ...opts, time: dur > 0 ? t % dur : t });
+      if (animated) raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [doc, cw, ch, dpr, editing, tick]);
+  }, [doc, cw, ch, dpr, editing, tick, paused]);
 
   const toComp = (e: { clientX: number; clientY: number }) => {
     const r = canvasRef.current!.getBoundingClientRect();

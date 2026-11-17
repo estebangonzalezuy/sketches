@@ -226,7 +226,27 @@ export interface ImageLayer extends Base {
   pixel: number;
 }
 
+/** Video or GIF placed in a box. Drawn per frame; time comes from render(). */
+export interface MediaLayer extends Base {
+  type: 'media';
+  mediaId: string;
+  kind: 'video' | 'gif';
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  fit: 'cover' | 'contain';
+  /** focal point for cover crop, 0–1 */
+  fx: number;
+  fy: number;
+  /** pixel cell at 1080 (0 = off) */
+  pixel: number;
+  /** seconds the source is shifted against the composition clock */
+  offset: number;
+}
+
 export type Layer =
+  | MediaLayer
   | BlockLayer
   | BracketLayer
   | GridLayer
@@ -256,6 +276,8 @@ export interface Composition {
     stroke: Token;
   };
   layers: Layer[];
+  /** MP4 export length (seconds) and frame rate */
+  video?: { duration: number; fps: number };
 }
 
 let counter = 0;

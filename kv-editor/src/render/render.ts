@@ -1,5 +1,6 @@
 import { TEXT_FONTS } from '../fonts';
-import type { Composition, ImageLayer, Layer, TextLayer, Token } from '../model';
+import type { Composition, ImageLayer, Layer, MediaLayer, TextLayer, Token } from '../model';
+import { getMedia, mediaSource } from '../media';
 import { RasterCache, type Rect } from './ink';
 import { hexToRgb, mulberry32, vnoise } from './noise';
 import { drawLockup, drawShape, fillTracked, lockupBounds, shapeBounds } from './shapes';
@@ -10,6 +11,8 @@ export interface RenderOpts {
   scale: number;
   /** layer ids to skip (e.g. while editing text inline) */
   hide?: Set<string>;
+  /** composition clock in seconds (GIF frames; video is seeked by the exporter) */
+  time?: number;
 }
 
 /**
@@ -26,7 +29,8 @@ export function render(ctx: CanvasRenderingContext2D, c: Composition, o: RenderO
   if (c.crosses.visible) drawCrosses(ctx, c, s);
   for (const l of c.layers) {
     if (!l.visible || o.hide?.has(l.id)) continue;
-    drawLayer(ctx, l, c, s, col);
+    if (l.type === 'media') drawMedia(ctx, l, c, s, o.time ?? 0);
+    else drawLayer(ctx, l, c, s, col);
   }
   ctx.restore();
 }
@@ -263,6 +267,77 @@ function drawImageLayer(ctx: CanvasRenderingContext2D, l: ImageLayer, c: Composi
   ctx.drawImage(cv, l.x, l.y, l.w, l.h);
 }
 
+// ---------------------------------------------------------------- video / gif
+
+let pixCanvas: HTMLCanvasElement | null = null;
+
+function drawMedia(ctx: CanvasRenderingContext2D, l: MediaLayer, c: Composition, s: number, t: number) {
+  const src = mediaSource(l.mediaId, t + l.offset);
+  const m = getMedia(l.mediaId);
+  if (!src || !m || !m.width) {
+    // placeholder while loading / missing
+    ctx.save();
+    ctx.fillStyle = 'rgba(20,19,19,0.12)';
+    ctx.fillRect(l.x, l.y, l.w, l.h);
+    ctx.restore();
+    return;
+  }
+  const sw = m.width;
+  const sh = m.height;
+  // source crop (cover) or destination inset (contain)
+  let sx = 0;
+  let sy = 0;
+  let sW = sw;
+  let sH = sh;
+  let dx = l.x;
+  let dy = l.y;
+  let dW = l.w;
+  let dH = l.h;
+  const ra = l.w / l.h;
+  const rs = sw / sh;
+  if (l.fit === 'cover') {
+    if (rs > ra) {
+      sW = sh * ra;
+      sx = (sw - sW) * l.fx;
+    } else {
+      sH = sw / ra;
+      sy = (sh - sH) * l.fy;
+    }
+  } else if (rs > ra) {
+    dH = l.w / rs;
+    dy = l.y + (l.h - dH) / 2;
+  } else {
+    dW = l.h * rs;
+    dx = l.x + (l.w - dW) / 2;
+  }
+  ctx.save();
+  if (l.pixel > 0) {
+    // tMSC pixel: sample down to one px per cell, scale back up hard-edged
+    const cell = Math.max(2, Math.round((l.pixel * c.width) / 1080));
+    const cw = Math.max(1, Math.round(dW / cell));
+    const ch = Math.max(1, Math.round(dH / cell));
+    pixCanvas ??= document.createElement('canvas');
+    pixCanvas.width = cw;
+    pixCanvas.height = ch;
+    const pg = pixCanvas.getContext('2d')!;
+    pg.drawImage(src, sx, sy, sW, sH, 0, 0, cw, ch);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(pixCanvas, 0, 0, cw, ch, dx, dy, dW, dH);
+  } else {
+    ctx.drawImage(src, sx, sy, sW, sH, dx, dy, dW, dH);
+  }
+  ctx.restore();
+}
+
+export const hasMedia = (c: Composition) => c.layers.some((l) => l.type === 'media' && l.visible);
+
+/** Longest visible media source, for the default MP4 length. */
+export function mediaDuration(c: Composition) {
+  let d = 0;
+  for (const l of c.layers) if (l.type === 'media' && l.visible) d = Math.max(d, getMedia(l.mediaId)?.duration ?? 0);
+  return d;
+}
+
 // ---------------------------------------------------------------- bounds
 
 export function layerBounds(l: Layer): Rect {
@@ -271,6 +346,7 @@ export function layerBounds(l: Layer): Rect {
     case 'bracket':
     case 'grid':
     case 'image':
+    case 'media':
       return { x: l.x, y: l.y, w: l.w, h: l.h };
     case 'headline':
       return headlineBounds(l);

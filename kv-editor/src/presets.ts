@@ -376,6 +376,7 @@ export function scaleLayer(l: Layer, k: number, ox: number, oy: number): Layer {
     case 'block':
     case 'grid':
     case 'image':
+    case 'media':
       l.w *= k;
       l.h *= k;
       if (l.type === 'grid') l.weight = Math.max(1, l.weight);

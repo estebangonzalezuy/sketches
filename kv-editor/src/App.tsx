@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { loadFonts } from './fonts';
 import { clone, DEFAULT_TYPE, FORMATS, uid, validate, type Composition, type FormatId, type Layer, type ShapeKind } from './model';
 import { adaptTo, asterisk, block, bracket, fitHeadline, generateGrid, gridLayer, headline, lockup, masterKV, presetFor, scaleComposition } from './presets';
-import { layerBounds, render } from './render/render';
+import { hasMedia, layerBounds, render } from './render/render';
+import { addMedia, blobToDataURL, getMedia, kindOf, playAll } from './media';
+import { exportMP4 } from './exportVideo';
 import { DocInspector, LayerInspector, typeLabel, type ViewState } from './ui/Inspector';
 import { Stage } from './ui/Stage';
 
@@ -38,6 +40,11 @@ function Editor() {
   const [view, setViewState] = useState<ViewState>({ snap: false, unit: 8, smart: true, ref: false, refOpacity: 0.5, refDiff: false });
   const [askFormat, setAskFormat] = useState<FormatId | null>(null);
   const [addOpen, setAddOpen] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [exporting, setExporting] = useState<{ p: number; label: string } | null>(null);
+  const cancelRef = useRef({ cancel: false });
+  const mediaRef = useRef<HTMLInputElement>(null);
+  const [dropping, setDropping] = useState(false);
   const past = useRef<Composition[]>([]);
   const future = useRef<Composition[]>([]);
   const lastKey = useRef<{ key: string; t: number } | null>(null);
@@ -157,9 +164,48 @@ function Editor() {
     },
     lockup: () => addLayer({ ...lockup(Math.round(doc.width * 0.08), Math.round(doc.height * 0.85), Math.round(80 * S)), role: undefined }),
     image: () => imgRef.current?.click(),
+    media: () => mediaRef.current?.click(),
+  };
+
+  const onMediaFile = async (f: File) => {
+    const kind = kindOf(f);
+    if (!kind) return onImageFile(f);
+    const id = uid('v');
+    try {
+      const m = await addMedia(id, f, kind, f.name);
+      const d = docRef.current;
+      // fit inside 60% of the frame, keep the source ratio
+      const k = Math.min((d.width * 0.6) / m.width, (d.height * 0.6) / m.height);
+      const w = Math.round(m.width * k);
+      const h = Math.round(m.height * k);
+      const layer: Layer = { id: uid('m'), type: 'media', mediaId: id, kind, name: f.name.replace(/\.[^.]+$/, ''), visible: true, locked: false, x: Math.round((d.width - w) / 2), y: Math.round((d.height - h) / 2), w, h, fit: 'cover', fx: 0.5, fy: 0.5, pixel: 0, offset: 0 };
+      setDoc((dd) => {
+        // sit under the type, shapes and lockup so they stay on top of the footage
+        const front = dd.layers.findIndex((l) => l.type === 'headline' || l.type === 'text' || l.type === 'shape' || l.type === 'lockup');
+        dd.layers.splice(front < 0 ? dd.layers.length : front, 0, layer);
+        if (m.duration > 0 && !dd.layers.some((l) => l.type === 'media' && l.id !== layer.id)) dd.video = { fps: dd.video?.fps ?? 30, duration: Math.round(Math.min(60, m.duration) * 100) / 100 };
+      });
+      setSelected(layer.id);
+      setAddOpen(false);
+      setPaused(false);
+    } catch (e) {
+      alert((e as Error).message);
+    }
+  };
+
+  const onFiles = (files: FileList | File[]) => {
+    for (const f of Array.from(files)) {
+      if (kindOf(f)) void onMediaFile(f);
+      else if (f.type.startsWith('image/')) onImageFile(f);
+      else if (/\.json$/i.test(f.name)) void openJSON(f);
+    }
   };
 
   const onImageFile = (f: File) => {
+    if (kindOf(f) === 'gif') {
+      void onMediaFile(f);
+      return;
+    }
     const r = new FileReader();
     r.onload = () => {
       const src = String(r.result);
@@ -227,16 +273,50 @@ function Editor() {
     render(cv.getContext('2d')!, doc, { scale });
     cv.toBlob((b) => b && download(b, `${slug(doc.name)}${scale > 1 ? `@${scale}x` : ''}.png`), 'image/png');
   };
-  const saveJSON = () => download(new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' }), `${slug(doc.name)}.json`);
+  /** JSON carries the videos/GIFs inline (data URLs) so the file opens anywhere. */
+  const saveJSON = async () => {
+    const media: Record<string, { kind: string; name: string; data: string }> = {};
+    for (const l of doc.layers) {
+      if (l.type !== 'media' || media[l.mediaId]) continue;
+      const m = getMedia(l.mediaId);
+      if (m) media[l.mediaId] = { kind: m.kind, name: m.name, data: await blobToDataURL(m.blob) };
+    }
+    const out = Object.keys(media).length ? { ...doc, media } : doc;
+    download(new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' }), `${slug(doc.name)}.json`);
+  };
   const openJSON = (f: File) =>
-    f.text().then((t) => {
+    f.text().then(async (t) => {
       try {
-        replaceDoc(validate(JSON.parse(t)));
+        const raw = JSON.parse(t) as Composition & { media?: Record<string, { kind: 'video' | 'gif'; name: string; data: string }> };
+        if (raw.media) {
+          for (const [id, m] of Object.entries(raw.media)) {
+            const blob = await (await fetch(m.data)).blob();
+            await addMedia(id, blob, m.kind, m.name);
+          }
+          delete raw.media;
+        }
+        replaceDoc(validate(raw));
         setSelected(null);
       } catch (e) {
         alert((e as Error).message);
       }
     });
+
+  const runMP4 = async () => {
+    if (exporting) return;
+    cancelRef.current = { cancel: false };
+    setExporting({ p: 0, label: 'Preparando…' });
+    try {
+      const blob = await exportMP4(docRef.current, (p) => setExporting({ p, label: `Cuadro ${Math.round(p * (docRef.current.video?.duration ?? 6) * (docRef.current.video?.fps ?? 30))}` }), cancelRef.current);
+      download(blob, `${slug(doc.name)}.mp4`);
+    } catch (e) {
+      if ((e as Error).message !== 'cancelado') alert(`No se pudo exportar el MP4: ${(e as Error).message}`);
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  useEffect(() => playAll(!paused), [paused]);
 
   const switchFormat = (f: FormatId, mode: 'adapt' | 'preset' | 'scale') => {
     const next = mode === 'adapt' ? adaptTo(doc, f) : mode === 'scale' ? scaleComposition(doc, f) : presetFor(f);
@@ -271,6 +351,9 @@ function Editor() {
       } else if ((e.key === 'Backspace' || e.key === 'Delete') && sel) {
         e.preventDefault();
         remove();
+      } else if (e.key === ' ' && hasMedia(doc)) {
+        e.preventDefault();
+        setPaused((p) => !p);
       } else if (e.key === 'Escape') {
         setSelected(null);
         setAddOpen(false);
@@ -322,7 +405,9 @@ function Editor() {
           <button type="button" onClick={saveJSON} title="⌘S">Guardar JSON</button>
           <button type="button" className="primary" onClick={() => exportPNG(1)} title="⌘E">PNG</button>
           <button type="button" className="primary" onClick={() => exportPNG(2)} title="⇧⌘E">PNG @2x</button>
+          <button type="button" className="primary" onClick={runMP4} title="Video del post (duración en Composición → Video)">MP4</button>
           <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => e.target.files?.[0] && openJSON(e.target.files[0])} />
+          <input ref={mediaRef} type="file" accept="video/*,image/gif,.mp4,.mov,.webm,.gif" hidden onChange={(e) => { if (e.target.files?.length) onFiles(e.target.files); e.target.value = ''; }} />
           <input ref={imgRef} type="file" accept="image/*" hidden onChange={(e) => { if (e.target.files?.[0]) onImageFile(e.target.files[0]); e.target.value = ''; }} />
         </div>
       </header>
@@ -365,6 +450,10 @@ function Editor() {
                 <button type="button" onClick={add.lockup}>Lockup</button>
                 <button type="button" onClick={add.image}>Imagen / personaje…</button>
               </div>
+              <div className="add-group">
+                <span>Movimiento</span>
+                <button type="button" onClick={add.media}>Video / GIF…</button>
+              </div>
             </div>
           )}
         </div>
@@ -405,7 +494,27 @@ function Editor() {
         </p>
       </aside>
 
-      <main className="center">
+      <main
+        className={`center ${dropping ? 'dropping' : ''}`}
+        onDragOver={(e) => {
+          if (e.dataTransfer.types.includes('Files')) {
+            e.preventDefault();
+            setDropping(true);
+          }
+        }}
+        onDragLeave={() => setDropping(false)}
+        onDrop={(e) => {
+          if (!e.dataTransfer.files.length) return;
+          e.preventDefault();
+          setDropping(false);
+          onFiles(e.dataTransfer.files);
+        }}
+      >
+        {hasMedia(doc) && (
+          <button type="button" className="playbtn" onClick={() => setPaused((p) => !p)} title="Espacio">
+            {paused ? '▶ Reproducir' : '❚❚ Pausa'}
+          </button>
+        )}
         <Stage
           doc={doc}
           selected={selected}
@@ -425,6 +534,7 @@ function Editor() {
           }}
           editing={editing}
           setEditing={setEditing}
+          paused={paused}
         />
       </main>
 
@@ -441,6 +551,17 @@ function Editor() {
           <DocInspector doc={doc} setDoc={setDoc} view={view} setView={(v) => setViewState((s) => ({ ...s, ...v }))} />
         )}
       </aside>
+
+      {exporting && (
+        <div className="modal">
+          <div className="dialog">
+            <h3>Exportando MP4</h3>
+            <p>{exporting.label} · {Math.round(exporting.p * 100)}%</p>
+            <div className="bar"><span style={{ width: `${exporting.p * 100}%` }} /></div>
+            <button type="button" className="ghost" onClick={() => (cancelRef.current.cancel = true)}>Cancelar</button>
+          </div>
+        </div>
+      )}
 
       {askFormat && (
         <div className="modal" onClick={() => setAskFormat(null)}>

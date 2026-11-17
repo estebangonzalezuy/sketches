@@ -1,6 +1,8 @@
 import { HEADLINE_FONTS, TEXT_FONTS } from '../fonts';
 import { FORMATS, PALETTES, TOKENS, type Composition, type FontId, type Layer, type ShapeKind, type TextFontId, type Token } from '../model';
 import { generateGrid } from '../presets';
+import { getMedia } from '../media';
+import { mediaDuration } from '../render/render';
 import { Btn, Num, Row, Section, Seg, Select, Swatches, TextBox, Toggle } from './controls';
 
 type Patch = (fn: (l: Layer) => void, key?: string) => void;
@@ -155,6 +157,34 @@ export function LayerInspector({
         </Section>
       )}
 
+      {layer.type === 'media' && (
+        <Section title="Video / GIF">
+          <p className="hint">{mediaInfo(layer.mediaId)}</p>
+          <Seg label="Encaje" value={layer.fit} options={[['cover', 'Llenar'], ['contain', 'Entero']]} onChange={P('fit')} />
+          {layer.fit === 'cover' && (
+            <>
+              <Num label="Foco X" value={layer.fx} min={0} max={1} step={0.01} onChange={P('fx')} />
+              <Num label="Foco Y" value={layer.fy} min={0} max={1} step={0.01} onChange={P('fy')} />
+            </>
+          )}
+          <Num label="Pixel @1080" value={layer.pixel} min={0} max={30} onChange={P('pixel')} />
+          <Num label="Desfase (s)" value={layer.offset} min={-30} max={30} step={0.05} onChange={P('offset')} />
+          <Row label="">
+            <Btn
+              onClick={() =>
+                patch((l) => {
+                  if (l.type !== 'media') return;
+                  const m = getMedia(l.mediaId);
+                  if (m?.width) l.h = (l.w * m.height) / m.width;
+                })
+              }
+            >
+              Proporción original
+            </Btn>
+          </Row>
+        </Section>
+      )}
+
       {layer.type === 'image' && (
         <Section title="Imagen">
           <Swatches label="Silueta" value={layer.tint} palette={pal} allowNone onChange={(t) => P('tint')(t)} />
@@ -253,6 +283,18 @@ export function DocInspector({
         <Num label="Tamaño" value={doc.crosses.size} min={2} max={60} onChange={(v) => setDoc((d) => (d.crosses.size = v), 'csize')} />
         <Num label="Trazo" value={doc.crosses.weight} min={0.5} max={6} step={0.1} onChange={(v) => setDoc((d) => (d.crosses.weight = v), 'cweight')} />
       </Section>
+      <Section title="Video (MP4)">
+        <Num label="Duración (s)" value={doc.video?.duration ?? 6} min={0.5} max={60} step={0.1} onChange={(v) => setDoc((d) => (d.video = { fps: d.video?.fps ?? 30, duration: Math.max(0.5, v) }), 'vdur')} />
+        <Seg label="FPS" value={String(doc.video?.fps ?? 30) as '24' | '25' | '30'} options={[['24', '24'], ['25', '25'], ['30', '30']]} onChange={(v) => setDoc((d) => (d.video = { duration: d.video?.duration ?? 6, fps: +v }))} />
+        {mediaDuration(doc) > 0 && (
+          <Row label="">
+            <Btn onClick={() => setDoc((d) => (d.video = { fps: d.video?.fps ?? 30, duration: Math.round(Math.min(60, mediaDuration(doc)) * 100) / 100 }))}>
+              Igualar al video ({mediaDuration(doc).toFixed(2)} s)
+            </Btn>
+          </Row>
+        )}
+        <p className="hint">El MP4 sale del mismo render que el PNG, cuadro a cuadro, sin audio.</p>
+      </Section>
       <Section title="Vista">
         <Toggle label="Snap" value={view.snap} onChange={(v) => setView({ snap: v })} />
         <Num label="Unidad" value={view.unit} min={1} max={120} onChange={(v) => setView({ unit: Math.max(1, Math.round(v)) })} />
@@ -284,6 +326,13 @@ export interface ViewState {
 
 const round = (v: number) => Math.round(v * 10) / 10;
 
+function mediaInfo(id: string) {
+  const m = getMedia(id);
+  if (!m) return 'Cargando… (si no aparece, volvé a subir el archivo)';
+  const kind = m.kind === 'gif' ? (m.gif ? `GIF, ${m.gif.frames.length} cuadros` : 'GIF (solo primer cuadro en este navegador)') : 'Video';
+  return `${m.name} · ${kind} · ${m.width}×${m.height}${m.duration ? ` · ${m.duration.toFixed(2)} s` : ''}`;
+}
+
 export function typeLabel(l: Layer) {
   return (
     {
@@ -295,6 +344,7 @@ export function typeLabel(l: Layer) {
       shape: 'Forma',
       lockup: 'Lockup',
       image: 'Imagen',
+      media: 'Video / GIF',
     } as const
   )[l.type];
 }
