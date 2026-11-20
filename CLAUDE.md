@@ -51,12 +51,14 @@ playground/
   `metadata.json` and `HOW_IT_WORKS.md` is a prototype. There is no list to edit.
   `npm run registry` (run automatically before dev, build, lint, typecheck and test)
   validates every `metadata.json` and fails loudly on a missing file or bad field.
-- **Privacy.** In production (Vercel production and previews, `next start`) every page
-  needs the password in `PLAYGROUND_PASSWORD`. `npm run dev` has no gate.
-  Prototypes are private by default. With `"public": true` a prototype is also served at
-  `/p/<slug>` without login, together with `/og/<slug>.*`, `/api/<slug>/*` and
+- **Privacy (optional password).** The password gate is on only when
+  `PLAYGROUND_PASSWORD` is set in the deployment's environment; without it the whole site
+  is open. `npm run dev` never has a gate. When the gate is on, every page needs the
+  password, except prototypes with `"public": true`, which are also served at `/p/<slug>`
+  without login, together with `/og/<slug>.*`, `/api/<slug>/*` and
   `/prototype-assets/<slug>/*`. Unknown or private slugs on those paths return 404, never a
-  login redirect, so private names don't leak.
+  login redirect, so private names don't leak. `/p/<slug>` with og:image and og:video is
+  the share link for a public prototype, gate or not.
 - **Gallery** is built at build time from metadata, sorted by `updatedAt`. Cards show
   static thumbnails (light and dark, switched by CSS). Never embed live iframes.
 - **Next.js 16 is newer than your training data.** `middleware.ts` is now `proxy.ts`;
@@ -305,7 +307,8 @@ return <ControlsLayout controls={c}>…subject using c.values…</ControlsLayout
   `https://<preview-host>/prototypes/<slug>`. Find it in the Vercel bot comment or status
   on the PR, or via the Vercel API (`GET /v6/deployments?projectId=…&meta-githubCommitRef=<branch>`).
   If it isn't ready yet, say so and give the PR link.
-- Previews are password-gated like production; the owner signs in once per preview host.
+- If `PLAYGROUND_PASSWORD` is set, previews are password-gated like production and the
+  owner signs in once per preview host. If it isn't, the links open directly.
 - Dependencies: install inside `playground/` (`npm install <pkg>`), commit
   `package.json` and `package-lock.json`. Prefer libraries from §5.
 - Don't edit `lib/generated/` (generated) or hand-edit `components/ui/` unless fixing a

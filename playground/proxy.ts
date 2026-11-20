@@ -3,7 +3,8 @@ import { gateEnabled, isValidSession, SESSION_COOKIE } from "@/lib/auth";
 import publicSlugs from "@/lib/generated/public-slugs.json";
 
 /**
- * Password gate for the whole site in production.
+ * Optional password gate for the whole site. Off unless PLAYGROUND_PASSWORD is set
+ * (and always off in `npm run dev`).
  *
  * Reachable without a session:
  *   /login, /api/auth             the gate itself
