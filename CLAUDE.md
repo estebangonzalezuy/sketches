@@ -360,3 +360,5 @@ Add to this list whenever something breaks and gets fixed. Newest last.
 - A light canvas with alpha-faded trails never fully returns to the background color
   (8-bit rounding leaves faint ghosts). Acceptable for the example; for crisp results
   periodically repaint the full background or use a dark-on-light additive approach.
+- Turbopack is strict about CommonJS-style default imports from ESM-only packages
+  (`import x from 'opentype.js'` fails: no default export). Use `import * as x from …`.
