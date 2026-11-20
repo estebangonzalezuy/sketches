@@ -8,9 +8,12 @@
 export const SESSION_COOKIE = "playground_session";
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 90; // 90 days
 
-/** The gate is on for production builds (`next start`, Vercel production and previews). */
+/**
+ * The gate is optional: it is on only in production builds (`next start`, Vercel
+ * production and previews) AND when PLAYGROUND_PASSWORD is set. No password, no gate.
+ */
 export function gateEnabled(): boolean {
-  return process.env.NODE_ENV === "production";
+  return process.env.NODE_ENV === "production" && configuredPassword() !== null;
 }
 
 export function configuredPassword(): string | null {
