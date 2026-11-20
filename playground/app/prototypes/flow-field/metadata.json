@@ -1,0 +1,9 @@
+{
+  "title": "Flow Field",
+  "description": "Particles drifting through a noise field, leaving fading trails.",
+  "tags": ["generative", "canvas"],
+  "createdAt": "2026-11-19",
+  "updatedAt": "2026-11-19T06:00:00.000Z",
+  "hidden": false,
+  "public": false
+}

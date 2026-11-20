@@ -1,5 +1,7 @@
 # Sketches
 
+> The Next.js prototype playground lives in [`playground/`](playground/) and deploys as its own Vercel project. Agent rules: [`CLAUDE.md`](CLAUDE.md).
+
 Colección de sketches. Se sirve en `estebangonzalez.co/sketches` (el proyecto `portfolio` hace un rewrite a este deploy) y no está linkeada desde ningún lado (`noindex`).
 
 | URL                              | Carpeta                                         |
