@@ -362,3 +362,6 @@ Add to this list whenever something breaks and gets fixed. Newest last.
   periodically repaint the full background or use a dark-on-light additive approach.
 - Turbopack is strict about CommonJS-style default imports from ESM-only packages
   (`import x from 'opentype.js'` fails: no default export). Use `import * as x from …`.
+- Code ported from the old Vite sketches can hit TypeScript's stricter typed-array generics
+  (`Uint8Array<ArrayBufferLike>` not assignable to `BufferSource`). Cast at the call site
+  (`as Uint8Array<ArrayBuffer>`) rather than changing the shared tsconfig.
