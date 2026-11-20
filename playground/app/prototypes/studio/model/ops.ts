@@ -1,6 +1,6 @@
 import { getTrack, layerTracks, setTrack } from "./paths";
 import { isAnimated, sortKeys, valueAt } from "./tracks";
-import type { EaseName, Key, ParamPath, Project, Track, Value } from "./types";
+import type { Ease, EaseName, Key, ParamPath, Project, Track, Value } from "./types";
 
 let n = 0;
 export const uid = (p = "k") => `${p}${Date.now().toString(36)}${(n++).toString(36)}${Math.floor(Math.random() * 1296).toString(36)}`;
@@ -56,9 +56,13 @@ export const moveKeys = (project: Project, ids: Set<string>, dt: number, from: M
 
 export const deleteKeys = (project: Project, ids: Set<string>) => mapKeys(project, (k) => (ids.has(k.id) ? null : k));
 
-export const setKeysEase = (project: Project, ids: Set<string>, ease: EaseName) => mapKeys(project, (k) => (ids.has(k.id) ? { ...k, ease } : k));
+export const setKeysEase = (project: Project, ids: Set<string>, ease: Ease) => mapKeys(project, (k) => (ids.has(k.id) ? { ...k, ease } : k));
 
 export const setKeyValue = (project: Project, id: string, v: Value) => mapKeys(project, (k) => (k.id === id ? { ...k, v } : k));
+
+/** Several key edits at once (graph editor drags): each id gets its patch. */
+export const patchKeys = (project: Project, patches: Map<string, Partial<Omit<Key, "id">>>) =>
+  mapKeys(project, (k) => (patches.has(k.id) ? { ...k, ...patches.get(k.id) } : k));
 
 /** Every key in the project, for selection and lookups. */
 export function allKeys(project: Project): Map<string, { key: Key; path: ParamPath }> {

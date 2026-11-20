@@ -6,12 +6,12 @@ import type { GeneratorDef } from "./types";
 
 const FONT_OPTIONS = (Object.keys(HEADLINE_FONTS) as FontId[]).map((id) => ({ value: id, label: HEADLINE_FONTS[id].label }));
 
-/** Glyph outlines → contours, centred on the layer origin. KV facets cut curves to 0/45/90°. */
-export function textContours(o: { text: string; font: string; size: number; tracking: number; leading: number; scaleX: number; align: string; facets: number }): Pt[][] {
+/** Glyph outlines → contours, one list per glyph (so per-letter effects can move each letter). KV facets cut curves to 0/45/90°. */
+export function textContours(o: { text: string; font: string; size: number; tracking: number; leading: number; scaleX: number; align: string; facets: number }): Pt[][][] {
   const font = getFont(o.font as FontId);
   const em = o.size / font.unitsPerEm;
   const steps = Math.max(6, Math.min(24, Math.round(o.size / 30)));
-  const out: Pt[][] = [];
+  const out: Pt[][][] = [];
   o.text.split("\n").forEach((line, li) => {
     const base = li * o.leading * o.size;
     const glyphs = [...line].map((ch) => font.charToGlyph(ch));
@@ -27,10 +27,12 @@ export function textContours(o: { text: string; font: string; size: number; trac
     glyphs.forEach((g, i) => {
       const cmds = g.getPath(0, 0, o.size).commands;
       const pieces = toPieces(cmds, steps, (x, y) => [off + pens[i] + x * o.scaleX, base + y]);
+      const glyph: Pt[][] = [];
       for (const pc of pieces) {
         const ct = o.facets > 0 ? octilinear(pc, o.facets, o.size) : flatPieces(pc);
-        if (ct.length >= 3) out.push(ct);
+        if (ct.length >= 3) glyph.push(ct);
       }
+      if (glyph.length) out.push(glyph);
     });
   });
   return out;
@@ -58,12 +60,13 @@ export const text: GeneratorDef = {
     const key = JSON.stringify(o);
     let shape = cache.get(key);
     if (!shape) {
-      const raw: ShapePath[] = [{ fill: "", contours: textContours(o) }];
+      const raw: ShapePath[] = textContours(o).map((contours) => ({ fill: "", contours }));
       const b = bboxOf(raw);
       shape = mapPaths(raw, ([x, y]) => [x - b.x - b.w / 2, y - b.y - b.h / 2]);
       if (cache.size > 200) cache.clear();
       cache.set(key, shape);
     }
-    return { kind: "vector", paths: [{ fill: String(p.fill), contours: shape[0].contours }] };
+    const fill = String(p.fill);
+    return { kind: "vector", paths: shape.map((g) => ({ fill, contours: g.contours })) };
   },
 };

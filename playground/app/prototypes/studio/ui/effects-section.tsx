@@ -9,6 +9,7 @@ import { mapLayer } from "../model/paths";
 import { newEffect } from "../model/project";
 import type { EffectInstance, Layer } from "../model/types";
 import { EFFECTS } from "../tools/registry";
+import { available } from "./available";
 import { useStudio } from "./context";
 import { Section } from "./inspector";
 import { ParamField } from "./param-field";
@@ -38,7 +39,7 @@ export function EffectsSection({ layer: l }: { layer: Layer }) {
           setSel({ effect: fx.id });
         }}>
           <NativeSelectOption value="" disabled>Add effect…</NativeSelectOption>
-          {Object.values(EFFECTS).map((d) => <NativeSelectOption key={d.id} value={d.id}>{d.name}</NativeSelectOption>)}
+          {available(project).effects.map((d) => <NativeSelectOption key={d.id} value={d.id}>{d.name}</NativeSelectOption>)}
         </NativeSelect>
       }
     >

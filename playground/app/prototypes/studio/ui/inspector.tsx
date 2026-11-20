@@ -9,6 +9,8 @@ import { uid } from "../model/ops";
 import { TRANSFORM_SPECS } from "../model/transform-specs";
 import type { Blend, Layer, TransformTracks } from "../model/types";
 import { GENERATORS } from "../tools/registry";
+import { TEMPLATES } from "../model/templates";
+import { available } from "./available";
 import { useStudio } from "./context";
 import { EffectsSection } from "./effects-section";
 import { KeysSection } from "./keys-section";
@@ -24,10 +26,11 @@ const BLENDS: { value: Blend; label: string }[] = [
 
 /** The selected layer: name and blend, selected keys, transform, contents, then its effect stack. */
 export function Inspector() {
-  const { project, update, sel, setSel } = useStudio();
+  const { project, update, sel, setSel, clock } = useStudio();
   const l = project.layers.find((x) => x.id === sel.layer);
   if (!l) return <p className="p-4 text-sm text-muted-foreground">Select a layer in the viewport or the timeline.</p>;
   const gen = GENERATORS[l.tool];
+  const templates = available(project).templatesFor(l);
   const patch = (fn: (x: Layer) => Layer, history = true) => update(mapLayer(project, l.id, fn), history);
   const i = project.layers.indexOf(l);
   /** +1 brings the layer forward (up the timeline), -1 sends it back. */
@@ -63,6 +66,15 @@ export function Inspector() {
           {BLENDS.map((b) => <NativeSelectOption key={b.value} value={b.value}>{b.label}</NativeSelectOption>)}
         </NativeSelect>
       </div>
+      {templates.length > 0 && (
+        <div className="flex min-h-11 items-center justify-between gap-2 text-xs text-muted-foreground">
+          Animate
+          <NativeSelect aria-label="Apply an animation template" size="sm" value="" onChange={(e) => update(TEMPLATES[e.target.value].apply(project, l.id, clock.t))}>
+            <NativeSelectOption value="" disabled>Template at playhead…</NativeSelectOption>
+            {templates.map((t) => <NativeSelectOption key={t.id} value={t.id}>{t.name}</NativeSelectOption>)}
+          </NativeSelect>
+        </div>
+      )}
       {sel.keys.size > 0 && <KeysSection />}
       <Section title="Transform">
         {(Object.keys(TRANSFORM_SPECS) as (keyof TransformTracks)[]).map((k) => (

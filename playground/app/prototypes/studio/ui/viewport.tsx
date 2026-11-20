@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { renderFrame } from "../engine/compositor";
+import { onMbReady } from "../engine/mb-host";
 import { useStudio } from "./context";
 import { Overlay } from "./overlay";
 
@@ -46,10 +47,12 @@ export function Viewport({ maxHeight }: { maxHeight: string }) {
     drawRef.current = schedule;
     draw();
     const off = clock.subscribe(schedule);
+    const offMb = onMbReady(schedule);
     const ro = new ResizeObserver(schedule);
     ro.observe(wrap);
     return () => {
       off();
+      offMb();
       ro.disconnect();
       cancelAnimationFrame(queued);
     };

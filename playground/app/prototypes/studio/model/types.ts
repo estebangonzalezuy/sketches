@@ -2,9 +2,12 @@
 export type Value = number | [number, number] | string | boolean;
 
 export type EaseName = "linear" | "ease" | "in" | "out" | "hold";
+/** A custom curve from the graph editor: cubic-bezier(x1, y1, x2, y2) over the segment. */
+export type Bezier = [number, number, number, number];
+export type Ease = EaseName | Bezier;
 
 /** A keyframe. `t` is seconds on the project clock; the ease shapes the segment that leaves it. */
-export type Key = { id: string; t: number; v: Value; ease: EaseName };
+export type Key = { id: string; t: number; v: Value; ease: Ease };
 
 /** A parameter is either a fixed value or animated by keys (the stopwatch is on). */
 export type Track = { value: Value } | { keys: Key[] };
@@ -52,6 +55,8 @@ export type Project = {
   fps: number;
   duration: number;
   background: string;
+  /** which tools and templates the project offers (model/environments.ts) */
+  environment?: string;
   /** back → front */
   layers: Layer[];
 };

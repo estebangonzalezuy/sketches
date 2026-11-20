@@ -1,5 +1,6 @@
 import { invert3, squareToQuad, type Pt, type Rect } from "../engine/geometry";
 import { runShader } from "../engine/gl";
+import { letters, type LettersOptions } from "../engine/letters";
 import { pixelShape } from "../engine/pixel-shape";
 import { cornerPin as pinPaths, radialWarp as warpPaths } from "../engine/shape-effects";
 import type { Value } from "../model/types";
@@ -83,5 +84,30 @@ export const radial: EffectDef = {
       depth: Number(p.depth),
       angle: Number(p.angle),
       sweep: Number(p.sweep),
+    }),
+};
+
+/** Kinetic type: each letter stretched and sheared by its own swing (wave, alternate or random). */
+export const lettersFx: EffectDef = {
+  id: "letters",
+  name: "Letters (stretch/skew)",
+  params: {
+    mode: { kind: "select", label: "Mode", default: "wave", options: [{ value: "wave", label: "Wave" }, { value: "alternate", label: "Alternate" }, { value: "random", label: "Random" }] },
+    stretch: { kind: "number", label: "Stretch", default: 0.45, min: 0, max: 2, step: 0.01 },
+    skew: { kind: "number", label: "Skew", default: 12, min: -60, max: 60, step: 0.5, unit: "°" },
+    frequency: { kind: "number", label: "Frequency", default: 1, min: 0, max: 6, step: 0.05 },
+    phase: { kind: "number", label: "Phase", default: 0, min: -3600, max: 3600, step: 1, unit: "°" },
+    pin: { kind: "select", label: "Pin", default: "baseline", options: [{ value: "baseline", label: "Baseline" }, { value: "center", label: "Centre" }, { value: "top", label: "Top" }] },
+    seed: { kind: "number", label: "Seed", default: 1, min: 0, max: 999, step: 1 },
+  },
+  vector: (paths, p) =>
+    letters(paths, {
+      mode: p.mode as LettersOptions["mode"],
+      stretch: Number(p.stretch),
+      skew: Number(p.skew),
+      frequency: Number(p.frequency),
+      phase: Number(p.phase),
+      pin: p.pin as LettersOptions["pin"],
+      seed: Number(p.seed),
     }),
 };

@@ -2,6 +2,7 @@ import type { Layer, Project } from "../model/types";
 import { EFFECTS, GENERATORS } from "../tools/registry";
 import type { ToolCtx } from "../tools/types";
 import { paramsAt, transformAt } from "./evaluate";
+import { integralOf } from "./integral";
 import { contentBox, type Content, type Rect } from "./geometry";
 import { rasterize } from "./raster";
 
@@ -24,18 +25,28 @@ export function layerContent(project: Project, l: Layer, t: number, scale: numbe
   if (!gen) return { content: { kind: "vector", paths: [] }, boxes, skipped };
   const tv = transformAt(l, t);
   const res = scale * Math.max(0.05, Math.abs(tv.scale));
-  const ctx = (slot: string): ToolCtx => ({ time: t, local: t - l.inPoint, scale: res, width: project.width, height: project.height, slot });
-  let content = gen.generate(paramsAt(l.params, t), ctx(l.id));
+  const ctx = (slot: string, tracks: Layer["params"]): ToolCtx => ({
+    time: t,
+    local: t - l.inPoint,
+    scale: res,
+    width: project.width,
+    height: project.height,
+    slot,
+    fps: project.fps,
+    duration: l.outPoint - l.inPoint,
+    integral: (param) => (tracks[param] ? integralOf(tracks[param], l.inPoint, t, project.fps) : 0),
+  });
+  let content = gen.generate(paramsAt(l.params, t), ctx(l.id, l.params));
   for (const e of l.effects) {
     if (!e.enabled) continue;
     const def = EFFECTS[e.tool];
     if (!def) continue;
     boxes.set(e.id, contentBox(content));
     const p = paramsAt(e.params, t);
-    if (content.kind === "vector" && def.vector) content = { kind: "vector", paths: def.vector(content.paths, p, ctx(e.id)) };
+    if (content.kind === "vector" && def.vector) content = { kind: "vector", paths: def.vector(content.paths, p, ctx(e.id, e.params)) };
     else if (def.raster) {
       const r = content.kind === "raster" ? content : rasterize(content.paths, res);
-      content = def.raster(r, p, ctx(`${l.id}/${e.id}`));
+      content = def.raster(r, p, ctx(`${l.id}/${e.id}`, e.params));
     } else skipped.add(e.id);
   }
   return { content, boxes, skipped };

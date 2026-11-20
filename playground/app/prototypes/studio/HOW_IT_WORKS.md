@@ -2,7 +2,11 @@
 
 ## What It Does
 
-A motion studio built from small, mixable tools: generators (Text, Rectangle, Shader Field, and the Motion, Now KV as layers) and effects (Corner Pin, Pixel (shape), Radial Warp, Wave). It's laid out like After Effects, with a viewer, an effect-controls inspector and a keyframe timeline, and it exports MP4. It opens on the Motion, Now poster, animated with every tool.
+A motion studio built from small, mixable tools. It's laid out like After Effects (viewer, effect-controls inspector, keyframe timeline with a graph editor) and exports MP4.
+
+- **Studio tools**: Text, Rectangle, Shader Field, and the Motion, Now KV as layers; effects Corner Pin, Pixel (shape), Radial Warp, Letters (per-letter stretch and skew) and Wave.
+- **Every Motion Builder tool**: Tag Shader, Text Extruder, Text, Chart, Table, Counter, Pixelado, ASCII, Spray and its 7 modes.
+- **Projects** open in tabs, each in an environment (Motion, Now · Inception · Spray · Free) that decides its tools and animation templates. The first tab is the Motion, Now poster, animated with every studio tool.
 
 ## Architecture
 
@@ -27,10 +31,28 @@ renderFrame(ctx, project, t, scale)                        engine/compositor.ts
 - **Pixel (shape)** isn't a pixelation of the picture. Each grid cell whose centre is inside the outline (nonzero rule, by scanline spans) becomes a vector square, so animating the cell size redraws the shape.
 - **Corner Pin** maps the shape's box to four pins (a projective homography). Pins are stored in box units, so they survive a text change. On raster layers the same pins warp the bitmap in GL.
 - **Radial Warp** bends the box around a centre: x becomes the angle, y the radius (letters standing on a ring). `amount` blends from flat to fully warped.
+- **Motion Builder inside the studio.** `lib/motion-builder/` is the Motion Builder tool set, ported unchanged (core contract and tools). `engine/mb-host.ts` runs any of its `ToolDefinition`s on a shared three.js renderer with the same context Motion Builder gives them: the design unit (short side / 1080), premultiplied sRGB targets, `blit`, the param `integral`, and a seed.
+  - `tools/mb.ts` wraps generators (and hybrid Tag Shader) as studio generators, and effects (Pixelado, ASCII, Spray, and Tag Shader on a layer) as raster effects that take the layer's bitmap as their source input.
+  - `prepare()` is async: until it lands, the previous state draws (or nothing), the viewer redraws when it does, and the export waits for it.
+  - KMR Apparat is commercial and isn't in the repo, so selects that default to it switch to the first free family (Archivo Narrow, Geist Mono, IBM Plex Mono).
+- **Letters** needs one path per letter, so the Text generator now emits one path per glyph. Each letter is stretched vertically and sheared by its own swing (wave, alternate or random), pinned at its baseline. Animating `phase` is what makes "Hard Work"-style kinetic type.
+- **Environments** (`model/environments.ts`) work like Motion Builder's: they filter what you can add, not what can open.
+  - **Motion, Now**: KV tools, shape effects, studio templates and **Animate all** (the KV entrance on any comp).
+  - **Inception**: the Motion Builder tools plus every effect.
+  - **Spray**: Spray and its modes.
+  - **Free**: everything.
+- **Templates** (`model/templates.ts`) write real, editable keys at the playhead.
+  - Studio: Fade in, Slide up, Pop, Spin in, Pixel build, Corner pin land, Radial unbend, Letters: wave loop, Letters: hard work.
+  - Each Motion Builder tool also brings its own templates, spread over the layer's length. Their `expo` and `back` eases become custom beziers.
 - **The Motion, Now KV** (`model/kv-import.ts`) comes in as layers. Blocks, the bracket and the headlines are vector layers (headlines use the KV fonts, with optional KV facets). The paper, grid, asterisk and lockup are bitmaps drawn by the KV render (`lib/kv`).
 
 ## Frontend
 
+- **Tabs**: one per open project, each with its own undo history. **+ New** starts a Motion, Now comp in any format, or an Inception, Spray or Free project. Opening a project file opens a new tab. The workspace is saved to `playground:studio:workspace`; the older single-project key migrates on first load.
+- **Graph editor** (**Graph** in the timeline): curves of the properties whose keys are selected, else the selected layer's animated ones (up to 5, each in a chart colour).
+  - Numbers plot their values; other properties plot each segment's progress 0 → 1.
+  - Drag a key to move it in time (and in value, for numbers).
+  - Drag a bezier handle to shape that segment: the key's ease becomes a custom `[x1, y1, x2, y2]`, shown as "Custom" in the inspector.
 - **Timeline (After Effects model)**
   - Layers front first, each with twirl-downs: Transform (Anchor, Position, Scale, Rotation, Opacity), Contents (generator params) and one group per effect.
   - **U** shows only the animated properties, all expanded. The timeline starts that way.
@@ -60,13 +82,15 @@ renderFrame(ctx, project, t, scale)                        engine/compositor.ts
 ## Key Dependencies
 
 - `lib/kv` (the Motion, Now poster core): fonts, glyph outlines and KV facets, and the KV render for bitmap layers.
+- `lib/motion-builder` and `three@0.169` for the Motion Builder tools; their free fonts are in `public/prototype-assets/studio/fonts/`.
 - `opentype.js` for outlines, WebGL2 for GL tools, WebCodecs and `mp4-muxer` for MP4.
 
 ## Component Tree
 
 ```
-StudioApp            fonts gate, first-visit demo, view prefs (useControls)
-└─ Studio            clock, selection, StudioContext, shortcuts, layout
+StudioApp            fonts gate, first tab, view prefs (useControls)
+├─ TabBar            project tabs, + New (environment)
+└─ Studio (per tab)            clock, selection, StudioContext, shortcuts, layout
    ├─ Toolbar        new KV comp per format, add layer, open/save JSON, undo/redo, ExportButton
    ├─ Viewport       canvas (renderFrame) + Overlay (box, MotionPath, handles, drag)
    ├─ Transport
@@ -86,9 +110,9 @@ StudioApp            fonts gate, first-visit demo, view prefs (useControls)
 
 | Path | What |
 | --- | --- |
-| `model/` | types, eases, track evaluation, AE-style ops (stopwatch, set at playhead, move/delete/ease keys), specs, project defaults, KV import, demo |
-| `engine/` | geometry (homography, subdivision), shape effects, pixel shape, rasteriser, WebGL2 runner, evaluation, pipeline, compositor, tests |
-| `tools/` | the tool contract, registry, Text, shapes, KV layer and paper, shape effects, GL tools |
-| `ui/` | studio shell, context, viewport and overlay, inspector, params, effects, keys, comp panel, toolbar, transport, shortcuts |
-| `timeline/` | rows builder, timeline, ruler, row name, row lane, layer bar, key drag, marquee |
+| `model/` | types, eases (named or custom bezier), track evaluation, AE-style ops, specs, project defaults, KV import, demo, environments, templates |
+| `engine/` | geometry (homography, subdivision), shape effects, pixel shape, letters, rasteriser, WebGL2 runner, Motion Builder host, param integral, evaluation, pipeline, compositor, tests |
+| `tools/` | the tool contract, registry, Text, shapes, KV layer and paper, shape effects (incl. Letters), GL tools, the Motion Builder bridge |
+| `ui/` | studio shell, tab bar, context, viewport and overlay, inspector, params, effects, keys, comp panel, toolbar, transport, shortcuts, environment filter |
+| `timeline/` | rows builder, timeline, ruler, row name, row lane, layer bar, key drag, marquee, graph editor (math + view) |
 | `clock.ts`, `store.ts`, `export-mp4.ts`, `data.ts` | playhead, project store, MP4, view prefs |

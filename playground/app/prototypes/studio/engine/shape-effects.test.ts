@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { bboxOf, invert3, project, squareToQuad, type Pt, type ShapePath } from "./geometry";
 import { pixelShape, spansAt } from "./pixel-shape";
 import { cornerPin, radialWarp } from "./shape-effects";
+import { letters } from "./letters";
 
 const square = (x: number, y: number, s: number): ShapePath => ({ fill: "#000", contours: [[[x, y], [x + s, y], [x + s, y + s], [x, y + s]]] });
 
@@ -65,5 +66,20 @@ describe("radial warp", () => {
     expect(b.x).toBeCloseTo(0, 0);
     expect(b.y).toBeCloseTo(0, 0);
     expect(b.w).toBeCloseTo(150, 0);
+  });
+});
+
+describe("letters", () => {
+  const word = [square(0, 0, 10), square(20, 0, 10), square(40, 0, 10)];
+  const base = { mode: "alternate" as const, stretch: 0.5, skew: 0, frequency: 1, phase: 0, pin: "baseline" as const, seed: 1 };
+  it("stretches letters by their own swing, keeping the baseline", () => {
+    const out = letters(word, base);
+    expect(bboxOf([out[0]]).h).toBeCloseTo(5);
+    expect(bboxOf([out[1]]).h).toBeCloseTo(15);
+    expect(bboxOf([out[0]]).y + bboxOf([out[0]]).h).toBeCloseTo(10);
+  });
+  it("is the identity with no stretch and no skew", () => {
+    const out = letters(word, { ...base, stretch: 0 });
+    expect(bboxOf(out)).toEqual(bboxOf(word));
   });
 });

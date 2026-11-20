@@ -1,5 +1,6 @@
 import { ArrayBufferTarget, Muxer } from "mp4-muxer";
 import { renderFrame } from "./engine/compositor";
+import { mbBusy, mbIdle } from "./engine/mb-host";
 import type { Project } from "./model/types";
 
 /** MP4 (H.264, VP9 fallback) from the same renderFrame() as the preview, one exact frame at a time. */
@@ -21,6 +22,11 @@ export async function exportMP4(project: Project, onProgress: (p: number) => voi
       if (signal.cancel) throw new Error("Cancelled");
       if (failure) throw failure;
       renderFrame(ctx, project, i / fps, 1);
+      // a Motion Builder tool that is still preparing (fonts, rebuild) is waited for, then the frame is redrawn
+      if (mbBusy()) {
+        await mbIdle();
+        renderFrame(ctx, project, i / fps, 1);
+      }
       const frame = new VideoFrame(cv, { timestamp: Math.round((i * 1e6) / fps), duration: Math.round(1e6 / fps) });
       enc.encode(frame, { keyFrame: i % (fps * 2) === 0 });
       frame.close();

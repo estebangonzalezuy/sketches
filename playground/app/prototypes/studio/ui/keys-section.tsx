@@ -17,7 +17,7 @@ export function KeysSection() {
   const all = allKeys(project);
   const picked = [...sel.keys].map((id) => all.get(id)).filter((x) => !!x);
   if (!picked.length) return null;
-  const eases = new Set(picked.map((p) => p.key.ease));
+  const eases = new Set(picked.map((p) => (typeof p.key.ease === "string" ? p.key.ease : "custom")));
   const one = picked.length === 1 ? picked[0] : null;
   const layer = one && project.layers.find((l) => l.id === one.path.layer);
   const spec = one && layer ? specOf(layer, one.path) : undefined;
@@ -35,6 +35,7 @@ export function KeysSection() {
         Ease out of key
         <NativeSelect aria-label="Ease" size="sm" value={eases.size === 1 ? [...eases][0] : ""} onChange={(e) => update(setKeysEase(project, sel.keys, e.target.value as EaseName))}>
           {eases.size > 1 && <NativeSelectOption value="" disabled>Mixed</NativeSelectOption>}
+          {eases.has("custom") && eases.size === 1 && <NativeSelectOption value="custom" disabled>Custom (graph)</NativeSelectOption>}
           {(Object.keys(EASE_LABELS) as EaseName[]).map((k) => <NativeSelectOption key={k} value={k}>{EASE_LABELS[k]}</NativeSelectOption>)}
         </NativeSelect>
       </div>

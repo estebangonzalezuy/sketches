@@ -62,9 +62,9 @@ export function Studio({ project, prefs }: { project: Project; prefs: Controls<t
   return (
     <StudioContext.Provider value={api}>
       {wide ? (
-        <div className="grid h-[calc(100dvh-3rem-1px)] grid-cols-[minmax(0,1fr)_340px] grid-rows-[auto_minmax(0,1fr)_40dvh]">
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_340px] grid-rows-[auto_minmax(0,1fr)_40dvh]">
           <div className="col-span-2"><Toolbar /></div>
-          <main className="flex min-h-0 flex-col justify-center overflow-hidden p-3">{viewer("calc(60dvh - 9rem)")}</main>
+          <main className="flex min-h-0 flex-col justify-center overflow-hidden p-3">{viewer("calc(60dvh - 12rem)")}</main>
           <aside aria-label="Inspector" className="overflow-y-auto border-l border-border">{inspector}</aside>
           <section aria-label="Timeline" className="col-span-2 overflow-y-auto border-t border-border">
             <Timeline />

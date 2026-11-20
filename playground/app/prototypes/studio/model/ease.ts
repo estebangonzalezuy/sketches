@@ -1,6 +1,4 @@
-import type { EaseName } from "./types";
-
-type Bezier = [number, number, number, number];
+import type { Bezier, Ease, EaseName } from "./types";
 
 /** "ease" is After Effects' Easy Ease. */
 export const EASES: Record<Exclude<EaseName, "hold">, Bezier> = {
@@ -42,4 +40,7 @@ export function bezier([x1, y1, x2, y2]: Bezier, u: number): number {
   return ((ay * t + by) * t + cy) * t;
 }
 
-export const ease = (name: EaseName, u: number) => (name === "hold" ? 0 : bezier(EASES[name], u));
+export const ease = (e: Ease, u: number) => (e === "hold" ? 0 : bezier(typeof e === "string" ? EASES[e] : e, u));
+
+/** The bezier behind any ease (hold has none). */
+export const curveOf = (e: Ease): Bezier | null => (e === "hold" ? null : typeof e === "string" ? EASES[e] : e);

@@ -11,6 +11,11 @@ export type ToolCtx = {
   height: number;
   /** stable key for caches and GL output slots */
   slot: string;
+  fps: number;
+  /** the layer's length in seconds */
+  duration: number;
+  /** ∫ of a numeric param from the layer's in point to now, in seconds (Motion Builder tools use it for speeds) */
+  integral: (param: string) => number;
 };
 
 /** Makes a layer's content. Vector generators return contours; raster and GL ones a bitmap. */
