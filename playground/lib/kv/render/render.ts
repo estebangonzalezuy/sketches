@@ -41,7 +41,8 @@ export function render(ctx: CanvasRenderingContext2D, c: Composition, o: RenderO
   ctx.restore();
 }
 
-function drawLayer(ctx: CanvasRenderingContext2D, l: Layer, c: Composition, s: number, col: (t: Token) => string) {
+/** Draws one KV layer in composition px (no paper, no fx). Used by the studio to animate KV layers one by one. */
+export function drawLayer(ctx: CanvasRenderingContext2D, l: Layer, c: Composition, s: number, col: (t: Token) => string) {
   switch (l.type) {
     case 'block':
       ctx.fillStyle = col(l.fill);
