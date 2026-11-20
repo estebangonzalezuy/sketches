@@ -2,7 +2,7 @@
 
 ## What It Does
 
-Animates the Motion, Now key visual. You can stack brand behaviors on its layers and play them all from one **Progress** slider, or key any layer's channels on a timeline. Then export the result as an MP4.
+Animates the Motion, Now key visual in an editor laid out like the KV Editor, with a classic timeline docked along the bottom. You can stack brand behaviors on its layers and play them all from one **Progress** slider, or key any layer's channels. Then export the result as an MP4.
 
 ## Architecture
 
@@ -26,27 +26,39 @@ Every channel is an offset from the resting poster. With no tracks and no mix, t
 ## Frontend
 
 - **State**
-  - The global settings (format, palette, length, frame rate, loop) live in `useControls` (persisted, with Reset and Randomize).
+  - The settings (palette, length, frame rate, loop) live in `useControls` (persisted, with Reset and Randomize). The format is stored on its own as `playground:kv-studio:format`, because it's a top-bar control, as in the KV Editor.
   - The poster source and the animation persist in localStorage as `playground:kv-studio:poster` and `playground:kv-studio:anim`. Both go through `store.ts`, which uses `useSyncExternalStore` and keeps an undo history for the animation.
   - On the first visit there's no stored animation, so the studio uses `autoMix` of the poster.
 - **Layer addressing**: tracks and behaviors point at a layer's `role` (`line1`, `blockA`, `lockup`…) when that role is unique, and otherwise at its id. That way an animation survives a format change or a re-import.
 - **Playhead**: `clock.ts` lives outside React. The stage redraws from it on each tick. Only the transport and the key lanes subscribe, so playback never re-renders the panels.
-- **Mix tab**
-  - **Auto mix** builds the KV choreography by layer type:
-    1. blocks wipe in
-    2. the bracket wipes down
-    3. the grid draws on
-    4. the headlines pixel-build
-    5. the asterisk grows and spins
-    6. the lockup wipes in
-  - Each layer can stack behaviors: fade, slide, wipe, grow, spin, pixel build, drift. Each has an amount and a *When* window inside Progress.
-- **Keyframes tab**
-  - Pick a layer and a channel (Move X/Y, Scale, Rotate, Opacity, Pixel cell, Reveal), then press **Key** to key it at the playhead.
-  - Tap a key to select it and jump there. Drag it to retime it; it snaps to frames. Edit the value and the ease of the segment that leaves it.
+- **Layout**
+  - From `lg` up, the editor uses the KV Editor's grid:
+    - the top bar: poster source, format buttons, undo/redo, MP4
+    - layers on the left
+    - the canvas and transport in the centre
+    - the inspector on the right
+    - the timeline across the bottom
+  - Below `lg` it stacks: the top bar, the poster and the transport, then the **Timeline / Layer / Layers** tabs. `use-wide.ts` picks one tree, so nothing renders twice.
+- **Selecting a layer**: tap it in the layer list, on the canvas (front-most layer under the finger), or by name in the timeline.
+- **Timeline**
+  - A time ruler that stays in view, with one row per layer: all its keys and thin bars for its behaviors.
+  - Expand a row to get a lane per keyed channel and a bar per behavior. Drag the middle of a bar to move its window, or drag near an end to stretch it.
+  - Drag keys to retime them (they snap to frames). **Key…** keys a channel at the playhead.
+  - The selected key or behavior is edited below the rows.
+  - Tapping or dragging any empty lane scrubs the playhead.
+- **Inspector**
+  - **Layer** shows the selected layer's behaviors (with **Auto mix** and **Clear** for the whole poster) and its keyframe lanes.
+  - **Settings** is the playground control panel: palette, length, frame rate (12, 24, 30 or 60), loop, Reset and Randomize.
+- **Frame rate**: the preview holds on whole frames, so 12 fps previews as stepped as it exports.
+- **Auto mix** builds the KV choreography by layer type:
+  1. blocks wipe in
+  2. the bracket wipes down
+  3. the grid draws on
+  4. the headlines pixel-build behind a wipe
+  5. the asterisk grows and spins
+  6. the lockup wipes in
 - **Shortcuts**: Space plays or pauses, ←/→ step one frame, ⌘Z/⇧⌘Z undo and redo the animation. They are ignored while typing.
-- **Responsive**
-  - The poster sits at the top, at its own aspect ratio, capped at 60dvh so a 9:16 still leaves room for the transport.
-  - On phones the settings live in the controls sheet. Every control is a 44px target, and nothing scrolls sideways.
+- **Responsive**: the poster keeps its own aspect ratio inside the height left for it. Every control is a 44px target, and nothing scrolls sideways.
 - **Reduced motion**: there's no autoplay. The playhead rests on the finished poster until you press play.
 - **Theme**: the chrome uses the design tokens. The canvas uses the poster's palette, which is data, not theme.
 
@@ -60,15 +72,14 @@ Every channel is an offset from the resting poster. With no tracks and no mix, t
 ## Component Tree
 
 ```
-KvStudio            ControlsLayout + font gate
-└─ Studio           useStudio (poster + anim), clock, shortcuts
-   ├─ PosterStage   canvas, render(animate(...)) on clock ticks
-   ├─ Transport     play/pause, Progress slider, time
-   ├─ SourceMenu    built-in / Open KV Editor JSON
-   ├─ ExportButton  MP4 with progress and cancel
-   └─ Tabs
-      ├─ MixPanel → BehaviorRow (in Collapse)
-      └─ KeyframesPanel → KeyLane, KeyEditor
+KvStudio              controls + font gate
+└─ Studio             useStudio (poster, format, anim), clock, shortcuts, selected layer; grid or stacked
+   ├─ StudioToolbar   SourceMenu, format buttons, undo/redo, ExportButton
+   ├─ LayersList
+   ├─ PosterStage     canvas, render(animate(...)) on clock ticks, tap-to-select
+   ├─ Transport       play/pause, Progress slider, time
+   ├─ Inspector       Layer (MixPanel → BehaviorRow, KeyframesPanel → KeyLane, KeyEditor) | Settings (ControlPanel)
+   └─ TimelinePanel   TimelineRuler, TimelineLayer → Lane, KeyDiamond, KeyLane, BehaviorBar
 ```
 
 ## Error Handling
@@ -92,5 +103,7 @@ KvStudio            ControlsLayout + font gate
 | `store.ts`, `use-studio.ts` | persisted state with undo, font loading, the poster per format and palette |
 | `clock.ts`, `use-clock.ts`, `use-shortcuts.ts`, `use-reduced-motion.ts` | playhead and input |
 | `poster-stage.tsx`, `transport.tsx`, `export-button.tsx`, `export-mp4.ts`, `source-menu.tsx` | stage, playback, export, source |
-| `mix-panel.tsx`, `behavior-row.tsx` | Mix tab |
-| `keyframes-panel.tsx`, `key-lane.tsx`, `key-editor.tsx` | Keyframes tab |
+| `studio-toolbar.tsx`, `layers-list.tsx`, `inspector.tsx`, `use-wide.ts` | editor shell |
+| `mix-panel.tsx`, `behavior-row.tsx` | behaviors in the inspector |
+| `keyframes-panel.tsx`, `key-lane.tsx`, `key-editor.tsx` | keyframes in the inspector |
+| `timeline-panel.tsx`, `timeline-layer.tsx`, `timeline-ruler.tsx`, `lane.tsx`, `behavior-bar.tsx` | the timeline |

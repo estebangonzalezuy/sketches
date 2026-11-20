@@ -9,10 +9,9 @@ export const FORMAT_IDS = Object.keys(FORMATS) as FormatId[];
 export const PALETTE_NAMES = ["Poster", ...Object.keys(PALETTES)] as const;
 
 export const controls = defineControls({
-  format: { type: "select", label: "Format", options: ["16x9", "4x5", "9x16", "1x1", "banner"], default: "16x9", randomize: false },
   palette: { type: "select", label: "Palette", options: PALETTE_NAMES, default: "Poster" },
   duration: { type: "number", label: "Length (s)", min: 2, max: 20, step: 0.5, default: 6, randomize: false },
-  fps: { type: "select", label: "Frame rate", options: ["24", "30", "60"], default: "30", randomize: false },
+  fps: { type: "select", label: "Frame rate", options: ["12", "24", "30", "60"], default: "30", randomize: false },
   loop: { type: "boolean", label: "Loop", default: true, randomize: false },
 });
 

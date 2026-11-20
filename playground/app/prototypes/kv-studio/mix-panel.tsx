@@ -15,8 +15,11 @@ import type { Anim, Behavior, BehaviorKind } from "./types";
 
 type Update = (fn: (a: Anim) => Anim, coalesce?: boolean) => void;
 
-/** Stack behaviors on layers; the Progress slider plays them all. */
-export function MixPanel({ comp, anim, update }: { comp: Composition; anim: Anim; update: Update }) {
+/**
+ * Stack behaviors on layers; the Progress slider plays them all. With `layerId`, only that
+ * layer's behaviors are listed (the inspector); Auto mix and Clear always act on the whole poster.
+ */
+export function MixPanel({ comp, anim, update, layerId }: { comp: Composition; anim: Anim; update: Update; layerId?: string }) {
   const keys = layerKeys(comp);
   // rows close first, then leave the mix, so the list never jumps
   const [closing, setClosing] = useState<Set<string>>(() => new Set());
@@ -34,7 +37,9 @@ export function MixPanel({ comp, anim, update }: { comp: Composition; anim: Anim
           Clear
         </Button>
       </div>
-      {animatable(comp).map((l) => {
+      {animatable(comp)
+        .filter((l) => !layerId || l.id === layerId)
+        .map((l) => {
         const key = keys.get(l.id)!;
         const mine = anim.mix.filter((b) => b.layer === key);
         return (

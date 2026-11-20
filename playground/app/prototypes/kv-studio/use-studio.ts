@@ -18,7 +18,8 @@ export function useStudio(settings: Settings) {
   const [storedSource, setSource] = useStored<PosterSource>("poster");
   const [storedAnim, setAnim] = useStored<Anim>("anim");
   const source = useMemo<PosterSource>(() => storedSource ?? { kind: "preset" }, [storedSource]);
-  const format = settings.format as FormatId;
+  const [storedFormat, setFormat] = useStored<FormatId>("format");
+  const format: FormatId = storedFormat ?? "16x9";
 
   const base = useMemo(() => {
     if (source.kind === "preset") return presetFor(format);
@@ -34,5 +35,5 @@ export function useStudio(settings: Settings) {
   const fallback = useMemo<Anim>(() => ({ version: 1, tracks: [], mix: autoMix(base, newId) }), [base]);
   const anim = storedAnim ?? fallback;
 
-  return { comp, anim, setAnim, source, setSource };
+  return { comp, anim, setAnim, source, setSource, format, setFormat };
 }
