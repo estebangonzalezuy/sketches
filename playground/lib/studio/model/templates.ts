@@ -1,5 +1,6 @@
 import { tools as MB_TOOLS } from "@/lib/motion-builder/tools";
 import type { AnimationKey } from "@/lib/motion-builder/core/tool";
+import { BACK, EXPO } from "./ease";
 import { uid } from "./ops";
 import { getTrack, mapLayer, setTrack } from "./paths";
 import { newEffect } from "./project";
@@ -13,8 +14,6 @@ import type { Ease, EffectInstance, Key, Layer, ParamPath, Project, Track, Value
 export type Template = { id: string; name: string; fits: (l: Layer) => boolean; apply: (p: Project, layerId: string, t0: number) => Project };
 
 const ks = (...k: [number, Value, Ease?][]): Track => ({ keys: k.map(([t, v, ease]) => ({ id: uid(), t, v, ease: ease ?? "ease" })) });
-const BACK: Ease = [0.34, 1.56, 0.64, 1];
-const EXPO: Ease = [0.16, 1, 0.3, 1];
 const isVector = (l: Layer) => ["text", "rect", "polygon"].includes(l.tool);
 const T = (l: Layer, param: keyof Layer["transform"]): ParamPath => ({ layer: l.id, group: "transform", param });
 const at = (p: Project, path: ParamPath, t: number) => valueAt(getTrack(p, path)!, t);

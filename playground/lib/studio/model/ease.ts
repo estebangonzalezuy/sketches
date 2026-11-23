@@ -10,6 +10,28 @@ export const EASES: Record<Exclude<EaseName, "hold">, Bezier> = {
 
 export const EASE_LABELS: Record<EaseName, string> = { linear: "Linear", ease: "Easy ease", in: "Ease in", out: "Ease out", hold: "Hold" };
 
+export const EXPO: Bezier = [0.16, 1, 0.3, 1];
+export const BACK: Bezier = [0.34, 1.56, 0.64, 1];
+
+/** Starting points in the curve editor; any of them can be reshaped by hand. */
+export const EASE_PRESETS: { label: string; ease: Ease }[] = [
+  { label: "Linear", ease: "linear" },
+  { label: "Easy ease", ease: "ease" },
+  { label: "Ease in", ease: "in" },
+  { label: "Ease out", ease: "out" },
+  { label: "Expo", ease: EXPO },
+  { label: "Back", ease: BACK },
+  { label: "Hold", ease: "hold" },
+];
+
+/** Same curve? Named eases compare by their bezier, so "ease" equals [0.33, 0, 0.67, 1]. */
+export function sameEase(a: Ease, b: Ease): boolean {
+  if (a === "hold" || b === "hold") return a === b;
+  const x = typeof a === "string" ? EASES[a] : a;
+  const y = typeof b === "string" ? EASES[b] : b;
+  return x.every((v, i) => Math.abs(v - y[i]) < 1e-3);
+}
+
 /** cubic-bezier at u ∈ [0, 1]: Newton with a bisection fallback. */
 export function bezier([x1, y1, x2, y2]: Bezier, u: number): number {
   if (u <= 0) return 0;

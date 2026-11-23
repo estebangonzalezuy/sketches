@@ -21,7 +21,7 @@ The engine (model, timeline, compositor, tools) is shared with the Studio and th
 ## Frontend
 
 - **Layout**: viewer, inspector (effect controls) and timeline, the same as the Studio, without project tabs. Below lg, the viewer stacks over Timeline / Layer tabs.
-- **Timeline**: a stopwatch on every property, key drag with box select, layer bars, a ruler scrub and the graph editor with bezier handles.
+- **Timeline**: a stopwatch on every property, key drag with box select, layer bars, a ruler scrub and the graph editor with bezier handles. Selected keys get a curve editor in the inspector (drag the handles or start from a preset).
 - **Templates** for this effect are under Layer → Animate, and write keys at the playhead. Applying one again later chains it.
 - **Shortcuts**: Space, ←/→, Home/End, Delete, F9, ⌘Z/⇧⌘Z.
 - The **View** controls (preview quality, motion paths, handles) come from the playground control panel, with Reset and Randomize.
