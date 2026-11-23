@@ -6,11 +6,13 @@ import { cn } from "@/lib/utils";
 import { FORMATS, type FormatId } from "@/lib/kv/model";
 import { demoProject } from "../model/demo";
 import { ENVIRONMENTS } from "../model/environments";
-import { closeTab, openTab, switchTab, useTabs } from "../store";
+import { useTabs } from "../use-workspace";
+import type { Workspace } from "../workspace";
 
 /** One tab per open project, as in Motion Builder; "+ New" starts a project in an environment. */
-export function TabBar() {
-  const { tabs, active } = useTabs();
+export function TabBar({ ws }: { ws: Workspace }) {
+  const { tabs, active } = useTabs(ws);
+  const { openTab, switchTab, closeTab } = ws;
   const create = (v: string) => {
     if (v.startsWith("kv:")) return openTab({ ...demoProject(v.slice(3) as FormatId), environment: "motion-now", name: `Motion, Now ${FORMATS[v.slice(3) as FormatId].label}` });
     openTab(ENVIRONMENTS.find((e) => e.id === v)!.create());
@@ -31,7 +33,7 @@ export function TabBar() {
       <NativeSelect aria-label="New project" size="sm" value="" onChange={(e) => create(e.target.value)} className="mb-1 shrink-0">
         <NativeSelectOption value="" disabled>+ New</NativeSelectOption>
         {(Object.keys(FORMATS) as FormatId[]).map((f) => <NativeSelectOption key={f} value={`kv:${f}`}>Motion, Now · {FORMATS[f].label}</NativeSelectOption>)}
-        {ENVIRONMENTS.filter((e) => e.id !== "motion-now").map((e) => <NativeSelectOption key={e.id} value={e.id}>{e.name}</NativeSelectOption>)}
+        {ENVIRONMENTS.filter((e) => e.id !== "motion-now" && !e.id.startsWith("fx:")).map((e) => <NativeSelectOption key={e.id} value={e.id}>{e.name}</NativeSelectOption>)}
       </NativeSelect>
     </div>
   );

@@ -1,26 +1,28 @@
 "use client";
 
 import { useRef } from "react";
-import { FileDownIcon, FileUpIcon, Redo2Icon, Undo2Icon } from "lucide-react";
+import { ExternalLinkIcon, FileDownIcon, FileUpIcon, Redo2Icon, Undo2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { newLayer, validateProject } from "../model/project";
 import { entrance } from "../model/templates";
-import { openTab, undo } from "../store";
 import { available } from "./available";
 import { useStudio } from "./context";
 import { ExportButton } from "./export-button";
+import { sendToStudio } from "../handoff";
 
 /** Top bar: animate the whole comp (Motion, Now), add a layer from the environment, open/save, undo, export. */
 export function Toolbar() {
-  const { project, update, setSel, clock } = useStudio();
+  const { project, update, setSel, clock, ws, handoff } = useStudio();
+  const router = useRouter();
   const { env, gens } = available(project);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const open = async (f: File) => {
     try {
-      openTab(validateProject(JSON.parse(await f.text())));
+      ws.openTab(validateProject(JSON.parse(await f.text())));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Couldn't open that file.");
     }
@@ -51,8 +53,14 @@ export function Toolbar() {
       <div className="ml-auto flex items-center gap-0.5">
         <Button size="icon" variant="ghost" aria-label="Open project" onClick={() => fileRef.current?.click()}><FileUpIcon /></Button>
         <Button size="icon" variant="ghost" aria-label="Save project" onClick={save}><FileDownIcon /></Button>
-        <Button size="icon" variant="ghost" aria-label="Undo (⌘Z)" onClick={() => undo(-1)}><Undo2Icon /></Button>
-        <Button size="icon" variant="ghost" aria-label="Redo (⇧⌘Z)" onClick={() => undo(1)}><Redo2Icon /></Button>
+        <Button size="icon" variant="ghost" aria-label="Undo (⌘Z)" onClick={() => ws.undo(-1)}><Undo2Icon /></Button>
+        <Button size="icon" variant="ghost" aria-label="Redo (⇧⌘Z)" onClick={() => ws.undo(1)}><Redo2Icon /></Button>
+        {handoff && (
+          <Button size="icon" variant="outline" aria-label="Open in Studio" className="sm:w-auto sm:px-2.5" onClick={() => sendToStudio(project, router)}>
+            <ExternalLinkIcon />
+            <span className="hidden sm:inline">Open in Studio</span>
+          </Button>
+        )}
         <ExportButton />
       </div>
       <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={(e) => {

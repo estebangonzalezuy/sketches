@@ -3,7 +3,7 @@
 import { ControlPanel, type Controls } from "@/components/controls";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
-import type { controls } from "../data";
+import type { controls } from "../prefs";
 import { useStudio } from "./context";
 import { Section } from "./inspector";
 

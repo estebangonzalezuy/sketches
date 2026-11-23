@@ -22,7 +22,7 @@ export interface OTFont {
 const opentype = opentypeModule as unknown as { parse(buf: ArrayBuffer): OTFont };
 
 /** Font files live with the prototype assets; every KV tool in the studio reads them from here. */
-const BASE = '/prototype-assets/kv-studio/';
+const BASE = '/shared/fonts/kv/';
 
 export const HEADLINE_FONTS: Record<FontId, { label: string; file: string }> = {
   saira: { label: 'Saira Extra Condensed Black', file: 'saira-extra-condensed-latin-900-normal.woff' },
@@ -65,14 +65,14 @@ export function loadFonts(): Promise<void> {
   loading = (async () => {
     await Promise.all(
       (Object.keys(HEADLINE_FONTS) as FontId[]).map(async (id) => {
-        const res = await fetch(`${BASE}fonts/${HEADLINE_FONTS[id].file}`);
+        const res = await fetch(`${BASE}${HEADLINE_FONTS[id].file}`);
         if (!res.ok) throw new Error(`Font missing: ${HEADLINE_FONTS[id].file}`);
         otFonts.set(id, opentype.parse(await res.arrayBuffer()));
       }),
     );
     await Promise.all(
       Object.values(TEXT_FONTS).map(async (t) => {
-        const face = new FontFace(t.family, `url(${BASE}fonts/${t.file})`, { weight: String(t.weight) });
+        const face = new FontFace(t.family, `url(${BASE}${t.file})`, { weight: String(t.weight) });
         await face.load();
         document.fonts.add(face);
       }),
