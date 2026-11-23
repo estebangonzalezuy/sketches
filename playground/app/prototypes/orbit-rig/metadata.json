@@ -1,0 +1,9 @@
+{
+  "title": "Orbit Rig",
+  "description": "A debug rig for an orbital card animation: master timeline, debug sphere, tunable params and squash curves over t.",
+  "tags": ["motion"],
+  "createdAt": "2026-11-23",
+  "updatedAt": "2026-11-23T13:56:04.000Z",
+  "hidden": false,
+  "public": false
+}
