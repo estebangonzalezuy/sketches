@@ -45,8 +45,8 @@ export function palette(name: string): Palette {
 
 /** Report chapters. Each one owns a palette pair; `dark` picks the dark background side. */
 export const CHAPTERS = {
-  Plata: { number: "01", dark: "Acid on ink", color: "Ink on acid" },
-  "Lo que viene": { number: "02", dark: "Lilac on brown", color: "Brown on lilac" },
+  Money: { number: "01", dark: "Acid on ink", color: "Ink on acid" },
+  "What’s Next": { number: "02", dark: "Lilac on brown", color: "Brown on lilac" },
   "Human + Tool": { number: "03", dark: "Magenta on green", color: "Green on magenta" },
 } as const satisfies Record<string, { number: string; dark: PaletteName; color: PaletteName }>;
 

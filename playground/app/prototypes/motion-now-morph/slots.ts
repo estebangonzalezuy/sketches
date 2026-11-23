@@ -85,9 +85,9 @@ function rank(x: Float32Array, y: Float32Array, wx: number, wy: number): Int32Ar
 const rateName = (e: number, i: number) => (i === RATE_EDGES.length - 1 ? "$1k+" : `$${e}`);
 
 export function chapterSlots(chapter: ChapterName, people: readonly Respondent[], b: Box): Slots {
-  if (chapter === "Plata")
+  if (chapter === "Money")
     return columns(people.map((p) => binIndex(RATE_EDGES, p.dayRate)), people.length, RATE_EDGES.map(rateName), b);
-  if (chapter === "Lo que viene")
+  if (chapter === "What’s Next")
     return columns(people.map((p) => p.mood - 1), people.length, ["1 · worried", "2", "3", "4", "5 · excited"], b);
   return rows(people.map((p) => AI_USE.indexOf(p.ai)), people.length, [...AI_USE], b);
 }

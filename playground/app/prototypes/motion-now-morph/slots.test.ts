@@ -6,7 +6,7 @@ import { chapterSlots } from "./slots";
 const box = { x: 100, y: 100, w: 1700, h: 500 };
 
 describe("chapter slots", () => {
-  it.each(["Plata", "Lo que viene", "Human + Tool"] as const)("%s keeps every dot inside the chart and distinct", (ch) => {
+  it.each(["Money", "What’s Next", "Human + Tool"] as const)("%s keeps every dot inside the chart and distinct", (ch) => {
     const s = chapterSlots(ch, EXAMPLE_RESPONDENTS, box);
     const seen = new Set<string>();
     for (let i = 0; i < EXAMPLE_RESPONDENTS.length; i++) {

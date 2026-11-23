@@ -3,7 +3,7 @@
 ## What It Does
 
 The same ~300 respondent dots start as a loose cloud and, as you scroll, drag or scrub,
-travel into the chart of a report chapter: "Plata" (day-rate histogram), "Lo que viene"
+travel into the chart of a report chapter: "Money" (day-rate histogram), "What’s Next"
 (1–5 mood bars) or "Human + Tool" (AI-use dot matrix). The chapter color wipes up from the
 bottom and a giant chapter title slides up into place.
 
@@ -20,7 +20,7 @@ drawMorph(ctx, w, h, state)      pure function of p (and time for the cloud's wo
    ├─ slots.ts   chapterSlots(): per-respondent target + labels, travel order (pure)
    ├─ local(p, rank, n, stagger) per-dot delayed progress → easing (power2 / expo / back)
    ├─ wipe       chapter color rises; each dot takes the color of the side it is on
-   └─ title      "01 Plata" slides up inside a clip
+   └─ title      "01 Money" slides up inside a clip
 ```
 
 ## Frontend

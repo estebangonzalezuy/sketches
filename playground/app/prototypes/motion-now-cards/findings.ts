@@ -19,7 +19,7 @@ function toFinding(raw: unknown, where: string): Finding | string {
   if (typeof r.sentence !== "string") return `${where}: "sentence" must be text.`;
   const chart = (r.chart ?? "bar") as ChartType;
   if (!CHART_TYPES.includes(chart)) return `${where}: "chart" must be one of ${CHART_TYPES.join(", ")}.`;
-  const chapter = (r.chapter ?? "Plata") as ChapterName;
+  const chapter = (r.chapter ?? "Money") as ChapterName;
   if (!CHAPTER_NAMES.includes(chapter)) return `${where}: "chapter" must be one of ${CHAPTER_NAMES.join(", ")}.`;
   const data = Array.isArray(r.data) ? r.data.filter((v): v is number => typeof v === "number" && Number.isFinite(v)) : typeof r.data === "string" ? parseList(r.data) : [];
   return {
