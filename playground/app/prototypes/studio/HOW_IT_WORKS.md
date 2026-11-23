@@ -72,7 +72,13 @@ renderFrame(ctx, project, t, scale)                        engine/compositor.ts
   - The selected layer shows its box, the motion path of its position (with a square per key), and its effects' handles (Corner Pin pins, the Radial Warp centre), which can be dragged and are keyed the same way.
   - The preview holds on whole frames, so 12 fps looks as stepped as it exports.
 - **Inspector**
-  - With a layer selected: name, restack, duplicate, delete and blend mode; the selected keys (ease for all of them, value when there's one); Transform; Contents; and the effect stack (add, enable, reorder, remove).
+  - With a layer selected: name, restack, duplicate, delete and blend mode; the selected keys; Transform; Contents; and the effect stack (add, enable, reorder, remove).
+  - **Curve editor** for the selected keys (`ui/curve-editor.tsx`): the ease out of the keys as a cubic-bezier in a 0–1 box with room to overshoot.
+    - Drag the two handles to reshape it (one undo step per drag).
+    - Presets (Linear, Easy ease, Ease in, Ease out, Expo, Back, Hold) are starting points.
+    - A dot runs the curve in a loop so the timing can be felt (still under reduced motion).
+    - With several keys selected, an edit sets them all; "mixed" shows when they differ.
+    - The value field appears when one key is selected.
   - Every property has a stopwatch, and its label scrubs sideways (⇧ for ×10).
   - With no layer selected: the composition (name, length, 12/24/30/60 fps, background) and the View controls (preview quality, motion paths, effect handles) from the playground control panel.
 - **Shortcuts**: Space, ←/→ (⇧ ×10 frames), Home/End, Delete (keys), F9 (Easy Ease on the selected keys), ⌘Z/⇧⌘Z.

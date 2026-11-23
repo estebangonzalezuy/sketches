@@ -13,8 +13,9 @@ doing playground work, and never add playground code outside `playground/`.
 
 Run every command below from `playground/`.
 
-**Production:** https://playground-lyart-xi.vercel.app (gallery at `/`, prototypes at
-`/prototypes/<slug>`). It deploys from `main`; pull requests get their own preview links.
+**Production:** https://playground.estebangonzalez.co (gallery at `/`, prototypes at
+`/prototypes/<slug>`; https://playground-lyart-xi.vercel.app is the same deployment). It
+deploys from `main`; pull requests get their own preview links.
 
 ---
 

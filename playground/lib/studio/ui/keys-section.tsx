@@ -2,11 +2,12 @@
 
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
-import { EASE_LABELS } from "../model/ease";
+import { useRef } from "react";
+import { sameEase } from "../model/ease";
 import { allKeys, deleteKeys, setKeysEase, setKeyValue } from "../model/ops";
 import { specOf } from "../model/specs";
-import type { EaseName } from "../model/types";
+import type { Project } from "../model/types";
+import { CurveEditor } from "./curve-editor";
 import { useStudio } from "./context";
 import { Section } from "./inspector";
 import { control } from "./param-field";
@@ -14,10 +15,13 @@ import { control } from "./param-field";
 /** The selected keyframes: easing for all of them, and the value when there's just one. */
 export function KeysSection() {
   const { project, update, sel, setSel } = useStudio();
+  // a handle drag edits from the project it started on, as one undo step
+  const base = useRef<Project | null>(null);
   const all = allKeys(project);
   const picked = [...sel.keys].map((id) => all.get(id)).filter((x) => !!x);
   if (!picked.length) return null;
-  const eases = new Set(picked.map((p) => (typeof p.key.ease === "string" ? p.key.ease : "custom")));
+  const first = picked[0].key.ease;
+  const mixed = picked.some((p) => !sameEase(p.key.ease, first));
   const one = picked.length === 1 ? picked[0] : null;
   const layer = one && project.layers.find((l) => l.id === one.path.layer);
   const spec = one && layer ? specOf(layer, one.path) : undefined;
@@ -31,14 +35,15 @@ export function KeysSection() {
         </Button>
       }
     >
-      <div className="flex min-h-11 items-center justify-between gap-2 text-xs text-muted-foreground">
-        Ease out of key
-        <NativeSelect aria-label="Ease" size="sm" value={eases.size === 1 ? [...eases][0] : ""} onChange={(e) => update(setKeysEase(project, sel.keys, e.target.value as EaseName))}>
-          {eases.size > 1 && <NativeSelectOption value="" disabled>Mixed</NativeSelectOption>}
-          {eases.has("custom") && eases.size === 1 && <NativeSelectOption value="custom" disabled>Custom (graph)</NativeSelectOption>}
-          {(Object.keys(EASE_LABELS) as EaseName[]).map((k) => <NativeSelectOption key={k} value={k}>{EASE_LABELS[k]}</NativeSelectOption>)}
-        </NativeSelect>
-      </div>
+      <p className="pt-1 text-xs text-muted-foreground">Ease out of {picked.length > 1 ? "these keys" : "this key"}</p>
+      <CurveEditor
+        value={first}
+        mixed={mixed}
+        onChange={(ease, gesture) => {
+          if (gesture === "start") base.current = project;
+          update(setKeysEase(base.current ?? project, sel.keys, ease), gesture === "start");
+        }}
+      />
       {one && spec && spec.kind !== "text" && (
         <div className="flex min-h-11 items-center justify-between gap-2 text-xs text-muted-foreground">
           {spec.label}
