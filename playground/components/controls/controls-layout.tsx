@@ -24,9 +24,15 @@ import type { Controls } from "./use-controls";
 export function ControlsLayout<S extends ControlSchema>({
   controls,
   children,
+  header,
+  footer,
 }: {
   controls: Controls<S>;
   children: React.ReactNode;
+  /** Extra panel content above the fields (e.g. export actions). */
+  header?: React.ReactNode;
+  /** Extra panel content below Reset / Randomize (e.g. a data editor). */
+  footer?: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -40,7 +46,7 @@ export function ControlsLayout<S extends ControlSchema>({
         data-capture-hide
         className="fixed top-[calc(3rem+1px+env(safe-area-inset-top))] right-0 bottom-0 hidden w-72 overflow-y-auto border-l border-border bg-background p-4 lg:block"
       >
-        <ControlPanel controls={controls} />
+        <ControlPanel controls={controls} header={header} footer={footer} />
       </aside>
 
       {/* Non-modal: no overlay, so the subject stays visible while tuning. */}
@@ -67,7 +73,7 @@ export function ControlsLayout<S extends ControlSchema>({
             data-vaul-no-drag
             className="max-h-[45dvh] overflow-y-auto p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
           >
-            <ControlPanel controls={controls} />
+            <ControlPanel controls={controls} header={header} footer={footer} />
           </div>
         </DrawerContent>
       </Drawer>
