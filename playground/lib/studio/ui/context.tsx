@@ -3,6 +3,7 @@
 import { createContext, useContext } from "react";
 import type { Clock } from "../clock";
 import type { Project } from "../model/types";
+import type { Workspace } from "../workspace";
 
 export type Selection = { layer: string | null; effect: string | null; keys: Set<string> };
 
@@ -14,6 +15,10 @@ export type StudioApi = {
   sel: Selection;
   setSel: (s: Partial<Selection>) => void;
   prefs: { quality: string; paths: boolean; handles: boolean };
+  /** the prototype's workspace (tabs, undo) */
+  ws: Workspace;
+  /** mini tools: show "Open in Studio" */
+  handoff: boolean;
 };
 
 export const StudioContext = createContext<StudioApi | null>(null);

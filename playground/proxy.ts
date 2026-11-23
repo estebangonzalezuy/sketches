@@ -12,6 +12,7 @@ import publicSlugs from "@/lib/generated/public-slugs.json";
  *   /og/<slug>.*                  social previews of public prototypes
  *   /api/<slug>/*                 API routes of public prototypes
  *   /prototype-assets/<slug>/*    static files of public prototypes
+ *   /shared/*                     static files several prototypes share (fonts…); nothing private
  *
  * For a non-public slug those paths answer 404, never a login redirect, so private
  * names do not leak.
@@ -29,6 +30,8 @@ export async function proxy(request: NextRequest) {
   if (pathname === "/login" || pathname.startsWith("/api/auth")) return NextResponse.next();
 
   const [, first, second] = pathname.split("/");
+  // shared static assets (OFL fonts used by several prototypes): public prototypes need them too
+  if (first === "shared") return NextResponse.next();
   const slug = (second ?? "").replace(/\.[a-z0-9]+$/i, "");
   if (first === "p" || first === "og") {
     return PUBLIC.has(slug) ? NextResponse.next() : notFound();

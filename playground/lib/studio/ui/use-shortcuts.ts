@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { deleteKeys, setKeysEase } from "../model/ops";
-import { undo } from "../store";
 import type { StudioApi } from "./context";
 
 const typing = (el: EventTarget | null) =>
@@ -20,9 +19,9 @@ export function useShortcuts(api: StudioApi) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (typing(e.target)) return;
-      const { clock, project, update, sel, setSel } = ref.current;
+      const { clock, project, update, sel, setSel, ws } = ref.current;
       const f = 1 / project.fps;
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") undo(e.shiftKey ? 1 : -1);
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") ws.undo(e.shiftKey ? 1 : -1);
       else if (e.key === " ") {
         if (clock.playing) clock.pause();
         else clock.play();

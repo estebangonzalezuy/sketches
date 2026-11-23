@@ -67,7 +67,7 @@ Every channel is an offset from the resting poster. With no tracks and no mix, t
 - `lib/kv/`: the Motion, Now poster core, ported from `kv-editor/`. It covers the model, the format presets, `render`, and the KV type treatment (opentype.js outlines with octilinear facets and ink).
 - `opentype.js`: glyph outlines for the KV headline treatment.
 - `mp4-muxer` with WebCodecs `VideoEncoder`: H.264 MP4 export, falling back to VP9-in-MP4.
-- Fonts (OFL) in `public/prototype-assets/kv-studio/fonts/`.
+- Fonts (OFL) in `public/shared/fonts/kv/`, shared with the Studio and its mini tools.
 
 ## Component Tree
 

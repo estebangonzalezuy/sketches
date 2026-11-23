@@ -1,0 +1,12 @@
+{
+  "title": "Wave",
+  "description": "A travelling sine wave through type, in WebGL: animate amplitude, wavelength and speed on the full timeline.",
+  "tags": [
+    "motion",
+    "canvas"
+  ],
+  "createdAt": "2026-11-23",
+  "updatedAt": "2026-11-23T13:58:26.000Z",
+  "hidden": false,
+  "public": false
+}

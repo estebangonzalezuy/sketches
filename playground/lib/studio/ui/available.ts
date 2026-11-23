@@ -8,6 +8,12 @@ export function available(p: Project) {
   const env = environmentOf(p);
   const gens = env.generators.length ? env.generators.map((id) => GENERATORS[id]).filter(Boolean) : [...ADDABLE_GENERATORS, ...Object.values(GENERATORS).filter((g) => g.id.startsWith("mb:"))];
   const effects = env.effects === "all" ? Object.values(EFFECTS) : env.effects.map((id) => EFFECTS[id]).filter(Boolean);
-  const pool = env.templates === "studio" ? STUDIO_TEMPLATES : env.templates === "mb" ? MB_TEMPLATES : Object.values(TEMPLATES);
+  const pool = Array.isArray(env.templates)
+    ? env.templates.map((id) => TEMPLATES[id]).filter(Boolean)
+    : env.templates === "studio"
+      ? STUDIO_TEMPLATES
+      : env.templates === "mb"
+        ? MB_TEMPLATES
+        : Object.values(TEMPLATES);
   return { env, gens, effects, templatesFor: (l: Layer) => pool.filter((t) => t.fits(l)) };
 }

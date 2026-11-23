@@ -1,0 +1,12 @@
+{
+  "title": "Radial Warp",
+  "description": "Type bent around a ring, letters standing on it: animate the bend, the angle and the radius on the full timeline.",
+  "tags": [
+    "motion",
+    "canvas"
+  ],
+  "createdAt": "2026-11-23",
+  "updatedAt": "2026-11-23T13:58:26.000Z",
+  "hidden": false,
+  "public": false
+}

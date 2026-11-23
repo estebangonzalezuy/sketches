@@ -8,6 +8,12 @@ A motion studio built from small, mixable tools. It's laid out like After Effect
 - **Every Motion Builder tool**: Tag Shader, Text Extruder, Text, Chart, Table, Counter, Pixelado, ASCII, Spray and its 7 modes.
 - **Projects** open in tabs, each in an environment (Motion, Now · Inception · Spray · Free) that decides its tools and animation templates. The first tab is the Motion, Now poster, animated with every studio tool.
 
+## Mini tools
+
+Every studio effect is also its own prototype: Corner Pin, Pixel (shape), Radial Warp, Kinetic Letters and Wave. Each is the same editor locked to one effect, with its templates and a demo. They're there to share one effect, or to animate just that.
+- **Open in Studio** opens the mini tool's project as a new tab here, in the Free environment.
+- All of the engine lives in `lib/studio/`; this prototype only mounts `<StudioEditor slug="studio" tabs />`.
+
 ## Architecture
 
 ```
@@ -48,7 +54,7 @@ renderFrame(ctx, project, t, scale)                        engine/compositor.ts
 
 ## Frontend
 
-- **Tabs**: one per open project, each with its own undo history. **+ New** starts a Motion, Now comp in any format, or an Inception, Spray or Free project. Opening a project file opens a new tab. The workspace is saved to `playground:studio:workspace`; the older single-project key migrates on first load.
+- **Tabs**: one per open project, each with its own undo history. **+ New** starts a Motion, Now comp in any format, or an Inception, Spray or Free project. Opening a project file opens a new tab. The workspace is saved to `playground:studio:workspace` (`lib/studio/workspace.ts`); the older single-project key migrates on first load.
 - **Graph editor** (**Graph** in the timeline): curves of the properties whose keys are selected, else the selected layer's animated ones (up to 5, each in a chart colour).
   - Numbers plot their values; other properties plot each segment's progress 0 → 1.
   - Drag a key to move it in time (and in value, for numbers).
@@ -82,7 +88,7 @@ renderFrame(ctx, project, t, scale)                        engine/compositor.ts
 ## Key Dependencies
 
 - `lib/kv` (the Motion, Now poster core): fonts, glyph outlines and KV facets, and the KV render for bitmap layers.
-- `lib/motion-builder` and `three@0.169` for the Motion Builder tools; their free fonts are in `public/prototype-assets/studio/fonts/`.
+- `lib/motion-builder` and `three@0.169` for the Motion Builder tools; their free fonts are in `public/shared/fonts/mb/` (the KV fonts are in `public/shared/fonts/kv/`).
 - `opentype.js` for outlines, WebGL2 for GL tools, WebCodecs and `mp4-muxer` for MP4.
 
 ## Component Tree
@@ -110,9 +116,10 @@ StudioApp            fonts gate, first tab, view prefs (useControls)
 
 | Path | What |
 | --- | --- |
-| `model/` | types, eases (named or custom bezier), track evaluation, AE-style ops, specs, project defaults, KV import, demo, environments, templates |
-| `engine/` | geometry (homography, subdivision), shape effects, pixel shape, letters, rasteriser, WebGL2 runner, Motion Builder host, param integral, evaluation, pipeline, compositor, tests |
-| `tools/` | the tool contract, registry, Text, shapes, KV layer and paper, shape effects (incl. Letters), GL tools, the Motion Builder bridge |
-| `ui/` | studio shell, tab bar, context, viewport and overlay, inspector, params, effects, keys, comp panel, toolbar, transport, shortcuts, environment filter |
-| `timeline/` | rows builder, timeline, ruler, row name, row lane, layer bar, key drag, marquee, graph editor (math + view) |
-| `clock.ts`, `store.ts`, `export-mp4.ts`, `data.ts` | playhead, project store, MP4, view prefs |
+| `lib/studio/model/` | types, eases (named or custom bezier), track evaluation, AE-style ops, specs, project defaults, KV import, demo, environments, templates |
+| `lib/studio/engine/` | geometry (homography, subdivision), shape effects, pixel shape, letters, rasteriser, WebGL2 runner, Motion Builder host, param integral, evaluation, pipeline, compositor, tests |
+| `lib/studio/tools/` | the tool contract, registry, Text, shapes, KV layer and paper, shape effects (incl. Letters), GL tools, the Motion Builder bridge |
+| `lib/studio/ui/` | studio shell, tab bar, context, viewport and overlay, inspector, params, effects, keys, comp panel, toolbar, transport, shortcuts, environment filter |
+| `lib/studio/timeline/` | rows builder, timeline, ruler, row name, row lane, layer bar, key drag, marquee, graph editor (math + view) |
+| `lib/studio/{clock,workspace,handoff,fonts,export-mp4,prefs}.ts` | playhead, per-slug workspaces, mini tool → Studio, shared fonts, MP4, view prefs |
+| `app/prototypes/studio/studio-app.tsx` | mounts the shared editor with tabs |

@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import type { Controls } from "@/components/controls";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createClock } from "../clock";
-import type { controls } from "../data";
+import type { controls } from "../prefs";
 import type { Project } from "../model/types";
-import { setProject } from "../store";
+import type { Workspace } from "../workspace";
 import { Timeline } from "../timeline/timeline";
 import { useReducedMotion } from "../use-reduced-motion";
 import { useWide } from "../use-wide";
@@ -23,7 +23,7 @@ import { Viewport } from "./viewport";
  * controls) beside it, with the timeline across the bottom. Below lg it stacks the viewer
  * over Timeline / Inspector tabs.
  */
-export function Studio({ project, prefs }: { project: Project; prefs: Controls<typeof controls> }) {
+export function Studio({ project, prefs, ws, handoff }: { project: Project; prefs: Controls<typeof controls>; ws: Workspace; handoff: boolean }) {
   const [clock] = useState(createClock);
   const [sel, setSelState] = useState<Selection>({ layer: null, effect: null, keys: new Set() });
   const reduced = useReducedMotion();
@@ -41,13 +41,15 @@ export function Studio({ project, prefs }: { project: Project; prefs: Controls<t
   const api: StudioApi = useMemo(
     () => ({
       project,
-      update: (next, history = true) => setProject(next, history),
+      update: (next, history = true) => ws.setProject(next, history),
       clock,
       sel,
       setSel: (s) => setSelState((cur) => ({ ...cur, ...s, ...(s.layer !== undefined && s.layer !== cur.layer && s.effect === undefined ? { effect: null } : {}) })),
       prefs: { quality: String(prefs.values.quality), paths: Boolean(prefs.values.paths), handles: Boolean(prefs.values.handles) },
+      ws,
+      handoff,
     }),
-    [project, clock, sel, prefs.values],
+    [project, clock, sel, prefs.values, ws, handoff],
   );
   useShortcuts(api);
 

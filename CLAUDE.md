@@ -47,6 +47,7 @@ playground/
 ├── public/thumbnails/            <slug>-light.jpg, <slug>-dark.jpg
 ├── public/og/                    <slug>.png, <slug>.mp4 (public prototypes only)
 ├── public/prototype-assets/<slug>/  static files a prototype needs
+├── public/shared/                 static files several prototypes use (fonts); always public
 └── scripts/                      registry, thumbnails, og capture
 ```
 
@@ -365,3 +366,6 @@ Add to this list whenever something breaks and gets fixed. Newest last.
 - Code ported from the old Vite sketches can hit TypeScript's stricter typed-array generics
   (`Uint8Array<ArrayBufferLike>` not assignable to `BufferSource`). Cast at the call site
   (`as Uint8Array<ArrayBuffer>`) rather than changing the shared tsconfig.
+- Assets used by more than one prototype (fonts of `lib/kv`, `lib/studio`, `lib/motion-builder`) go in
+  `public/shared/`, which the gate always lets through. Under `public/prototype-assets/<slug>/` a
+  public prototype can only read its own slug, so a shared file there breaks once it's public.
