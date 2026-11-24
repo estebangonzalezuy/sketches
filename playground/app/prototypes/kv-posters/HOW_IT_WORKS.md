@@ -30,6 +30,7 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
 - **Colour** (settings): `squares` (default) paints big flat colour fields behind and draws the rosettes and spirals as outlines with see-through interiors (each motif is drawn on its own layer with `destination-out` fills, then composited), headline and asterisk unboxed; `fills` colours the motifs themselves over a pastel mosaic.
 - **New poster** rolls the seed. Changing any generator control (layout, seed, format, blocks) starts from that freshly generated poster; edits are remembered per settings in `playground:kv-posters:poster`.
 - **Design**: headline and lockup options include **Outline only** and a colour; any box can drop its outline (**Box outline**); the asterisk has **Roundness** (sharp to round arm ends). Tap selects the front-most element (backgrounds lose to anything on top), drag moves it, the inspector edits text, size, petals, rotation, colours (multi-swatch for petal and band sets), box / vertical / scallop / ticks. Add: flower, scalloped flower, spiral, block, asterisk, text. Forward / backward / duplicate / delete. ⌘Z / ⇧⌘Z undo and redo (a slider drag is one step), Delete removes, Esc deselects.
+- **Timeline** (Animate tab): a seconds ruler and one row per element, front-most first. Each row's bar is when that element animates: drag the middle to move it, drag near an end to stretch it (snaps to frames), tap empty lane space to scrub. Muted bars are the automatic timing; a bar becomes hand-set (solid) once touched and is stored on the element as `anim: { start, end, effect, ease? }` (fractions of the length), so it saves and undoes with the poster. Selecting a row (or tapping the element on the canvas) opens its clip: **Effect** (KV build, fade, rise, drop, slide in, scale, spin in; `effects.ts` applies the generic ones around the finished element), **Own easing** (the Studio curve editor, else the global curve) and **Auto** to drop the hand-set timing. In `in + out`, each clip plays in and mirrors out (`min(clip(u), clip(1 − u))`), so loops still close.
 - **Animate**: styles `build` (everything builds in, then holds), `loop` (finished poster, motifs spin), `build + loop`, `in + out` (builds in and back out, so it loops). Kinds start in order (blocks → frames → spirals/flowers → headline → lockup → asterisk), staggered top to bottom. Spin advances by whole rotational-symmetry periods, so loops are seamless. Scrub with the time slider; Space plays and pauses. **Easing**: the Studio's curve editor (`lib/studio/ui/curve-editor.tsx`) shapes each element's build (drag the two bezier handles or start from a preset; stored as `playground:kv-posters:ease`); spins stay linear so loops close.
 - **Paper texture**: a checkbox turns the grain on or off; Grain sets its strength. It is a seeded noise tile laid in device pixels over the whole print (paper, colour and ink), so it reads the same in the preview, the PNG and the MP4.
 - **Formats**: motif and mark sizes use a unit `U = min(width, height × 0.75)` (the width on 3:4 and taller), so 1:1 and 4:5 don't overflow; the canvas resizes both sides on a format change.
@@ -52,6 +53,8 @@ KvPosters            controls, font gate, ControlsLayout
    ├─ DesignPanel    new poster, AddMenu, undo/redo, selected element actions
    │  └─ ElementInspector → fields.tsx (NumberField, SwitchField, TextField, SwatchField)
    └─ AnimatePanel   play, scrub, MP4 export with progress and cancel
+      ├─ Timeline     ruler + one TimelineLane per element, each with a ClipBar
+      └─ ClipEditor   effect, own easing (CurveEditor), back to automatic
 ```
 
 ## Error Handling
@@ -64,7 +67,7 @@ KvPosters            controls, font gate, ControlsLayout
 
 ```
 types.ts data.ts random.ts mosaic.ts elements.ts layouts.ts vary.ts generate.ts(+test)
-animate.ts(+test) bounds.ts render.ts draw-frame.ts draw-shapes.ts draw-flower.ts draw-spiral.ts draw-type.ts
+animate.ts(+test) effects.ts bounds.ts render.ts draw-frame.ts draw-shapes.ts draw-flower.ts draw-spiral.ts draw-type.ts
 store.ts use-playhead.ts use-reduced-motion.ts export-mp4.ts
-kv-posters.tsx poster-editor.tsx poster-canvas.tsx design-panel.tsx add-menu.tsx element-inspector.tsx fields.tsx animate-panel.tsx
+kv-posters.tsx poster-editor.tsx poster-canvas.tsx design-panel.tsx add-menu.tsx element-inspector.tsx fields.tsx animate-panel.tsx timeline.tsx timeline-lane.tsx clip-bar.tsx clip-editor.tsx
 ```

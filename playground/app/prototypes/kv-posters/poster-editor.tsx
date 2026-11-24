@@ -5,7 +5,7 @@ import { ImageDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Controls } from "@/components/controls";
-import { animate } from "./animate";
+import { animate, clipsFor } from "./animate";
 import { AnimatePanel } from "./animate-panel";
 import { moved } from "./bounds";
 import { controls, PALETTES } from "./data";
@@ -14,7 +14,7 @@ import { exportMP4 } from "./export-mp4";
 import { PosterCanvas } from "./poster-canvas";
 import { render } from "./render";
 import { canRedo, canUndo, editPoster, redo, setEase, undo, useEase, usePoster } from "./store";
-import type { AnimStyle, Element, FormatId, Paint, Poster } from "./types";
+import type { AnimStyle, Clip, Element, FormatId, Paint, Poster } from "./types";
 import { usePlayhead } from "./use-playhead";
 import { useReducedMotion } from "./use-reduced-motion";
 
@@ -72,8 +72,8 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
           anim={tab === "animate" ? animate(poster, ph.t, settings) : undefined}
           selected={selected}
           onSelect={setSelected}
-          interactive={tab === "design"}
-          onMove={(id, dx, dy) => edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === id ? moved(e as Element, dx, dy) : e)) }), `move:${id}`)}
+          interactive
+          onMove={(id, dx, dy) => tab === "design" && edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === id ? moved(e as Element, dx, dy) : e)) }), `move:${id}`)}
         />
       </div>
       <Tabs value={tab} onValueChange={setTab}>
@@ -102,6 +102,11 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
             fps={fps}
             ease={curve}
             setEase={setEase}
+            poster={poster}
+            clips={clipsFor(poster, settings)}
+            selected={selected}
+            onSelect={setSelected}
+            onClip={(id, c: Clip | null, group) => edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === id ? ({ ...e, anim: c ?? undefined } as Element) : e)) }), group)}
             onExport={async (onProgress, signal) => download(await exportMP4(poster, palette, grain, settings, fps, onProgress, signal), `motion-now-${v.seed}.mp4`)}
           />
         </TabsContent>

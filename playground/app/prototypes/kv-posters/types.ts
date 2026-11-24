@@ -9,6 +9,20 @@ export type FormatId = "3x4" | "4x5" | "9x16" | "1x1";
 
 interface Base {
   id: string;
+  /** hand-set timing on the Animate timeline; absent = the automatic choreography */
+  anim?: Clip;
+}
+
+/** How an element enters: its own KV build, or a generic move applied to the finished element. */
+export type Effect = "build" | "fade" | "rise" | "drop" | "slide" | "scale" | "spin";
+
+/** When an element animates, as fractions of the length (0–1), and how. */
+export interface Clip {
+  start: number;
+  end: number;
+  effect: Effect;
+  /** own timing curve; absent = the global Easing */
+  ease?: import("@/lib/studio/model/types").Ease;
 }
 
 export interface Block extends Base {
@@ -127,4 +141,6 @@ export interface ElState {
   p: number;
   /** continuous spin, radians */
   spin: number;
+  /** how p is applied (default: the element's own build) */
+  effect?: Effect;
 }

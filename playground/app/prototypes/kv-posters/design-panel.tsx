@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { AddMenu } from "./add-menu";
 import { ElementInspector } from "./element-inspector";
 import { uid } from "./random";
+import { NAMES } from "./data";
 import type { Element, Palette, Poster } from "./types";
 
-const NAMES: Record<Element["kind"], string> = { block: "Block", bands: "Frames", flower: "Flower", spiral: "Spiral", headline: "Headline", lockup: "Lockup", mark: "Asterisk" };
 
 export interface DesignActions {
   newPoster: () => void;

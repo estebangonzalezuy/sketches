@@ -1,5 +1,5 @@
 import { defineControls } from "@/components/controls";
-import type { FormatId, Palette } from "./types";
+import type { Element, FormatId, Kind, Palette } from "./types";
 
 export const SLUG = "kv-posters";
 
@@ -45,3 +45,12 @@ export const controls = defineControls({
 });
 
 export const PASTELS = ["blue", "pink", "lilac", "mint", "orange", "yellow"] as const;
+
+export const NAMES: Record<Kind, string> = { block: "Block", bands: "Frames", flower: "Flower", spiral: "Spiral", headline: "Headline", lockup: "Lockup", mark: "Asterisk" };
+
+/** A readable row name: the headline's words, or the kind and its number. */
+export function elementName(els: Element[], e: Element): string {
+  if (e.kind === "headline" || e.kind === "lockup") return e.text.replace(/\n/g, " ");
+  const same = els.filter((x) => x.kind === e.kind);
+  return same.length > 1 ? `${NAMES[e.kind]} ${same.indexOf(e) + 1}` : NAMES[e.kind];
+}

@@ -1,4 +1,5 @@
 import type { AnimFrame } from "./animate";
+import { withEffect } from "./effects";
 import { drawFlower } from "./draw-flower";
 import { drawFrame, drawGrain, drawGrid, drawPaper } from "./draw-frame";
 import { drawBands, drawBlock, drawMark, type Pen } from "./draw-shapes";
@@ -20,14 +21,15 @@ export function render(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, o
   ctx.setTransform(o.scale, 0, 0, o.scale, 0, 0);
   const pen: Pen = { pal, lw: Math.max(1.5, p.width * 0.0027), line: p.line, scale: o.scale, cut: p.paint === "squares" };
   drawPaper(ctx, p, pal);
-  const st = (e: Element) => o.anim?.els.get(e.id) ?? { p: 1, spin: 0 };
-  for (const e of p.elements) if (BACK.has(e.kind)) draw(ctx, e, pen, st(e).p, st(e).spin);
+  const st = (e: Element) => o.anim?.els.get(e.id) ?? { p: 1, spin: 0, effect: "build" as const };
+  const paint = (c: CanvasRenderingContext2D, e: Element) => withEffect(c, e, st(e), p, (k) => draw(c, e, pen, k, st(e).spin));
+  for (const e of p.elements) if (BACK.has(e.kind)) paint(ctx, e);
   drawGrid(ctx, p, pal, o.anim?.frame ?? 1);
   drawFrame(ctx, p, pal, o.anim?.frame ?? 1);
   for (const e of p.elements) {
     if (BACK.has(e.kind)) continue;
-    if (pen.cut && (e.kind === "flower" || e.kind === "spiral")) onLayer(ctx, (l) => draw(l, e, pen, st(e).p, st(e).spin));
-    else draw(ctx, e, pen, st(e).p, st(e).spin);
+    if (pen.cut && (e.kind === "flower" || e.kind === "spiral")) onLayer(ctx, (l) => paint(l, e));
+    else paint(ctx, e);
   }
   drawGrain(ctx, o.grain);
   ctx.restore();
