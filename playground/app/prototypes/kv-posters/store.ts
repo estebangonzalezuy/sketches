@@ -8,6 +8,7 @@ import { headlineBox } from "./draw-type";
 import { generate, type GenOptions } from "./generate";
 import type { Ease } from "@/lib/studio/model/types";
 import type { Poster } from "./types";
+import { DEFAULT_QUESTIONS, type Questions } from "./questions";
 
 /** Edits are tied to the generator settings they were made on; new settings → a fresh poster. */
 type Saved = { key: string; poster: Poster };
@@ -106,4 +107,22 @@ export function setEase(e: Ease) {
   easeValue = e;
   writeStorage(EASE_KEY, e);
   easeListeners.forEach((l) => l());
+}
+
+// ---------------------------------------------------------------- survey questions
+
+const Q_KEY = storageKey(SLUG, "questions");
+const qListeners = new Set<() => void>();
+let qValue: Questions | undefined;
+const readQ = (): Questions => (qValue ??= readStorage<Questions>(Q_KEY) ?? DEFAULT_QUESTIONS);
+export const useQuestions = () =>
+  useSyncExternalStore(
+    (cb) => (qListeners.add(cb), () => qListeners.delete(cb)),
+    readQ,
+    () => DEFAULT_QUESTIONS,
+  );
+export function setQuestions(q: Questions) {
+  qValue = q;
+  writeStorage(Q_KEY, q);
+  qListeners.forEach((l) => l());
 }

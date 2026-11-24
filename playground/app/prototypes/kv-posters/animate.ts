@@ -11,8 +11,10 @@ export interface AnimSettings {
   turns: number;
   /** timing curve of each element's build (spin stays linear so loops close) */
   ease?: Ease;
-  /** construct: type technical notes into each box before its outline draws */
-  notes?: boolean;
+  /** construct: what each box types before its outline draws */
+  notes?: "questions" | "specs" | "off";
+  /** per element lines for "questions" (see questions.ts) */
+  questionLines?: Map<string, string[]>;
 }
 
 /** Shape a 0 → 1 progress with the chosen curve; "hold" jumps at the end. */
@@ -26,6 +28,8 @@ export interface AnimFrame {
   frame: number;
   /** construct notes on */
   notes: boolean;
+  /** "questions" mode: lines to type per element (else the element's specs) */
+  lines?: Map<string, string[]>;
   els: Map<string, ElState>;
 }
 
@@ -90,7 +94,7 @@ export function animate(p: Poster, t: number, s: AnimSettings): AnimFrame {
     // construct: every element draws itself from outlines, anchors and handles
     els.set(e.id, { p: pr, spin: spinning ? period(e) * s.turns * u : 0, effect: s.style === "construct" ? "construct" : c.effect });
   }
-  return { frame: clamp01(buildAt(s.style, u) / 0.3), els, notes: s.notes !== false };
+  return { frame: clamp01(buildAt(s.style, u) / 0.3), els, notes: (s.notes ?? "specs") !== "off", lines: s.notes === "questions" ? s.questionLines : undefined };
 }
 
 const top = (e: Element) => ("y" in e ? e.y : e.cy);

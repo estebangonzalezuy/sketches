@@ -12,6 +12,8 @@ export interface Pen {
   cut: boolean;
   /** construct: typed notes inside each box first */
   notes?: boolean;
+  /** "questions" mode lines per element id */
+  lines?: Map<string, string[]>;
 }
 
 /** Marker for a fill that erases (destination-out) instead of painting. */

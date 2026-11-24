@@ -50,10 +50,9 @@ function notes(ctx: CanvasRenderingContext2D, e: Element, k: number, pen: Pen) {
   const out = clamp01((k - 0.28) / 0.17);
   if (type <= 0 || out >= 1) return;
   const b = bounds(e);
-  const lines = notesFor(e, pen.pal);
+  const lines = pen.lines?.get(e.id) ?? notesFor(e, pen.pal);
   const size = Math.max(9, Math.min(pen.lw * 8, b.h / (lines.length * 1.6 + 0.8), b.w / 12));
-  const total = lines.reduce((n, l) => n + l.length, 0);
-  let left = Math.floor(total * type);
+  let left = 0;
   ctx.save();
   ctx.beginPath();
   ctx.rect(b.x, b.y, b.w, b.h);
@@ -61,11 +60,27 @@ function notes(ctx: CanvasRenderingContext2D, e: Element, k: number, pen: Pen) {
   ctx.globalAlpha *= 1 - out;
   ctx.fillStyle = pen.pal.ink;
   ctx.textBaseline = "top";
+  // wrap to the box: the first line is the title, the rest flow as body text
+  const maxW = b.w - size * 1.2;
+  const rows: { text: string; title: boolean }[] = [];
   lines.forEach((line, i) => {
-    if (left <= 0) return;
-    const shown = line.slice(0, left);
-    left -= line.length;
     ctx.font = `${i === 0 ? 600 : 500} ${i === 0 ? size * 1.15 : size}px "KV Inter"`;
+    let cur = "";
+    for (const word of line.split(" ")) {
+      const next = cur ? `${cur} ${word}` : word;
+      if (cur && ctx.measureText(next).width > maxW) {
+        rows.push({ text: cur, title: i === 0 });
+        cur = word;
+      } else cur = next;
+    }
+    rows.push({ text: cur, title: i === 0 });
+  });
+  left = Math.floor(rows.reduce((n, r) => n + r.text.length, 0) * type);
+  rows.forEach((row, i) => {
+    if (left <= 0) return;
+    const shown = row.text.slice(0, left);
+    left -= row.text.length;
+    ctx.font = `${row.title ? 600 : 500} ${row.title ? size * 1.15 : size}px "KV Inter"`;
     const y = b.y + size * 0.6 + i * size * 1.45 + (i > 0 ? size * 0.2 : 0);
     ctx.fillText(shown, b.x + size * 0.6, y);
     // caret on the line being typed
