@@ -1,13 +1,16 @@
 import { bounds } from "./bounds";
+import { drawConstruct } from "./construct";
+import type { Pen } from "./draw-shapes";
 import type { Element, ElState, Poster } from "./types";
 
 /**
  * Applies an element's entrance effect around its drawing. "build" hands progress to the
  * element's own KV build; the others draw the finished element and move, fade or scale it.
  */
-export function withEffect(ctx: CanvasRenderingContext2D, e: Element, st: ElState, p: Poster, draw: (progress: number) => void) {
+export function withEffect(ctx: CanvasRenderingContext2D, e: Element, st: ElState, p: Poster, pen: Pen, draw: (progress: number) => void) {
   const fx = st.effect ?? "build";
   if (fx === "build") return draw(st.p);
+  if (fx === "construct") return drawConstruct(ctx, e, st.p, pen, () => draw(1));
   const k = st.p;
   if (k <= 0) return;
   ctx.save();

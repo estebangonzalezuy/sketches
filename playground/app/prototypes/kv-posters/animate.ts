@@ -83,7 +83,8 @@ export function animate(p: Poster, t: number, s: AnimSettings): AnimFrame {
   for (const e of p.elements) {
     const c = clips.get(e.id)!;
     const pr = s.style === "loop" ? 1 : s.style === "in + out" ? Math.min(clipAt(c, u, s.ease), clipAt(c, 1 - u, s.ease)) : clipAt(c, u, s.ease);
-    els.set(e.id, { p: pr, spin: spinning ? period(e) * s.turns * u : 0, effect: c.effect });
+    // construct: every element draws itself from outlines, anchors and handles
+    els.set(e.id, { p: pr, spin: spinning ? period(e) * s.turns * u : 0, effect: s.style === "construct" ? "construct" : c.effect });
   }
   return { frame: clamp01(buildAt(s.style, u) / 0.3), els };
 }

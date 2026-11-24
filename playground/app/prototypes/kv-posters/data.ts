@@ -37,7 +37,7 @@ export const controls = defineControls({
   density: { type: "number", label: "Blocks", min: 0, max: 1, step: 0.05, default: 0.55 },
   paper: { type: "boolean", label: "Paper texture", default: true },
   grain: { type: "number", label: "Grain", min: 0, max: 1, step: 0.05, default: 0.4 },
-  style: { type: "select", label: "Animation", options: ["build", "loop", "build + loop", "in + out"], default: "build + loop" },
+  style: { type: "select", label: "Animation", options: ["build", "loop", "build + loop", "in + out", "construct"], default: "build + loop" },
   duration: { type: "number", label: "Length (s)", min: 2, max: 20, step: 0.5, default: 6 },
   stagger: { type: "number", label: "Stagger", min: 0, max: 1, step: 0.05, default: 0.5 },
   turns: { type: "number", label: "Spin", min: 0, max: 4, step: 1, default: 1 },

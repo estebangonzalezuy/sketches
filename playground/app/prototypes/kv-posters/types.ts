@@ -14,7 +14,7 @@ interface Base {
 }
 
 /** How an element enters: its own KV build, or a generic move applied to the finished element. */
-export type Effect = "build" | "fade" | "rise" | "drop" | "slide" | "scale" | "spin";
+export type Effect = "build" | "fade" | "rise" | "drop" | "slide" | "scale" | "spin" | "construct";
 
 /** When an element animates, as fractions of the length (0–1), and how. */
 export interface Clip {
@@ -133,7 +133,7 @@ export interface Poster {
   elements: Element[];
 }
 
-export type AnimStyle = "build" | "loop" | "build + loop" | "in + out";
+export type AnimStyle = "build" | "loop" | "build + loop" | "in + out" | "construct";
 
 /** Per-element animation state at one instant. */
 export interface ElState {

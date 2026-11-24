@@ -22,7 +22,7 @@ export function render(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, o
   const pen: Pen = { pal, lw: Math.max(1.5, p.width * 0.0027), line: p.line, scale: o.scale, cut: p.paint === "squares" };
   drawPaper(ctx, p, pal);
   const st = (e: Element) => o.anim?.els.get(e.id) ?? { p: 1, spin: 0, effect: "build" as const };
-  const paint = (c: CanvasRenderingContext2D, e: Element) => withEffect(c, e, st(e), p, (k) => draw(c, e, pen, k, st(e).spin));
+  const paint = (c: CanvasRenderingContext2D, e: Element) => withEffect(c, e, st(e), p, pen, (k) => draw(c, e, pen, k, st(e).spin));
   for (const e of p.elements) if (BACK.has(e.kind)) paint(ctx, e);
   drawGrid(ctx, p, pal, o.anim?.frame ?? 1);
   drawFrame(ctx, p, pal, o.anim?.frame ?? 1);

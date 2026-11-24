@@ -17,6 +17,7 @@ const EFFECTS: [Effect, string][] = [
   ["slide", "Slide in"],
   ["scale", "Scale"],
   ["spin", "Spin in"],
+  ["construct", "Construct"],
 ];
 
 /** Settings of the selected element's clip: effect, timing curve, back to automatic. */
