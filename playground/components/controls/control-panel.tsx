@@ -6,11 +6,23 @@ import { ControlField } from "./control-field";
 import type { ControlSchema } from "./schema";
 import type { Controls } from "./use-controls";
 
-/** The fields of a schema plus Reset and Randomize. Layout-agnostic. */
-export function ControlPanel<S extends ControlSchema>({ controls }: { controls: Controls<S> }) {
+/**
+ * The fields of a schema plus Reset and Randomize. Layout-agnostic.
+ * `header` / `footer` add a prototype's own panel content (actions, inputs, data) around them.
+ */
+export function ControlPanel<S extends ControlSchema>({
+  controls,
+  header,
+  footer,
+}: {
+  controls: Controls<S>;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
+}) {
   const { schema, values, set } = controls;
   return (
     <div className="flex flex-col gap-4">
+      {header}
       <div className="flex flex-col gap-3">
         {Object.entries(schema).map(([name, control]) => (
           <ControlField
@@ -32,6 +44,7 @@ export function ControlPanel<S extends ControlSchema>({ controls }: { controls: 
           Randomize
         </Button>
       </div>
+      {footer}
     </div>
   );
 }

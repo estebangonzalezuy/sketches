@@ -370,3 +370,8 @@ Add to this list whenever something breaks and gets fixed. Newest last.
 - Assets used by more than one prototype (fonts of `lib/kv`, `lib/studio`, `lib/motion-builder`) go in
   `public/shared/`, which the gate always lets through. Under `public/prototype-assets/<slug>/` a
   public prototype can only read its own slug, so a shared file there breaks once it's public.
+- Never name a prototype file `layout.ts`, `page.ts`, `template.ts`, `loading.ts`, `error.ts`,
+  `route.ts`, `default.ts` or `not-found.ts`: inside `app/` Next treats them as route files
+  (a `layout.ts` broke typegen). Pick a descriptive name (`clusters.ts`).
+- Canvas text layouts cached before a web font loads keep the fallback font's metrics. Put a
+  measured font signature in the cache key (see `motion-now-quotes/wall.ts`).
