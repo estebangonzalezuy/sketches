@@ -5,8 +5,10 @@ import { DownloadIcon, PauseIcon, PlayIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
+import { CurveEditor } from "@/lib/studio/ui/curve-editor";
+import type { Ease } from "@/lib/studio/model/types";
 
-export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExport }: {
+export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExport, ease, setEase }: {
   t: number;
   duration: number;
   fps: number;
@@ -14,6 +16,8 @@ export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExpor
   toggle: () => void;
   scrub: (v: number) => void;
   onExport: (onProgress: (v: number) => void, signal: { cancel: boolean }) => Promise<void>;
+  ease: Ease;
+  setEase: (e: Ease) => void;
 }) {
   const [job, setJob] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +59,10 @@ export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExpor
         </Button>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
+      <section className="grid gap-2 rounded-md border border-border p-3">
+        <h2 className="text-sm font-medium">Easing</h2>
+        <CurveEditor value={ease} mixed={false} onChange={(e) => setEase(e)} />
+      </section>
     </div>
   );
 }

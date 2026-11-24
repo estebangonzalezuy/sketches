@@ -6,6 +6,7 @@ import { readStorage, storageKey, writeStorage } from "@/lib/storage";
 import { SLUG } from "./data";
 import { headlineBox } from "./draw-type";
 import { generate, type GenOptions } from "./generate";
+import type { Ease } from "@/lib/studio/model/types";
 import type { Poster } from "./types";
 
 /** Edits are tied to the generator settings they were made on; new settings → a fresh poster. */
@@ -88,3 +89,21 @@ function subscribeFonts(cb: () => void) {
   return () => fontListeners.delete(cb);
 }
 export const useFonts = () => useSyncExternalStore(subscribeFonts, () => fontState, () => "loading" as const);
+
+// ---------------------------------------------------------------- animation curve
+
+const EASE_KEY = storageKey(SLUG, "ease");
+const easeListeners = new Set<() => void>();
+let easeValue: Ease | undefined;
+const readEase = (): Ease => (easeValue ??= readStorage<Ease>(EASE_KEY) ?? "out");
+export const useEase = () =>
+  useSyncExternalStore(
+    (cb) => (easeListeners.add(cb), () => easeListeners.delete(cb)),
+    readEase,
+    () => "out" as Ease,
+  );
+export function setEase(e: Ease) {
+  easeValue = e;
+  writeStorage(EASE_KEY, e);
+  easeListeners.forEach((l) => l());
+}

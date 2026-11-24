@@ -79,6 +79,10 @@ export interface Lockup extends Base {
   size: number;
   text: string;
   box: boolean;
+  /** outlined letters, no fill */
+  outline?: boolean;
+  /** text colour (default ink) */
+  fill?: Swatch;
 }
 
 export interface Mark extends Base {

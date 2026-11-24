@@ -93,14 +93,15 @@ export function drawLockup(ctx: CanvasRenderingContext2D, l: Lockup, pen: Pen, p
   ctx.globalAlpha = Math.min(1, Math.max(0, p * 2 - 0.6));
   ctx.font = FONT(l.size);
   ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = pen.pal.ink;
-  ctx.strokeStyle = pen.pal.ink;
-  ctx.lineWidth = l.size * 0.035;
+  const color = pen.pal[l.fill ?? "ink"];
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
   ctx.lineJoin = "round";
+  ctx.lineWidth = l.outline ? Math.max(1, l.size * 0.03) : l.size * 0.035;
   l.text.split("\n").forEach((t, i) => {
     const y = l.size * (0.98 + i * 1.0);
     ctx.strokeText(t, l.size * 0.3, y);
-    ctx.fillText(t, l.size * 0.3, y);
+    if (!l.outline) ctx.fillText(t, l.size * 0.3, y);
   });
   ctx.restore();
 }
