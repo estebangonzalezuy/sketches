@@ -28,7 +28,7 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
   const fps = Number(v.fps);
   const grain = v.paper ? v.grain : 0;
   const curve = useEase();
-  const settings = { style: v.style as AnimStyle, duration: v.duration, stagger: v.stagger, turns: v.turns, ease: curve };
+  const settings = { style: v.style as AnimStyle, duration: v.duration, stagger: v.stagger, turns: v.turns, ease: curve, notes: v.notes };
   const reduced = useReducedMotion();
   const ph = usePlayhead(v.duration, fps, !reduced);
   const edit = (fn: (p: Poster) => Poster, group?: string) => editPoster(opts, poster, fn, group);

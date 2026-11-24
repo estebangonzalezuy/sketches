@@ -19,7 +19,7 @@ const BACK = new Set(["block", "bands"]);
 export function render(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, o: RenderOpts) {
   ctx.save();
   ctx.setTransform(o.scale, 0, 0, o.scale, 0, 0);
-  const pen: Pen = { pal, lw: Math.max(1.5, p.width * 0.0027), line: p.line, scale: o.scale, cut: p.paint === "squares" };
+  const pen: Pen = { pal, lw: Math.max(1.5, p.width * 0.0027), line: p.line, scale: o.scale, cut: p.paint === "squares", notes: o.anim?.notes };
   drawPaper(ctx, p, pal);
   const st = (e: Element) => o.anim?.els.get(e.id) ?? { p: 1, spin: 0, effect: "build" as const };
   const paint = (c: CanvasRenderingContext2D, e: Element) => withEffect(c, e, st(e), p, pen, (k) => draw(c, e, pen, k, st(e).spin));

@@ -1,5 +1,6 @@
 import { bounds } from "./bounds";
 import type { Pen } from "./draw-shapes";
+import { notesFor } from "./notes";
 import { outlinesOf, type Stroke } from "./outlines";
 import type { Element } from "./types";
 
@@ -30,12 +31,44 @@ export function drawConstruct(ctx: CanvasRenderingContext2D, e: Element, k: numb
   ctx.strokeStyle = ink;
   ctx.fillStyle = ink;
   guide(ctx, e, clamp01(k / 0.2), lw, pen);
-  const draw = clamp01((k - 0.05) / 0.65);
+  // with notes, the box is written in first and the outline waits for it
+  if (pen.notes) notes(ctx, e, k, pen);
+  const draw = pen.notes ? clamp01((k - 0.2) / 0.55) : clamp01((k - 0.05) / 0.65);
   const strokes = outlinesOf(e);
   strokes.forEach((s, i) => {
     // strokes start a little after one another, all finish together
     const local = clamp01(draw * 1.25 - (i / Math.max(1, strokes.length)) * 0.25);
     if (local > 0) partial(ctx, s, local, lw * 1.6, pen);
+  });
+  ctx.restore();
+}
+
+/** Notes typed into the box (0.03–0.25), held, then wiped out as the outline arrives (0.28–0.45). */
+function notes(ctx: CanvasRenderingContext2D, e: Element, k: number, pen: Pen) {
+  const type = clamp01((k - 0.03) / 0.22);
+  const out = clamp01((k - 0.28) / 0.17);
+  if (type <= 0 || out >= 1) return;
+  const b = bounds(e);
+  const lines = notesFor(e, pen.pal);
+  const size = Math.max(9, Math.min(pen.lw * 8, b.h / (lines.length * 1.6 + 0.8), b.w / 12));
+  const total = lines.reduce((n, l) => n + l.length, 0);
+  let left = Math.floor(total * type);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(b.x, b.y, b.w, b.h);
+  ctx.clip();
+  ctx.globalAlpha *= 1 - out;
+  ctx.fillStyle = pen.pal.ink;
+  ctx.textBaseline = "top";
+  lines.forEach((line, i) => {
+    if (left <= 0) return;
+    const shown = line.slice(0, left);
+    left -= line.length;
+    ctx.font = `${i === 0 ? 600 : 500} ${i === 0 ? size * 1.15 : size}px "KV Inter"`;
+    const y = b.y + size * 0.6 + i * size * 1.45 + (i > 0 ? size * 0.2 : 0);
+    ctx.fillText(shown, b.x + size * 0.6, y);
+    // caret on the line being typed
+    if (left < 0 && type < 1) ctx.fillRect(b.x + size * 0.6 + ctx.measureText(shown).width + 2, y, Math.max(1, size * 0.08), size);
   });
   ctx.restore();
 }

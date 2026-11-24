@@ -11,6 +11,8 @@ export interface AnimSettings {
   turns: number;
   /** timing curve of each element's build (spin stays linear so loops close) */
   ease?: Ease;
+  /** construct: type technical notes into each box before its outline draws */
+  notes?: boolean;
 }
 
 /** Shape a 0 → 1 progress with the chosen curve; "hold" jumps at the end. */
@@ -22,6 +24,8 @@ export function shape(e: Ease | undefined, u: number): number {
 export interface AnimFrame {
   /** grid and frame draw-on */
   frame: number;
+  /** construct notes on */
+  notes: boolean;
   els: Map<string, ElState>;
 }
 
@@ -86,7 +90,7 @@ export function animate(p: Poster, t: number, s: AnimSettings): AnimFrame {
     // construct: every element draws itself from outlines, anchors and handles
     els.set(e.id, { p: pr, spin: spinning ? period(e) * s.turns * u : 0, effect: s.style === "construct" ? "construct" : c.effect });
   }
-  return { frame: clamp01(buildAt(s.style, u) / 0.3), els };
+  return { frame: clamp01(buildAt(s.style, u) / 0.3), els, notes: s.notes !== false };
 }
 
 const top = (e: Element) => ("y" in e ? e.y : e.cy);

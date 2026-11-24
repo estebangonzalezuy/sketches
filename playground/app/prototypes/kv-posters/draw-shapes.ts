@@ -10,6 +10,8 @@ export interface Pen {
   scale: number;
   /** squares mode: motif interiors are cut out so the painted squares show through */
   cut: boolean;
+  /** construct: typed notes inside each box first */
+  notes?: boolean;
 }
 
 /** Marker for a fill that erases (destination-out) instead of painting. */
