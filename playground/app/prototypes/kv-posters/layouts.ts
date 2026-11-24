@@ -1,5 +1,7 @@
 import { bands, fitSize, flower, headline, spiral, type Measure } from "./elements";
 import { mosaic, type Box } from "./mosaic";
+import { PASTELS } from "./data";
+import { headlineVariant } from "./vary";
 import type { Rng } from "./random";
 import type { Element, Swatch, Template } from "./types";
 
@@ -59,6 +61,24 @@ export const LAYOUTS: Record<Template, Layout> = {
       ...mosaic(r, { x: f.x + col, y: f.y, w: f.w - col, h: f.h * 0.85 }, 5, 8, d),
       flower(W * 0.6, H * 0.5, W * 0.32, ["lilac", "mint"], { petals: 8, disc: "yellow" }),
       headline(f.x + W * 0.012, f.y + f.h * 0.015, fitSize(m, "Motion, Now", col - W * 0.02, f.h * 0.8, true), "Motion, Now", { vertical: true, box: false }),
+    ];
+  },
+  // free: one to three motifs anywhere, a mosaic, the headline wherever the seed puts it
+  free: (f, r, d, m) => {
+    const { W } = f;
+    const n = r.int(1, 3);
+    const motifs: Element[] = Array.from({ length: n }, () => {
+      const rad = W * r.range(0.16, n === 1 ? 0.42 : 0.28);
+      const cx = f.x + rad * 0.5 + r() * (f.w - rad);
+      const cy = f.y + f.h * 0.2 + r() * f.h * 0.6;
+      return r.chance(0.25)
+        ? spiral(cx, cy, rad, [r.pick(PASTELS), r.pick(PASTELS), "cream", r.pick(PASTELS)])
+        : flower(cx, cy, rad, [r.pick(PASTELS), r.pick(PASTELS)], { petals: r.int(6, 12), disc: r.pick(["cream", "yellow", "lilac", "mint"]) });
+    });
+    return [
+      ...mosaic(r, { x: f.x, y: f.y, w: f.w, h: f.h * r.range(0.7, 0.95) }, r.int(3, 7), r.int(4, 10), d),
+      ...motifs,
+      headlineVariant(headline(0, 0, 100, "Motion,\nNow"), r, f, m),
     ];
   },
   // line art: one scalloped flower over the grid, headline stepping down

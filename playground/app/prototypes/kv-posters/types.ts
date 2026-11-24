@@ -3,7 +3,7 @@
 export type Swatch = "paper" | "ink" | "blue" | "pink" | "lilac" | "mint" | "green" | "orange" | "yellow" | "brown" | "cream";
 export type Palette = Record<Swatch, string>;
 
-export type Template = "stack" | "cascade" | "overlap" | "vertical" | "line";
+export type Template = "stack" | "cascade" | "overlap" | "vertical" | "line" | "free";
 export type Paint = "squares" | "fills";
 export type FormatId = "3x4" | "4x5" | "9x16" | "1x1";
 
@@ -66,6 +66,8 @@ export interface Headline extends Base {
   text: string;
   vertical: boolean;
   box: boolean;
+  /** outline around the box (default on) */
+  boxLine?: boolean;
   /** outlined letters, no fill */
   outline?: boolean;
   /** letter colour (default ink) */
@@ -79,6 +81,8 @@ export interface Lockup extends Base {
   size: number;
   text: string;
   box: boolean;
+  /** outline around the box (default on) */
+  boxLine?: boolean;
   /** outlined letters, no fill */
   outline?: boolean;
   /** text colour (default ink) */
@@ -92,6 +96,8 @@ export interface Mark extends Base {
   size: number;
   fill: Swatch;
   box: boolean;
+  /** outline around the box (default on) */
+  boxLine?: boolean;
   /** arm ends: 0 = sharp, 1 = fully round */
   round: number;
 }

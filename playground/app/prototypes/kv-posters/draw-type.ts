@@ -38,7 +38,7 @@ export function drawHeadline(ctx: CanvasRenderingContext2D, h: Headline, pen: Pe
     ctx.lineWidth = pen.lw * 0.6;
     const w = b.w * Math.min(1, p * 2);
     ctx.fillRect(0, 0, w, b.h);
-    ctx.strokeRect(0, 0, w, b.h);
+    if (h.boxLine !== false) ctx.strokeRect(0, 0, w, b.h);
   }
   ctx.beginPath();
   ctx.rect(0, 0, b.w, b.h);
@@ -88,7 +88,7 @@ export function drawLockup(ctx: CanvasRenderingContext2D, l: Lockup, pen: Pen, p
     ctx.strokeStyle = pen.pal.ink;
     ctx.lineWidth = pen.lw * 0.6;
     ctx.fillRect(0, 0, b.w * Math.min(1, p * 2), b.h);
-    ctx.strokeRect(0, 0, b.w * Math.min(1, p * 2), b.h);
+    if (l.boxLine !== false) ctx.strokeRect(0, 0, b.w * Math.min(1, p * 2), b.h);
   }
   ctx.globalAlpha = Math.min(1, Math.max(0, p * 2 - 0.6));
   ctx.font = FONT(l.size);

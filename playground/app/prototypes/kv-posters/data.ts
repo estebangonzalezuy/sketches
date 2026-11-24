@@ -26,11 +26,11 @@ export const PALETTES: Record<string, Palette> = {
   },
 };
 
-export const TEMPLATES = ["auto", "stack", "cascade", "overlap", "vertical", "line"] as const;
+export const TEMPLATES = ["auto", "free", "stack", "cascade", "overlap", "vertical", "line"] as const;
 
 export const controls = defineControls({
   template: { type: "select", label: "Layout", options: TEMPLATES, default: "auto" },
-  seed: { type: "number", label: "Seed", min: 1, max: 9999, step: 1, default: 2 },
+  seed: { type: "number", label: "Seed", min: 1, max: 9999, step: 1, default: 12 },
   format: { type: "select", label: "Format", options: ["3x4", "4x5", "9x16", "1x1"], default: "3x4", randomize: false },
   palette: { type: "select", label: "Palette", options: ["Pastel", "KV yellow", "Night"], default: "Pastel" },
   color: { type: "select", label: "Colour", options: ["squares", "fills"], default: "squares" },

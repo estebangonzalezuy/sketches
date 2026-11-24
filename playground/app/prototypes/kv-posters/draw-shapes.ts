@@ -83,7 +83,7 @@ export function drawMark(ctx: CanvasRenderingContext2D, m: Mark, pen: Pen, p: nu
     ctx.lineWidth = pen.lw * 0.6;
     ctx.globalAlpha = clamp01(p * 3);
     ctx.fillRect(m.cx - s * 1.05, m.cy - s * 1.05, s * 2.1, s * 2.1);
-    ctx.strokeRect(m.cx - s * 1.05, m.cy - s * 1.05, s * 2.1, s * 2.1);
+    if (m.boxLine !== false) ctx.strokeRect(m.cx - s * 1.05, m.cy - s * 1.05, s * 2.1, s * 2.1);
     ctx.globalAlpha = 1;
   }
   ctx.translate(m.cx, m.cy);

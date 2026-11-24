@@ -13,6 +13,7 @@ export function ElementInspector({ el, palette, width, set }: { el: Element; pal
           <TextField label="Text" value={el.text} onChange={(text) => set({ text })} />
           <NumberField label="Size" value={el.size} min={40} max={W * 0.4} onChange={(size) => set({ size })} />
           <SwitchField label="Box" value={el.box} onChange={(box) => set({ box })} />
+          {el.box && <SwitchField label="Box outline" value={el.boxLine !== false} onChange={(boxLine) => set({ boxLine })} />}
           <SwitchField label="Vertical" value={el.vertical} onChange={(vertical) => set({ vertical })} />
           <SwitchField label="Outline only" value={!!el.outline} onChange={(outline) => set({ outline })} />
           <SwatchField label={el.outline ? "Outline colour" : "Colour"} palette={palette} value={[el.fill ?? "ink"]} onChange={([fill]) => set({ fill })} />
@@ -24,6 +25,7 @@ export function ElementInspector({ el, palette, width, set }: { el: Element; pal
           <TextField label="Text" value={el.text} onChange={(text) => set({ text })} />
           <NumberField label="Size" value={el.size} min={20} max={W * 0.15} onChange={(size) => set({ size })} />
           <SwitchField label="Box" value={el.box} onChange={(box) => set({ box })} />
+          {el.box && <SwitchField label="Box outline" value={el.boxLine !== false} onChange={(boxLine) => set({ boxLine })} />}
           <SwitchField label="Outline only" value={!!el.outline} onChange={(outline) => set({ outline })} />
           <SwatchField label={el.outline ? "Outline colour" : "Colour"} palette={palette} value={[el.fill ?? "ink"]} onChange={([fill]) => set({ fill })} />
         </>
@@ -72,6 +74,7 @@ export function ElementInspector({ el, palette, width, set }: { el: Element; pal
           <NumberField label="Size" value={el.size} min={20} max={W * 0.3} onChange={(size) => set({ size })} />
           <NumberField label="Roundness" value={el.round ?? 1} min={0} max={1} step={0.01} onChange={(round) => set({ round })} />
           <SwitchField label="Box" value={el.box} onChange={(box) => set({ box })} />
+          {el.box && <SwitchField label="Box outline" value={el.boxLine !== false} onChange={(boxLine) => set({ boxLine })} />}
           <SwatchField label="Colour" palette={palette} value={[el.fill]} onChange={([fill]) => set({ fill })} />
         </>
       );
