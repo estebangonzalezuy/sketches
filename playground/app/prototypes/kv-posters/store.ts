@@ -25,19 +25,25 @@ function set(next: Saved | null) {
 }
 const subscribe = (cb: () => void) => (listeners.add(cb), () => listeners.delete(cb));
 
-export const genKey = (o: GenOptions) => JSON.stringify([o.template, o.seed, o.format, o.density]);
+export const genKey = (o: GenOptions) => JSON.stringify([o.template, o.seed, o.format, o.density, o.paint]);
 
 /** The poster for these settings: the saved edit if it belongs to them, else a generated one. */
 export function usePoster(o: GenOptions): Poster {
   const s = useSyncExternalStore(subscribe, read, () => null);
-  const { template, seed, format, density } = o;
-  const fresh = useMemo(() => generate({ template, seed, format, density }, headlineBox), [template, seed, format, density]);
-  return s && s.key === genKey(o) ? s.poster : fresh;
+  const { template, seed, format, density, paint } = o;
+  const fresh = useMemo(() => generate({ template, seed, format, density, paint }, headlineBox), [template, seed, format, density, paint]);
+  return s && s.key === genKey(o) ? migrate(s.poster) : fresh;
 }
 
 let last: { group: string; at: number } | null = null;
 
 /** Apply an edit. Edits with the same `group` within 600 ms share one undo step (a slider drag). */
+/** Older saves: drop removed element kinds, fill in new fields. */
+function migrate(p: Poster): Poster {
+  return { ...p, paint: p.paint ?? "fills", elements: p.elements.filter((e) => KINDS.has(e.kind)) };
+}
+const KINDS = new Set(["block", "bands", "flower", "spiral", "headline", "lockup", "mark"]);
+
 export function editPoster(o: GenOptions, current: Poster, fn: (p: Poster) => Poster, group?: string) {
   const key = genKey(o);
   const now = Date.now();

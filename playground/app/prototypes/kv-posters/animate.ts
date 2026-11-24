@@ -16,7 +16,7 @@ export interface AnimFrame {
 }
 
 /** Where each kind starts in the build, as a fraction of it. */
-const BASE: Record<Kind, number> = { block: 0, bands: 0.04, arc: 0.12, spiral: 0.18, flower: 0.2, headline: 0.32, lockup: 0.48, mark: 0.54 };
+const BASE: Record<Kind, number> = { block: 0, bands: 0.04, spiral: 0.18, flower: 0.2, headline: 0.32, lockup: 0.48, mark: 0.54 };
 const LEN = 0.4;
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 

@@ -1,4 +1,4 @@
-import type { Arc, Bands, Block, Mark, Palette } from "./types";
+import type { Bands, Block, Mark, Palette } from "./types";
 
 export interface Pen {
   pal: Palette;
@@ -8,6 +8,30 @@ export interface Pen {
   line: boolean;
   /** device px per poster px (for the inked headline raster) */
   scale: number;
+  /** squares mode: motif interiors are cut out so the painted squares show through */
+  cut: boolean;
+}
+
+/** Marker for a fill that erases (destination-out) instead of painting. */
+export const CUT = "cut";
+
+/** Fill for a motif's body (petals, discs): see-through in squares mode. */
+export const motifFill = (pen: Pen, s: keyof Palette) => (pen.cut ? CUT : fillOf(pen, s));
+
+/** Fill (or cut) then outline the current path. */
+export function fillStroke(ctx: CanvasRenderingContext2D, pen: Pen, fill: string, lw = pen.lw) {
+  if (fill === CUT) {
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = "#000";
+    ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+  } else {
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+  ctx.strokeStyle = pen.pal.ink;
+  ctx.lineWidth = lw;
+  ctx.stroke();
 }
 
 export const fillOf = (pen: Pen, s: keyof Palette) => (pen.line && s !== "ink" ? pen.pal.paper : pen.pal[s]);
@@ -48,24 +72,7 @@ export function drawBands(ctx: CanvasRenderingContext2D, b: Bands, pen: Pen, p: 
   });
 }
 
-export function drawArc(ctx: CanvasRenderingContext2D, a: Arc, pen: Pen, p: number) {
-  if (p <= 0) return;
-  const end = a.start + (a.end - a.start) * p;
-  a.fills.forEach((f, i) => {
-    const r0 = a.r + i * a.band;
-    ctx.beginPath();
-    ctx.arc(a.cx, a.cy, r0 + a.band, a.start, end);
-    ctx.arc(a.cx, a.cy, r0, end, a.start, true);
-    ctx.closePath();
-    ctx.fillStyle = fillOf(pen, f);
-    ctx.fill();
-    ctx.strokeStyle = pen.pal.ink;
-    ctx.lineWidth = pen.lw * 0.8;
-    ctx.stroke();
-  });
-}
-
-/** Rounded six-arm asterisk, optionally in an outlined box. */
+/** Six-arm asterisk; `round` takes the arm ends from sharp (0) to fully round (1). Optional outlined box. */
 export function drawMark(ctx: CanvasRenderingContext2D, m: Mark, pen: Pen, p: number, spin: number) {
   if (p <= 0) return;
   const s = m.size;
@@ -82,29 +89,34 @@ export function drawMark(ctx: CanvasRenderingContext2D, m: Mark, pen: Pen, p: nu
   ctx.translate(m.cx, m.cy);
   ctx.rotate(spin + (1 - p) * -Math.PI * 0.6);
   ctx.scale(p, p);
-  ctx.lineCap = "round";
-  const arms = () => {
-    ctx.beginPath();
-    for (let i = 0; i < 6; i++) {
-      const a = (i * Math.PI) / 3 - Math.PI / 2;
-      ctx.moveTo(0, 0);
-      ctx.lineTo(Math.cos(a) * s * 0.72, Math.sin(a) * s * 0.72);
-    }
-  };
+  const w = s * 0.34;
+  const L = s * 0.9;
+  const r = Math.min(1, Math.max(0, m.round ?? 1)) * (w / 2);
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    ctx.save();
+    ctx.rotate((i * Math.PI) / 3);
+    const x = -w / 2;
+    const y = -L;
+    const h = L;
+    // arm: rounded only at the outer end
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+    ctx.restore();
+  }
+  ctx.moveTo(w * 0.62, 0);
+  ctx.arc(0, 0, w * 0.62, 0, Math.PI * 2);
   if (pen.line) {
     ctx.strokeStyle = pen.pal.ink;
-    ctx.lineWidth = s * 0.34;
-    arms();
+    ctx.lineWidth = pen.lw * 2;
     ctx.stroke();
-    ctx.strokeStyle = pen.pal.paper;
-    ctx.lineWidth = s * 0.34 - pen.lw * 1.6;
-    arms();
-    ctx.stroke();
-  } else {
-    ctx.strokeStyle = pen.pal[m.fill];
-    ctx.lineWidth = s * 0.34;
-    arms();
-    ctx.stroke();
-  }
+    ctx.fillStyle = pen.pal.paper;
+  } else ctx.fillStyle = pen.pal[m.fill];
+  ctx.fill("nonzero");
   ctx.restore();
 }

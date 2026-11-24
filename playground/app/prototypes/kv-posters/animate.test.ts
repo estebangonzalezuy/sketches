@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { animate, buildAt } from "./animate";
 import { generate } from "./generate";
 
-const poster = generate({ template: "cascade", seed: 3, format: "3x4", density: 0.5 });
+const poster = generate({ template: "cascade", seed: 3, format: "3x4", density: 0.5, paint: "fills" });
 const base = { duration: 6, stagger: 0.5, turns: 1 };
 
 describe("animate", () => {

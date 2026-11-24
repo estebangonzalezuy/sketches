@@ -14,13 +14,13 @@ import { exportMP4 } from "./export-mp4";
 import { PosterCanvas } from "./poster-canvas";
 import { render } from "./render";
 import { canRedo, canUndo, editPoster, redo, undo, usePoster } from "./store";
-import type { AnimStyle, Element, FormatId, Poster } from "./types";
+import type { AnimStyle, Element, FormatId, Paint, Poster } from "./types";
 import { usePlayhead } from "./use-playhead";
 import { useReducedMotion } from "./use-reduced-motion";
 
 export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
   const v = c.values;
-  const opts = { template: v.template, seed: v.seed, format: v.format as FormatId, density: v.density };
+  const opts = { template: v.template, seed: v.seed, format: v.format as FormatId, density: v.density, paint: v.color as Paint };
   const poster = usePoster(opts);
   const palette = PALETTES[v.palette] ?? PALETTES.Pastel;
   const [tab, setTab] = useState("design");

@@ -42,3 +42,22 @@ export function mosaic(r: Rng, area: Box, cols: number, rows: number, density: n
   }
   return out;
 }
+
+/**
+ * "Squares" paint: big flat colour fields covering the frame (some cells left as paper),
+ * plus a few small tabs hanging off the frame edges, like the printed references.
+ */
+export function paintSquares(r: Rng, area: Box, W: number, density: number): Block[] {
+  const colors: Swatch[] = ["blue", "pink", "lilac", "mint", "orange", "yellow", "green", "blue", "lilac", "pink"];
+  const cols = r.int(2, 3);
+  const rows = r.int(4, 6);
+  const fields = mosaic(r, area, cols, rows, 0.45 + density * 0.55, []).map((b) => ({ ...b, fill: r.pick(colors) }));
+  const tabs: Block[] = [];
+  for (let i = 0; i < r.int(2, 4); i++) {
+    const left = r.chance(0.5);
+    const h = area.h * r.range(0.04, 0.12);
+    const w = W * r.range(0.02, 0.06);
+    tabs.push({ id: uid("t"), kind: "block", x: left ? area.x - w * 0.6 : area.x + area.w - w * 0.4, y: area.y + r.range(0.1, 0.85) * area.h, w, h, fill: r.pick(["green", "lilac", "blue", "orange"] as Swatch[]) });
+  }
+  return [...fields, ...tabs];
+}

@@ -13,10 +13,6 @@ export function bounds(e: Element): Rect {
     case "block":
     case "bands":
       return { x: e.x, y: e.y, w: e.w, h: e.h };
-    case "arc": {
-      const R = e.r + e.band * e.fills.length;
-      return { x: e.cx - R, y: e.cy - R, w: 2 * R, h: 2 * R };
-    }
     case "flower":
     case "spiral":
       return { x: e.cx - e.r, y: e.cy - e.r, w: 2 * e.r, h: 2 * e.r };

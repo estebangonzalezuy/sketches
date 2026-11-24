@@ -33,6 +33,7 @@ export const controls = defineControls({
   seed: { type: "number", label: "Seed", min: 1, max: 9999, step: 1, default: 2 },
   format: { type: "select", label: "Format", options: ["3x4", "4x5", "9x16", "1x1"], default: "3x4", randomize: false },
   palette: { type: "select", label: "Palette", options: ["Pastel", "KV yellow", "Night"], default: "Pastel" },
+  color: { type: "select", label: "Colour", options: ["squares", "fills"], default: "squares" },
   density: { type: "number", label: "Blocks", min: 0, max: 1, step: 0.05, default: 0.55 },
   paper: { type: "boolean", label: "Paper texture", default: true },
   grain: { type: "number", label: "Grain", min: 0, max: 1, step: 0.05, default: 0.4 },

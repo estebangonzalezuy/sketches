@@ -7,7 +7,7 @@ import { ElementInspector } from "./element-inspector";
 import { uid } from "./random";
 import type { Element, Palette, Poster } from "./types";
 
-const NAMES: Record<Element["kind"], string> = { block: "Block", bands: "Frames", arc: "Arc", flower: "Flower", spiral: "Spiral", headline: "Headline", lockup: "Lockup", mark: "Asterisk" };
+const NAMES: Record<Element["kind"], string> = { block: "Block", bands: "Frames", flower: "Flower", spiral: "Spiral", headline: "Headline", lockup: "Lockup", mark: "Asterisk" };
 
 export interface DesignActions {
   newPoster: () => void;

@@ -14,6 +14,8 @@ export function ElementInspector({ el, palette, width, set }: { el: Element; pal
           <NumberField label="Size" value={el.size} min={40} max={W * 0.4} onChange={(size) => set({ size })} />
           <SwitchField label="Box" value={el.box} onChange={(box) => set({ box })} />
           <SwitchField label="Vertical" value={el.vertical} onChange={(vertical) => set({ vertical })} />
+          <SwitchField label="Outline only" value={!!el.outline} onChange={(outline) => set({ outline })} />
+          <SwatchField label={el.outline ? "Outline colour" : "Colour"} palette={palette} value={[el.fill ?? "ink"]} onChange={([fill]) => set({ fill })} />
         </>
       );
     case "lockup":
@@ -47,15 +49,6 @@ export function ElementInspector({ el, palette, width, set }: { el: Element; pal
           <SwatchField multi label="Colours" palette={palette} value={el.fills} onChange={(fills) => set({ fills })} />
         </>
       );
-    case "arc":
-      return (
-        <>
-          <NumberField label="Radius" value={el.r} min={W * 0.03} max={W * 0.6} onChange={(r) => set({ r })} />
-          <NumberField label="Band" value={el.band} min={W * 0.01} max={W * 0.12} onChange={(band) => set({ band })} />
-          <NumberField label="Sweep" value={el.end - el.start} min={0.2} max={Math.PI * 2} step={0.01} onChange={(v) => set({ end: el.start + v })} />
-          <SwatchField multi label="Bands" palette={palette} value={el.fills} onChange={(fills) => set({ fills })} />
-        </>
-      );
     case "bands":
       return (
         <>
@@ -75,6 +68,7 @@ export function ElementInspector({ el, palette, width, set }: { el: Element; pal
       return (
         <>
           <NumberField label="Size" value={el.size} min={20} max={W * 0.3} onChange={(size) => set({ size })} />
+          <NumberField label="Roundness" value={el.round ?? 1} min={0} max={1} step={0.01} onChange={(round) => set({ round })} />
           <SwitchField label="Box" value={el.box} onChange={(box) => set({ box })} />
           <SwatchField label="Colour" palette={palette} value={[el.fill]} onChange={([fill]) => set({ fill })} />
         </>

@@ -1,5 +1,5 @@
 import { uid } from "./random";
-import type { Arc, Bands, Flower, Headline, Lockup, Mark, Spiral, Swatch } from "./types";
+import type { Bands, Flower, Headline, Lockup, Mark, Spiral, Swatch } from "./types";
 
 export const flower = (cx: number, cy: number, r: number, fills: Swatch[], o: Partial<Flower> = {}): Flower => ({
   id: uid("f"), kind: "flower", cx, cy, r, rot: 0, petals: 8, style: "petal", fills, disc: "cream", dots: "cream", ticks: true, ...o,
@@ -7,10 +7,6 @@ export const flower = (cx: number, cy: number, r: number, fills: Swatch[], o: Pa
 
 export const spiral = (cx: number, cy: number, r: number, fills: Swatch[], o: Partial<Spiral> = {}): Spiral => ({
   id: uid("s"), kind: "spiral", cx, cy, r, rot: 0, rings: 4, perRing: 8, fills, ...o,
-});
-
-export const arc = (cx: number, cy: number, r: number, band: number, fills: Swatch[], start: number, end: number): Arc => ({
-  id: uid("a"), kind: "arc", cx, cy, r, band, fills, start, end,
 });
 
 export const bands = (x: number, y: number, w: number, h: number, band: number, fills: Swatch[]): Bands => ({
@@ -26,7 +22,7 @@ export const lockup = (x: number, y: number, size: number): Lockup => ({
 });
 
 export const mark = (cx: number, cy: number, size: number, fill: Swatch = "ink"): Mark => ({
-  id: uid("m"), kind: "mark", cx, cy, size, fill, box: true,
+  id: uid("m"), kind: "mark", cx, cy, size, fill, box: true, round: 1,
 });
 
 /** Ink box of a headline before layout, for fitting. Injected so generation stays pure and testable. */

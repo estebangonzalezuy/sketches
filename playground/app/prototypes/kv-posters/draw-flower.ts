@@ -1,4 +1,4 @@
-import { fillOf, type Pen } from "./draw-shapes";
+import { fillOf, fillStroke, motifFill, CUT, type Pen } from "./draw-shapes";
 import type { Flower } from "./types";
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -7,11 +7,7 @@ const out = (v: number) => 1 - (1 - clamp01(v)) ** 3;
 function shape(ctx: CanvasRenderingContext2D, pen: Pen, fill: string, draw: () => void, lw = pen.lw) {
   ctx.beginPath();
   draw();
-  ctx.fillStyle = fill;
-  ctx.fill();
-  ctx.strokeStyle = pen.pal.ink;
-  ctx.lineWidth = lw;
-  ctx.stroke();
+  fillStroke(ctx, pen, fill, lw);
 }
 
 /** Seven circles: one in the middle, six around, popping in after `from`. */
@@ -41,7 +37,8 @@ function ticks(ctx: CanvasRenderingContext2D, pen: Pen, f: Flower, r: number, k:
 
 /** Scalloped rosette rings (the line-art reference). */
 function scallops(ctx: CanvasRenderingContext2D, pen: Pen, f: Flower, R: number, p: number) {
-  for (const [ring, k] of [[1, out(p * 1.5)], [0.84, out(p * 1.5 - 0.2)]] as const) {
+  const rings = pen.cut ? ([[1, out(p * 1.5)]] as const) : ([[1, out(p * 1.5)], [0.84, out(p * 1.5 - 0.2)]] as const);
+  for (const [ring, k] of rings) {
     if (k <= 0) continue;
     const rr = R * ring * k;
     const n = f.petals;
@@ -58,11 +55,14 @@ function scallops(ctx: CanvasRenderingContext2D, pen: Pen, f: Flower, R: number,
     ctx.strokeStyle = pen.pal.ink;
     ctx.lineWidth = pen.lw * 2;
     ctx.stroke();
-    ctx.fillStyle = fillOf(pen, f.fills[0] ?? "cream");
+    const fill = motifFill(pen, f.fills[0] ?? "cream");
+    if (fill === CUT) ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = fill === CUT ? "#000" : fill;
     ctx.fill();
     ctx.beginPath();
     ctx.arc(0, 0, rr - b * 0.9, 0, Math.PI * 2);
     ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
   }
 }
 
@@ -80,13 +80,13 @@ export function drawFlower(ctx: CanvasRenderingContext2D, f: Flower, pen: Pen, p
       if (k <= 0) continue;
       ctx.save();
       ctx.rotate((i * Math.PI * 2) / n);
-      shape(ctx, pen, fillOf(pen, f.fills[i % f.fills.length]), () => ctx.ellipse(0, -(r - pr) * k, pr * 1.05 * k, pr * 1.12 * k, 0, 0, Math.PI * 2));
+      shape(ctx, pen, motifFill(pen, f.fills[i % f.fills.length]), () => ctx.ellipse(0, -(r - pr) * k, pr * 1.05 * k, pr * 1.12 * k, 0, 0, Math.PI * 2));
       ctx.restore();
     }
   }
   ticks(ctx, pen, f, r, out(p * 2 - 0.9));
   const disc = out(p * 2.2 - 0.4);
-  if (disc > 0) shape(ctx, pen, fillOf(pen, f.disc), () => ctx.arc(0, 0, r * 0.5 * disc, 0, Math.PI * 2));
+  if (disc > 0) shape(ctx, pen, motifFill(pen, f.disc), () => ctx.arc(0, 0, r * 0.5 * disc, 0, Math.PI * 2));
   dots(ctx, pen, f, r, p, 0.45);
   ctx.restore();
 }

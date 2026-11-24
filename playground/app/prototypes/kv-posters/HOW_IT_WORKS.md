@@ -2,7 +2,7 @@
 
 ## What It Does
 
-Generates Motion, Now posters in the style of the flower/rosette references (cream paper, construction grid, crop marks, pastel mosaics, outlined flowers and spirals, heavy condensed type), lets you edit every element, and animates the result into an MP4.
+Generates Motion, Now posters in the style of the flower/rosette references (cream paper, construction grid, crop marks, painted colour squares, outlined rosettes and spirals, KV-treated type), lets you edit every element, and animates the result into an MP4.
 
 ## Architecture
 
@@ -26,10 +26,11 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
 
 ## Frontend
 
-- **Layouts** (the five references): `stack` (stacked headline top-right, spiral over nested frames), `cascade` (three flowers over a mosaic and a rainbow arc), `overlap` (one-line headline, two overlapping flowers), `vertical` (headline down the left edge, flower in rings), `line` (line art: scalloped rosette, outlined type). `auto` picks one per seed.
+- **Layouts**: `stack` (stacked headline top-right, spiral), `cascade` (three flowers), `overlap` (one-line headline, two flowers), `vertical` (headline down the left edge, one big flower), `line` (line art: scalloped rosette, outlined type). `auto` picks one per seed.
+- **Colour** (settings): `squares` (default) paints big flat colour fields behind and draws the rosettes and spirals as outlines with see-through interiors (each motif is drawn on its own layer with `destination-out` fills, then composited), headline and asterisk unboxed; `fills` colours the motifs themselves over a pastel mosaic.
 - **New poster** rolls the seed. Changing any generator control (layout, seed, format, blocks) starts from that freshly generated poster; edits are remembered per settings in `playground:kv-posters:poster`.
-- **Design**: tap selects the front-most element (backgrounds lose to anything on top), drag moves it, the inspector edits text, size, petals, rotation, colours (multi-swatch for petal and band sets), box / vertical / scallop / ticks. Add: flower, scalloped flower, spiral, arc, block, asterisk, text. Forward / backward / duplicate / delete. ⌘Z / ⇧⌘Z undo and redo (a slider drag is one step), Delete removes, Esc deselects.
-- **Animate**: styles `build` (everything builds in, then holds), `loop` (finished poster, motifs spin), `build + loop`, `in + out` (builds in and back out, so it loops). Kinds start in order (blocks → frames → arcs → spirals/flowers → headline → lockup → asterisk), staggered top to bottom. Spin advances by whole rotational-symmetry periods, so loops are seamless. Scrub with the time slider; Space plays and pauses.
+- **Design**: headline options include **Outline only** and a colour; the asterisk has **Roundness** (sharp to round arm ends). Tap selects the front-most element (backgrounds lose to anything on top), drag moves it, the inspector edits text, size, petals, rotation, colours (multi-swatch for petal and band sets), box / vertical / scallop / ticks. Add: flower, scalloped flower, spiral, block, asterisk, text. Forward / backward / duplicate / delete. ⌘Z / ⇧⌘Z undo and redo (a slider drag is one step), Delete removes, Esc deselects.
+- **Animate**: styles `build` (everything builds in, then holds), `loop` (finished poster, motifs spin), `build + loop`, `in + out` (builds in and back out, so it loops). Kinds start in order (blocks → frames → spirals/flowers → headline → lockup → asterisk), staggered top to bottom. Spin advances by whole rotational-symmetry periods, so loops are seamless. Scrub with the time slider; Space plays and pauses.
 - **Paper texture**: a checkbox in the settings turns the paper grain on or off (preview, PNG and MP4 alike); Grain sets its strength.
 - **Export**: PNG at the format's size; MP4 H.264 (VP9 fallback) at the chosen frame rate.
 - **Responsive**: the poster sits on top, capped at `max-w-md`; panels below; settings in the side panel (desktop) or bottom sheet (mobile). Every button is a 44px target.

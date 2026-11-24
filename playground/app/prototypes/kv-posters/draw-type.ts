@@ -47,16 +47,20 @@ export function drawHeadline(ctx: CanvasRenderingContext2D, h: Headline, pen: Pe
   // the reveal moves the whole context so the inked raster stays cached at a fixed position
   ctx.translate(0, (1 - k) * b.h);
   const layer = kvLayer(h, Math.round(pad(h.size) - ink.x), Math.round(pad(h.size) - ink.y));
-  if (pen.line) {
+  const color = pen.pal[h.fill ?? "ink"];
+  if (pen.line || h.outline) {
     ctx.beginPath();
     tracePath(ctx, typeGeometry(layer).contours, layer.x, layer.y);
-    ctx.fillStyle = pen.pal.paper;
-    ctx.fill("nonzero");
-    ctx.strokeStyle = pen.pal.ink;
-    ctx.lineWidth = pen.lw;
+    if (pen.line) {
+      ctx.fillStyle = pen.pal.paper;
+      ctx.fill("nonzero");
+    }
+    ctx.strokeStyle = pen.line ? pen.pal.ink : color;
+    ctx.lineWidth = pen.lw * 1.1;
+    ctx.lineJoin = "round";
     ctx.stroke();
   } else {
-    drawKvHeadline(ctx, layer, { scale: pen.scale, compWidth: 1080, color: () => pen.pal.ink });
+    drawKvHeadline(ctx, layer, { scale: pen.scale, compWidth: 1080, color: () => color });
   }
   ctx.restore();
 }

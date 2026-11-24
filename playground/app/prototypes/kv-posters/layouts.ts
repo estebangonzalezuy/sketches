@@ -1,4 +1,4 @@
-import { arc, bands, fitSize, flower, headline, spiral, type Measure } from "./elements";
+import { bands, fitSize, flower, headline, spiral, type Measure } from "./elements";
 import { mosaic, type Box } from "./mosaic";
 import type { Rng } from "./random";
 import type { Element, Swatch, Template } from "./types";
@@ -11,7 +11,6 @@ export interface Frame extends Box {
 
 type Layout = (f: Frame, r: Rng, density: number, measure: Measure) => Element[];
 
-const PI = Math.PI;
 const trio = (r: Rng): Swatch[][] => r.pick([[["blue"], ["lilac"], ["mint"]], [["pink"], ["blue"], ["yellow"]], [["mint"], ["pink"], ["lilac"]]]) as Swatch[][];
 
 const head = (f: Frame, m: Measure, text: string, x: number, y: number, w: number, h: number, o = {}) =>
@@ -29,13 +28,12 @@ export const LAYOUTS: Record<Template, Layout> = {
       head(f, m, "Motion,\nNow", W - mm - W * 0.4, f.y + f.h * 0.02, W * 0.38, H * 0.22),
     ];
   },
-  // two-line headline top-left, three flowers cascading over a mosaic and a rainbow arc
+  // two-line headline top-left, three flowers cascading over a mosaic
   cascade: (f, r, d, m) => {
     const { W, H } = f;
     const [a, b, c] = trio(r);
     return [
       ...mosaic(r, { x: f.x, y: f.y + f.h * 0.16, w: f.w, h: f.h * 0.66 }, 6, 8, d),
-      arc(W * 0.6, H * 0.52, W * 0.18, W * 0.05, ["pink", "orange", "cream"], PI, 2 * PI),
       flower(W * 0.28, H * 0.4, W * 0.19, a, { petals: 10 }),
       flower(W * 0.5, H * 0.54, W * 0.19, b, { petals: 10 }),
       flower(W * 0.71, H * 0.68, W * 0.19, c, { petals: 10 }),
@@ -53,14 +51,13 @@ export const LAYOUTS: Record<Template, Layout> = {
       head(f, m, "Motion, Now", f.x + W * 0.015, f.y + f.h * 0.02, f.w - W * 0.03, H * 0.13, { box: false }),
     ];
   },
-  // vertical headline down the left edge, one flower in concentric rings
+  // vertical headline down the left edge, one big flower
   vertical: (f, r, d, m) => {
     const { W, H } = f;
     const col = W * 0.2;
     return [
       ...mosaic(r, { x: f.x + col, y: f.y, w: f.w - col, h: f.h * 0.85 }, 5, 8, d),
-      arc(W * 0.6, H * 0.5, W * 0.26, W * 0.045, ["blue", "cream", "yellow", "cream", "blue"], -PI / 2, 1.5 * PI),
-      flower(W * 0.6, H * 0.5, W * 0.25, ["lilac", "mint"], { petals: 8, disc: "yellow" }),
+      flower(W * 0.6, H * 0.5, W * 0.32, ["lilac", "mint"], { petals: 8, disc: "yellow" }),
       headline(f.x + W * 0.012, f.y + f.h * 0.015, fitSize(m, "Motion, Now", col - W * 0.02, f.h * 0.8, true), "Motion, Now", { vertical: true, box: false }),
     ];
   },

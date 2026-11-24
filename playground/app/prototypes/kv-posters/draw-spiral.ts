@@ -1,4 +1,4 @@
-import { fillOf, type Pen } from "./draw-shapes";
+import { fillOf, fillStroke, motifFill, type Pen } from "./draw-shapes";
 import type { Spiral } from "./types";
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -21,11 +21,7 @@ export function drawSpiral(ctx: CanvasRenderingContext2D, s: Spiral, pen: Pen, p
       const y = Math.sin(a) * (rr - cr);
       ctx.beginPath();
       ctx.arc(x, y, cr, 0, Math.PI * 2);
-      ctx.fillStyle = fillOf(pen, s.fills[(j + k) % s.fills.length]);
-      ctx.fill();
-      ctx.strokeStyle = pen.pal.ink;
-      ctx.lineWidth = pen.lw;
-      ctx.stroke();
+      fillStroke(ctx, pen, motifFill(pen, s.fills[(j + k) % s.fills.length]));
       if (k === s.rings - 1) {
         ctx.save();
         ctx.translate(x, y);
@@ -44,10 +40,7 @@ export function drawSpiral(ctx: CanvasRenderingContext2D, s: Spiral, pen: Pen, p
   if (c > 0) {
     ctx.beginPath();
     ctx.arc(0, 0, s.r * 0.2 * c, 0, Math.PI * 2);
-    ctx.fillStyle = fillOf(pen, "cream");
-    ctx.fill();
-    ctx.lineWidth = pen.lw;
-    ctx.stroke();
+    fillStroke(ctx, pen, motifFill(pen, "cream"));
   }
   ctx.restore();
 }

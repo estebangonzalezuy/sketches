@@ -4,6 +4,7 @@ export type Swatch = "paper" | "ink" | "blue" | "pink" | "lilac" | "mint" | "gre
 export type Palette = Record<Swatch, string>;
 
 export type Template = "stack" | "cascade" | "overlap" | "vertical" | "line";
+export type Paint = "squares" | "fills";
 export type FormatId = "3x4" | "4x5" | "9x16" | "1x1";
 
 interface Base {
@@ -28,18 +29,6 @@ export interface Bands extends Base {
   h: number;
   fills: Swatch[];
   band: number;
-}
-
-/** Concentric ring bands, inner radius r, between two angles (radians). */
-export interface Arc extends Base {
-  kind: "arc";
-  cx: number;
-  cy: number;
-  r: number;
-  band: number;
-  fills: Swatch[];
-  start: number;
-  end: number;
 }
 
 export interface Flower extends Base {
@@ -77,6 +66,10 @@ export interface Headline extends Base {
   text: string;
   vertical: boolean;
   box: boolean;
+  /** outlined letters, no fill */
+  outline?: boolean;
+  /** letter colour (default ink) */
+  fill?: Swatch;
 }
 
 export interface Lockup extends Base {
@@ -95,9 +88,11 @@ export interface Mark extends Base {
   size: number;
   fill: Swatch;
   box: boolean;
+  /** arm ends: 0 = sharp, 1 = fully round */
+  round: number;
 }
 
-export type Element = Block | Bands | Arc | Flower | Spiral | Headline | Lockup | Mark;
+export type Element = Block | Bands | Flower | Spiral | Headline | Lockup | Mark;
 export type Kind = Element["kind"];
 
 export interface Poster {
@@ -107,6 +102,8 @@ export interface Poster {
   height: number;
   /** outline-only drawing (the line-art reference) */
   line: boolean;
+  /** "squares": motifs are outlines and the colour is painted squares behind them; "fills": motifs are coloured */
+  paint: Paint;
   /** construction grid, as fractions of the inner frame */
   grid: { xs: number[]; ys: number[] };
   elements: Element[];
