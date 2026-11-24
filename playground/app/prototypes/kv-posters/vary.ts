@@ -12,7 +12,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 export function vary(els: Element[], r: Rng, f: Frame, m: Measure): Element[] {
   return els.map((e) => {
     if (e.kind === "flower" || e.kind === "spiral") {
-      const rad = clamp(e.r * r.range(0.78, 1.3), f.W * 0.12, f.W * 0.5);
+      const rad = clamp(e.r * r.range(0.78, 1.3), f.U * 0.12, f.U * 0.45);
       const base = {
         ...e,
         r: rad,

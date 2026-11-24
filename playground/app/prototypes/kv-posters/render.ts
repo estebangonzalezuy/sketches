@@ -1,6 +1,6 @@
 import type { AnimFrame } from "./animate";
 import { drawFlower } from "./draw-flower";
-import { drawFrame, drawGrid, drawPaper } from "./draw-frame";
+import { drawFrame, drawGrain, drawGrid, drawPaper } from "./draw-frame";
 import { drawBands, drawBlock, drawMark, type Pen } from "./draw-shapes";
 import { drawSpiral } from "./draw-spiral";
 import { drawHeadline, drawLockup } from "./draw-type";
@@ -19,7 +19,7 @@ export function render(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, o
   ctx.save();
   ctx.setTransform(o.scale, 0, 0, o.scale, 0, 0);
   const pen: Pen = { pal, lw: Math.max(1.5, p.width * 0.0027), line: p.line, scale: o.scale, cut: p.paint === "squares" };
-  drawPaper(ctx, p, pal, o.grain);
+  drawPaper(ctx, p, pal);
   const st = (e: Element) => o.anim?.els.get(e.id) ?? { p: 1, spin: 0 };
   for (const e of p.elements) if (BACK.has(e.kind)) draw(ctx, e, pen, st(e).p, st(e).spin);
   drawGrid(ctx, p, pal, o.anim?.frame ?? 1);
@@ -29,6 +29,7 @@ export function render(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, o
     if (pen.cut && (e.kind === "flower" || e.kind === "spiral")) onLayer(ctx, (l) => draw(l, e, pen, st(e).p, st(e).spin));
     else draw(ctx, e, pen, st(e).p, st(e).spin);
   }
+  drawGrain(ctx, o.grain);
   ctx.restore();
 }
 

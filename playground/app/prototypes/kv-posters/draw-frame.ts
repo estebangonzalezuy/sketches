@@ -5,6 +5,7 @@ import type { Palette, Poster } from "./types";
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 let tile: HTMLCanvasElement | null = null;
+/** Seeded fibre + speckle noise, 256 px, mid-grey centred. */
 function grainTile() {
   if (tile) return tile;
   tile = document.createElement("canvas");
@@ -13,7 +14,8 @@ function grainTile() {
   const img = g.createImageData(256, 256);
   const r = rng(11);
   for (let i = 0; i < img.data.length; i += 4) {
-    const v = 110 + r() * 36;
+    const speck = r() < 0.015 ? (r() < 0.5 ? -70 : 60) : 0;
+    const v = 128 + (r() - 0.5) * 90 + speck;
     img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
     img.data[i + 3] = 255;
   }
@@ -21,15 +23,23 @@ function grainTile() {
   return tile;
 }
 
-export function drawPaper(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, grain: number) {
+export function drawPaper(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette) {
   ctx.fillStyle = pal.paper;
   ctx.fillRect(0, 0, p.width, p.height);
+}
+
+/**
+ * Printed-paper grain over the whole poster (paper, colour squares and ink alike). The tile is laid
+ * in device pixels, so the grain reads the same in the small preview, the PNG and the MP4.
+ */
+export function drawGrain(ctx: CanvasRenderingContext2D, grain: number) {
   if (grain <= 0) return;
   ctx.save();
-  ctx.globalAlpha = grain * 0.35;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = Math.min(1, grain * 0.55);
   ctx.globalCompositeOperation = "overlay";
   ctx.fillStyle = ctx.createPattern(grainTile(), "repeat")!;
-  ctx.fillRect(0, 0, p.width, p.height);
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.restore();
 }
 

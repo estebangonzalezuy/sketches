@@ -370,3 +370,7 @@ Add to this list whenever something breaks and gets fixed. Newest last.
 - Assets used by more than one prototype (fonts of `lib/kv`, `lib/studio`, `lib/motion-builder`) go in
   `public/shared/`, which the gate always lets through. Under `public/prototype-assets/<slug>/` a
   public prototype can only read its own slug, so a shared file there breaks once it's public.
+- A canvas that resizes only when its width changes keeps the old height after an aspect-ratio change
+  (format switch) and draws squashed. Compare and set both `width` and `height`.
+- Noise or grain drawn as a pattern in scaled poster units gets averaged away in a small preview. Lay
+  texture tiles in device pixels (`setTransform(1, 0, 0, 1, 0, 0)`) so it reads at every size.

@@ -23,7 +23,7 @@ export function resolveTemplate(o: GenOptions): Template {
 
 export function frameOf(width: number, height: number): Frame {
   const m = Math.round(width * 0.045);
-  return { W: width, H: height, m, x: m, y: m, w: width - 2 * m, h: height - 2 * m };
+  return { W: width, H: height, m, x: m, y: m, w: width - 2 * m, h: height - 2 * m, U: Math.min(width, height * 0.75) };
 }
 
 /** Seed + options → a full poster. Pure: same input, same poster. */
@@ -36,8 +36,8 @@ export function generate(o: GenOptions, measure: Measure = approxMeasure): Poste
   if (t !== "line") body = vary(body, r, f, measure);
   const squares = o.paint === "squares" && t !== "line";
   if (squares) body = [...paintSquares(r, f, width, o.density), ...body.filter((e) => e.kind !== "block" && e.kind !== "bands").map(outlined)];
-  const lk = Math.round(width * r.range(0.05, 0.066));
-  const ms = Math.round(width * r.range(0.06, 0.09));
+  const lk = Math.round(f.U * r.range(0.05, 0.066));
+  const ms = Math.round(f.U * r.range(0.06, 0.09));
   const swap = r.chance(0.35);
   const lockupEl = lockup(f.x + width * 0.015, f.y + f.h - lk * 2.6, lk);
   const markEl = { ...mark(f.x + f.w - ms * 1.15, f.y + f.h - ms * 1.15, ms, squares || t === "cascade" ? "brown" : "ink"), box: !squares, round: r.chance(0.7) ? 1 : r.range(0, 0.6), ...(squares ? { size: ms * 1.6, cx: f.x + f.w - ms * 1.7, cy: f.y + f.h - ms * 1.7 } : {}) };

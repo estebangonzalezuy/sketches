@@ -30,9 +30,11 @@ export function PosterCanvas({
     const cv = ref.current!;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const w = Math.max(1, Math.round(cv.clientWidth * dpr));
-    if (cv.width !== w) {
+    const h = Math.max(1, Math.round((w * poster.height) / poster.width));
+    // both sides: a format change keeps the width but not the height
+    if (cv.width !== w || cv.height !== h) {
       cv.width = w;
-      cv.height = Math.round((w * poster.height) / poster.width);
+      cv.height = h;
     }
     render(cv.getContext("2d")!, poster, palette, { scale: cv.width / poster.width, grain, anim });
   });
