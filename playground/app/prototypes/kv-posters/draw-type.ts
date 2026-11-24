@@ -1,64 +1,32 @@
-import { getFont } from "@/lib/kv/fonts";
+import { DEFAULT_TYPE, type HeadlineLayer } from "@/lib/kv/model";
+import { drawHeadline as drawKvHeadline, tracePath, typeGeometry } from "@/lib/kv/render/type";
 import { fillOf, type Pen } from "./draw-shapes";
 import type { Headline, Lockup } from "./types";
 
-interface Set {
-  path: Path2D;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-const cache = new Map<string, Set>();
-const LEADING = 0.86;
-
-/** Headline outlines from Barlow Condensed Black (opentype.js), origin at the first baseline. */
-export function headlineSet(text: string, size: number): Set {
-  const key = `${text}|${size}`;
-  const hit = cache.get(key);
-  if (hit) return hit;
-  const font = getFont("barlow");
-  const em = size / font.unitsPerEm;
-  const path = new Path2D();
-  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-  text.split("\n").forEach((line, li) => {
-    let pen = 0;
-    let prev: ReturnType<typeof font.charToGlyph> | null = null;
-    for (const ch of line) {
-      const g = font.charToGlyph(ch);
-      if (prev) pen += font.getKerningValue(prev, g) * em;
-      for (const c of g.getPath(pen, li * size * LEADING, size).commands) {
-        if (c.type === "Z") path.closePath();
-        else {
-          if (c.type === "M") path.moveTo(c.x, c.y);
-          else if (c.type === "L") path.lineTo(c.x, c.y);
-          else if (c.type === "Q") path.quadraticCurveTo(c.x1, c.y1, c.x, c.y);
-          else if (c.type === "C") path.bezierCurveTo(c.x1, c.y1, c.x2, c.y2, c.x, c.y);
-          x0 = Math.min(x0, c.x); x1 = Math.max(x1, c.x); y0 = Math.min(y0, c.y); y1 = Math.max(y1, c.y);
-        }
-      }
-      pen += (g.advanceWidth ?? 0) * em - size * 0.01;
-      prev = g;
-    }
-  });
-  const set = { path, x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
-  cache.set(key, set);
-  return set;
+/**
+ * Headlines use the KV type treatment from lib/kv (the same as the Studio's Letters cell):
+ * Archivo Narrow Bold outlines, octagonal facets, keyhole notches in tall counters, round dots
+ * and the printed-ink edge.
+ */
+function kvLayer(h: Pick<Headline, "id" | "text" | "size">, x = 0, y = 0): HeadlineLayer {
+  return { ...DEFAULT_TYPE, id: h.id, type: "headline", name: "", visible: true, locked: false, text: h.text, x, y, size: h.size, font: "narrow", tracking: -0.01, leading: 0.88, fill: "ink" };
 }
 
 const pad = (size: number) => size * 0.08;
 
+/** Ink box of the headline relative to its anchor (first baseline). */
+const inkBox = (h: Pick<Headline, "id" | "text" | "size">) => typeGeometry(kvLayer(h)).bbox;
+
 /** Box size of a headline (horizontal), padding included. */
 export function headlineBox(text: string, size: number) {
-  const s = headlineSet(text, size);
-  return { w: s.w + 2 * pad(size), h: s.h + 2 * pad(size) };
+  const b = inkBox({ id: "m", text, size });
+  return { w: b.w + 2 * pad(size), h: b.h + 2 * pad(size) };
 }
 
 export function drawHeadline(ctx: CanvasRenderingContext2D, h: Headline, pen: Pen, p: number) {
   if (p <= 0) return;
-  const s = headlineSet(h.text, h.size);
-  const b = headlineBox(h.text, h.size);
+  const ink = inkBox(h);
+  const b = { w: ink.w + 2 * pad(h.size), h: ink.h + 2 * pad(h.size) };
   ctx.save();
   if (h.vertical) {
     ctx.translate(h.x + b.h, h.y);
@@ -76,16 +44,19 @@ export function drawHeadline(ctx: CanvasRenderingContext2D, h: Headline, pen: Pe
   ctx.rect(0, 0, b.w, b.h);
   ctx.clip();
   const k = 1 - (1 - Math.min(1, Math.max(0, p * 1.4 - 0.3))) ** 3;
-  ctx.translate(pad(h.size) - s.x, pad(h.size) - s.y + (1 - k) * b.h);
+  // the reveal moves the whole context so the inked raster stays cached at a fixed position
+  ctx.translate(0, (1 - k) * b.h);
+  const layer = kvLayer(h, Math.round(pad(h.size) - ink.x), Math.round(pad(h.size) - ink.y));
   if (pen.line) {
+    ctx.beginPath();
+    tracePath(ctx, typeGeometry(layer).contours, layer.x, layer.y);
     ctx.fillStyle = pen.pal.paper;
-    ctx.fill(s.path);
+    ctx.fill("nonzero");
     ctx.strokeStyle = pen.pal.ink;
     ctx.lineWidth = pen.lw;
-    ctx.stroke(s.path);
+    ctx.stroke();
   } else {
-    ctx.fillStyle = pen.pal.ink;
-    ctx.fill(s.path);
+    drawKvHeadline(ctx, layer, { scale: pen.scale, compWidth: 1080, color: () => pen.pal.ink });
   }
   ctx.restore();
 }

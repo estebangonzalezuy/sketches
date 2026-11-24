@@ -18,7 +18,7 @@ const BACK = new Set(["block", "bands"]);
 export function render(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, o: RenderOpts) {
   ctx.save();
   ctx.setTransform(o.scale, 0, 0, o.scale, 0, 0);
-  const pen: Pen = { pal, lw: Math.max(1.5, p.width * 0.0027), line: p.line };
+  const pen: Pen = { pal, lw: Math.max(1.5, p.width * 0.0027), line: p.line, scale: o.scale };
   drawPaper(ctx, p, pal, o.grain);
   const st = (e: Element) => o.anim?.els.get(e.id) ?? { p: 1, spin: 0 };
   for (const e of p.elements) if (BACK.has(e.kind)) draw(ctx, e, pen, st(e).p, st(e).spin);

@@ -38,7 +38,7 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
 
 ## Key Dependencies
 
-- `lib/kv/fonts.ts`: loads the shared KV fonts; headlines are Barlow Condensed Black outlines via opentype.js, the lockup is Inter SemiBold.
+- `lib/kv/fonts.ts` and `lib/kv/render/type.ts`: headlines are Archivo Narrow Bold with the KV type treatment (facets, keyhole notches, round dots, printed-ink edge), the same pipeline as the Studio's Letters cell; in line art they are outlined. The lockup is Inter SemiBold.
 - `mp4-muxer` + WebCodecs `VideoEncoder`.
 
 ## Component Tree

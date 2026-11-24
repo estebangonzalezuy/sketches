@@ -6,6 +6,8 @@ export interface Pen {
   lw: number;
   /** line-art mode: every fill is paper */
   line: boolean;
+  /** device px per poster px (for the inked headline raster) */
+  scale: number;
 }
 
 export const fillOf = (pen: Pen, s: keyof Palette) => (pen.line && s !== "ink" ? pen.pal.paper : pen.pal[s]);
