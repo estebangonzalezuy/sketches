@@ -17,6 +17,21 @@ const pad = (size: number) => size * 0.08;
 /** Ink box of the headline relative to its anchor (first baseline). */
 const inkBox = (h: Pick<Headline, "id" | "text" | "size">) => typeGeometry(kvLayer(h)).bbox;
 
+/** The headline's letter outlines in poster coordinates (same placement as drawHeadline). */
+export function headlineContours(h: Headline): [number, number][][] {
+  const ink = inkBox(h);
+  const bh = ink.h + 2 * pad(h.size);
+  const ox = pad(h.size) - ink.x;
+  const oy = pad(h.size) - ink.y;
+  return typeGeometry(kvLayer(h)).contours.map((ct) =>
+    ct.map(([x, y]) => {
+      const u = x + ox;
+      const v = y + oy;
+      return h.vertical ? [h.x + bh - v, h.y + u] : [h.x + u, h.y + v];
+    }),
+  );
+}
+
 /** Box size of a headline (horizontal), padding included. */
 export function headlineBox(text: string, size: number) {
   const b = inkBox({ id: "m", text, size });
@@ -38,7 +53,7 @@ export function drawHeadline(ctx: CanvasRenderingContext2D, h: Headline, pen: Pe
     ctx.lineWidth = pen.lw * 0.6;
     const w = b.w * Math.min(1, p * 2);
     ctx.fillRect(0, 0, w, b.h);
-    ctx.strokeRect(0, 0, w, b.h);
+    if (h.boxLine !== false) ctx.strokeRect(0, 0, w, b.h);
   }
   ctx.beginPath();
   ctx.rect(0, 0, b.w, b.h);
@@ -88,7 +103,7 @@ export function drawLockup(ctx: CanvasRenderingContext2D, l: Lockup, pen: Pen, p
     ctx.strokeStyle = pen.pal.ink;
     ctx.lineWidth = pen.lw * 0.6;
     ctx.fillRect(0, 0, b.w * Math.min(1, p * 2), b.h);
-    ctx.strokeRect(0, 0, b.w * Math.min(1, p * 2), b.h);
+    if (l.boxLine !== false) ctx.strokeRect(0, 0, b.w * Math.min(1, p * 2), b.h);
   }
   ctx.globalAlpha = Math.min(1, Math.max(0, p * 2 - 0.6));
   ctx.font = FONT(l.size);

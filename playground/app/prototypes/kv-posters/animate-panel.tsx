@@ -7,8 +7,12 @@ import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { CurveEditor } from "@/lib/studio/ui/curve-editor";
 import type { Ease } from "@/lib/studio/model/types";
+import { ClipEditor } from "./clip-editor";
+import { elementName } from "./data";
+import { Timeline } from "./timeline";
+import type { Clip, Poster } from "./types";
 
-export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExport, ease, setEase }: {
+export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExport, ease, setEase, poster, clips, selected, onSelect, onClip }: {
   t: number;
   duration: number;
   fps: number;
@@ -18,7 +22,14 @@ export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExpor
   onExport: (onProgress: (v: number) => void, signal: { cancel: boolean }) => Promise<void>;
   ease: Ease;
   setEase: (e: Ease) => void;
+  poster: Poster;
+  clips: Map<string, Clip>;
+  selected: string | null;
+  onSelect: (id: string | null) => void;
+  /** null clears the hand-set timing */
+  onClip: (id: string, c: Clip | null, group?: string) => void;
 }) {
+  const sel = poster.elements.find((e) => e.id === selected);
   const [job, setJob] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const signal = useRef({ cancel: false });
@@ -59,8 +70,30 @@ export function AnimatePanel({ t, duration, fps, playing, toggle, scrub, onExpor
         </Button>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
+      <Timeline
+        poster={poster}
+        clips={clips}
+        u={duration > 0 ? t / duration : 0}
+        duration={duration}
+        fps={fps}
+        selected={selected}
+        onSelect={onSelect}
+        onScrub={(u) => scrub(u * duration)}
+        onClip={(id, c) => onClip(id, c, `clip:${id}`)}
+      />
+      {sel && (
+        <ClipEditor
+          name={elementName(poster.elements, sel)}
+          clip={clips.get(sel.id)!}
+          duration={duration}
+          custom={!!sel.anim}
+          globalEase={ease}
+          onChange={(c, group) => onClip(sel.id, c, group)}
+          onReset={() => onClip(sel.id, null)}
+        />
+      )}
       <section className="grid gap-2 rounded-md border border-border p-3">
-        <h2 className="text-sm font-medium">Easing</h2>
+        <h2 className="text-sm font-medium">Easing (all elements)</h2>
         <CurveEditor value={ease} mixed={false} onChange={(e) => setEase(e)} />
       </section>
     </div>

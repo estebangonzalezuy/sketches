@@ -3,12 +3,26 @@
 export type Swatch = "paper" | "ink" | "blue" | "pink" | "lilac" | "mint" | "green" | "orange" | "yellow" | "brown" | "cream";
 export type Palette = Record<Swatch, string>;
 
-export type Template = "stack" | "cascade" | "overlap" | "vertical" | "line";
+export type Template = "stack" | "cascade" | "overlap" | "vertical" | "line" | "free";
 export type Paint = "squares" | "fills";
 export type FormatId = "3x4" | "4x5" | "9x16" | "1x1";
 
 interface Base {
   id: string;
+  /** hand-set timing on the Animate timeline; absent = the automatic choreography */
+  anim?: Clip;
+}
+
+/** How an element enters: its own KV build, or a generic move applied to the finished element. */
+export type Effect = "build" | "fade" | "rise" | "drop" | "slide" | "scale" | "spin" | "construct";
+
+/** When an element animates, as fractions of the length (0–1), and how. */
+export interface Clip {
+  start: number;
+  end: number;
+  effect: Effect;
+  /** own timing curve; absent = the global Easing */
+  ease?: import("@/lib/studio/model/types").Ease;
 }
 
 export interface Block extends Base {
@@ -66,6 +80,8 @@ export interface Headline extends Base {
   text: string;
   vertical: boolean;
   box: boolean;
+  /** outline around the box (default on) */
+  boxLine?: boolean;
   /** outlined letters, no fill */
   outline?: boolean;
   /** letter colour (default ink) */
@@ -79,6 +95,8 @@ export interface Lockup extends Base {
   size: number;
   text: string;
   box: boolean;
+  /** outline around the box (default on) */
+  boxLine?: boolean;
   /** outlined letters, no fill */
   outline?: boolean;
   /** text colour (default ink) */
@@ -92,6 +110,8 @@ export interface Mark extends Base {
   size: number;
   fill: Swatch;
   box: boolean;
+  /** outline around the box (default on) */
+  boxLine?: boolean;
   /** arm ends: 0 = sharp, 1 = fully round */
   round: number;
 }
@@ -113,7 +133,7 @@ export interface Poster {
   elements: Element[];
 }
 
-export type AnimStyle = "build" | "loop" | "build + loop" | "in + out";
+export type AnimStyle = "build" | "loop" | "build + loop" | "in + out" | "construct";
 
 /** Per-element animation state at one instant. */
 export interface ElState {
@@ -121,4 +141,6 @@ export interface ElState {
   p: number;
   /** continuous spin, radians */
   spin: number;
+  /** how p is applied (default: the element's own build) */
+  effect?: Effect;
 }

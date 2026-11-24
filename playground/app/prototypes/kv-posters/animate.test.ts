@@ -21,6 +21,16 @@ describe("animate", () => {
     expect(animate(poster, 6, { ...base, style: "build", ease: "hold" }).els.get(id)!.p).toBe(1);
   });
 
+  it("uses a hand-set clip and mirrors it out in in + out", () => {
+    const id = poster.elements[0].id;
+    const custom = { ...poster, elements: poster.elements.map((e, i) => (i === 0 ? { ...e, anim: { start: 0.5, end: 0.6, effect: "fade" as const } } : e)) };
+    const st = (t: number, style: "build" | "in + out") => animate(custom, t, { ...base, style, ease: "linear" }).els.get(id)!;
+    expect(st(2.9, "build").p).toBe(0);
+    expect(st(3.3, "build").p).toBeCloseTo(0.5);
+    expect(st(6, "build")).toMatchObject({ p: 1, effect: "fade" });
+    expect(st(6, "in + out").p).toBe(0);
+  });
+
   it("in + out returns to empty, so the loop closes", () => {
     expect(buildAt("in + out", 0)).toBe(0);
     expect(buildAt("in + out", 0.6)).toBe(1);
