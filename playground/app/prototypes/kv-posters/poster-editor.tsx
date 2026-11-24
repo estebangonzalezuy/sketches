@@ -26,6 +26,7 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
   const [tab, setTab] = useState("design");
   const [selected, setSelected] = useState<string | null>(null);
   const fps = Number(v.fps);
+  const grain = v.paper ? v.grain : 0;
   const settings = { style: v.style as AnimStyle, duration: v.duration, stagger: v.stagger, turns: v.turns };
   const reduced = useReducedMotion();
   const ph = usePlayhead(v.duration, fps, !reduced);
@@ -56,7 +57,7 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
     const cv = document.createElement("canvas");
     cv.width = poster.width;
     cv.height = poster.height;
-    render(cv.getContext("2d")!, poster, palette, { scale: 1, grain: v.grain });
+    render(cv.getContext("2d")!, poster, palette, { scale: 1, grain });
     cv.toBlob((b) => b && download(b, `motion-now-${v.seed}.png`), "image/png");
   };
 
@@ -66,7 +67,7 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
         <PosterCanvas
           poster={poster}
           palette={palette}
-          grain={v.grain}
+          grain={grain}
           anim={tab === "animate" ? animate(poster, ph.t, settings) : undefined}
           selected={selected}
           onSelect={setSelected}
@@ -98,7 +99,7 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
             {...ph}
             duration={v.duration}
             fps={fps}
-            onExport={async (onProgress, signal) => download(await exportMP4(poster, palette, v.grain, settings, fps, onProgress, signal), `motion-now-${v.seed}.mp4`)}
+            onExport={async (onProgress, signal) => download(await exportMP4(poster, palette, grain, settings, fps, onProgress, signal), `motion-now-${v.seed}.mp4`)}
           />
         </TabsContent>
       </Tabs>

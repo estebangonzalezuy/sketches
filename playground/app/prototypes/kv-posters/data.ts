@@ -34,6 +34,7 @@ export const controls = defineControls({
   format: { type: "select", label: "Format", options: ["3x4", "4x5", "9x16", "1x1"], default: "3x4", randomize: false },
   palette: { type: "select", label: "Palette", options: ["Pastel", "KV yellow", "Night"], default: "Pastel" },
   density: { type: "number", label: "Blocks", min: 0, max: 1, step: 0.05, default: 0.55 },
+  paper: { type: "boolean", label: "Paper texture", default: true },
   grain: { type: "number", label: "Grain", min: 0, max: 1, step: 0.05, default: 0.4 },
   style: { type: "select", label: "Animation", options: ["build", "loop", "build + loop", "in + out"], default: "build + loop" },
   duration: { type: "number", label: "Length (s)", min: 2, max: 20, step: 0.5, default: 6 },
