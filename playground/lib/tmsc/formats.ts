@@ -2,7 +2,6 @@
 export const FORMATS = {
   "4:5 · 1080×1350": { w: 1080, h: 1350 },
   "16:9 · 1920×1080": { w: 1920, h: 1080 },
-  "Share · 1200×630": { w: 1200, h: 630 },
 } as const;
 
 export type FormatName = keyof typeof FORMATS;

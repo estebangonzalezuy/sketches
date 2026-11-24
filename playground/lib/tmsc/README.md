@@ -1,6 +1,6 @@
 # lib/tmsc
 
-Shared brand layer for the six "tMSC: Motion, Now 2026" report tools
+Shared brand layer for the "tMSC: Motion, Now 2026" report tools
 (`app/prototypes/motion-now-*`). React parts live in `components/tmsc/`.
 
 | File | What |
@@ -12,7 +12,7 @@ Shared brand layer for the six "tMSC: Motion, Now 2026" report tools
 | `random.ts` | seeded PRNG, gaussian, smooth wobble noise |
 | `fonts.ts` | Archivo Narrow (self-hosted in `public/shared/fonts/tmsc`) for canvas |
 | `text.ts` | canvas word wrap and fit-to-lines |
-| `formats.ts` | export sizes (1080×1350, 1920×1080, 1200×630) |
+| `formats.ts` | export sizes (1080×1350, 1920×1080) |
 | `download.ts` | PNG rendering and downloads |
 | `video.ts` | frame-exact MP4 (WebCodecs + mp4-muxer) and live MediaRecorder takes |
 | `zip.ts` | stored-only zip writer for batch exports |
