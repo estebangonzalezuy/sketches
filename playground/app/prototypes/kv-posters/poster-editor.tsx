@@ -13,7 +13,7 @@ import { DesignPanel } from "./design-panel";
 import { exportMP4 } from "./export-mp4";
 import { PosterCanvas } from "./poster-canvas";
 import { render } from "./render";
-import { canRedo, canUndo, editPoster, redo, undo, usePoster } from "./store";
+import { canRedo, canUndo, editPoster, redo, setEase, undo, useEase, usePoster } from "./store";
 import type { AnimStyle, Element, FormatId, Paint, Poster } from "./types";
 import { usePlayhead } from "./use-playhead";
 import { useReducedMotion } from "./use-reduced-motion";
@@ -27,7 +27,8 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
   const [selected, setSelected] = useState<string | null>(null);
   const fps = Number(v.fps);
   const grain = v.paper ? v.grain : 0;
-  const settings = { style: v.style as AnimStyle, duration: v.duration, stagger: v.stagger, turns: v.turns };
+  const curve = useEase();
+  const settings = { style: v.style as AnimStyle, duration: v.duration, stagger: v.stagger, turns: v.turns, ease: curve };
   const reduced = useReducedMotion();
   const ph = usePlayhead(v.duration, fps, !reduced);
   const edit = (fn: (p: Poster) => Poster, group?: string) => editPoster(opts, poster, fn, group);
@@ -99,6 +100,8 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
             {...ph}
             duration={v.duration}
             fps={fps}
+            ease={curve}
+            setEase={setEase}
             onExport={async (onProgress, signal) => download(await exportMP4(poster, palette, grain, settings, fps, onProgress, signal), `motion-now-${v.seed}.mp4`)}
           />
         </TabsContent>

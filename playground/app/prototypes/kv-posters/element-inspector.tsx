@@ -24,6 +24,8 @@ export function ElementInspector({ el, palette, width, set }: { el: Element; pal
           <TextField label="Text" value={el.text} onChange={(text) => set({ text })} />
           <NumberField label="Size" value={el.size} min={20} max={W * 0.15} onChange={(size) => set({ size })} />
           <SwitchField label="Box" value={el.box} onChange={(box) => set({ box })} />
+          <SwitchField label="Outline only" value={!!el.outline} onChange={(outline) => set({ outline })} />
+          <SwatchField label={el.outline ? "Outline colour" : "Colour"} palette={palette} value={[el.fill ?? "ink"]} onChange={([fill]) => set({ fill })} />
         </>
       );
     case "flower":

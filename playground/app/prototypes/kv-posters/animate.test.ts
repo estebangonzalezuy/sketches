@@ -13,6 +13,14 @@ describe("animate", () => {
     expect([...z.els.values()].every((s) => s.p === 1 && s.spin === 0)).toBe(true);
   });
 
+  it("applies the timing curve to each build", () => {
+    const lin = animate(poster, 1.2, { ...base, style: "build", ease: "linear" });
+    const out = animate(poster, 1.2, { ...base, style: "build", ease: [0, 0, 0.2, 1] });
+    const id = poster.elements[0].id;
+    expect(out.els.get(id)!.p).toBeGreaterThan(lin.els.get(id)!.p);
+    expect(animate(poster, 6, { ...base, style: "build", ease: "hold" }).els.get(id)!.p).toBe(1);
+  });
+
   it("in + out returns to empty, so the loop closes", () => {
     expect(buildAt("in + out", 0)).toBe(0);
     expect(buildAt("in + out", 0.6)).toBe(1);

@@ -1,3 +1,5 @@
+import { ease as applyEase } from "@/lib/studio/model/ease";
+import type { Ease } from "@/lib/studio/model/types";
 import type { AnimStyle, Element, ElState, Kind, Poster } from "./types";
 
 export interface AnimSettings {
@@ -7,6 +9,14 @@ export interface AnimSettings {
   stagger: number;
   /** whole turns per loop of the spinning motifs (keeps the loop seamless) */
   turns: number;
+  /** timing curve of each element's build (spin stays linear so loops close) */
+  ease?: Ease;
+}
+
+/** Shape a 0 → 1 progress with the chosen curve; "hold" jumps at the end. */
+export function shape(e: Ease | undefined, u: number): number {
+  if (!e || u <= 0 || u >= 1) return Math.min(1, Math.max(0, u));
+  return e === "hold" ? 0 : applyEase(e, u);
 }
 
 export interface AnimFrame {
@@ -48,7 +58,7 @@ export function animate(p: Poster, t: number, s: AnimSettings): AnimFrame {
     const list = ranks.get(e.kind)!;
     const r = list.length > 1 ? list.indexOf(e) / (list.length - 1) : 0;
     const start = Math.min(1 - LEN, BASE[e.kind] + r * 0.28 * s.stagger);
-    els.set(e.id, { p: clamp01((b - start) / LEN), spin: spinning ? period(e) * s.turns * u : 0 });
+    els.set(e.id, { p: shape(s.ease, clamp01((b - start) / LEN)), spin: spinning ? period(e) * s.turns * u : 0 });
   }
   return { frame: clamp01(b / 0.3), els };
 }
