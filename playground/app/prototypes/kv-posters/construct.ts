@@ -10,12 +10,13 @@ const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
  * Brand-reveal construction for one element at progress k (0 → 1):
  *   0.00–0.20  a dashed bounding box with corner ticks and its size label
  *   0.05–0.70  the outlines draw on, anchor points and bezier handles riding along
- *   0.55–0.90  the finished element fills in
+ *   0.55–0.585 the finished element fills in, nearly instantly
  *   0.70–1.00  the technical marks fade away
  */
 export function drawConstruct(ctx: CanvasRenderingContext2D, e: Element, k: number, pen: Pen, drawFinished: () => void) {
   if (k <= 0) return;
-  const fill = clamp01((k - 0.55) / 0.35);
+  // the finished element arrives almost at once (a tenth of the old 35% fade)
+  const fill = clamp01((k - 0.55) / 0.035);
   if (fill > 0) {
     ctx.save();
     ctx.globalAlpha *= fill;
