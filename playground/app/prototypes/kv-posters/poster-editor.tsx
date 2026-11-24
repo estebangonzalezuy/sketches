@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ImageDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,7 +13,9 @@ import { DesignPanel } from "./design-panel";
 import { exportMP4 } from "./export-mp4";
 import { PosterCanvas } from "./poster-canvas";
 import { render } from "./render";
-import { canRedo, canUndo, editPoster, redo, setEase, undo, useEase, usePoster } from "./store";
+import { canRedo, canUndo, editPoster, redo, setEase, setQuestions, undo, useEase, usePoster, useQuestions } from "./store";
+import { assignQuestions } from "./questions";
+import { QuestionsEditor } from "./questions-editor";
 import type { AnimStyle, Clip, Element, FormatId, Paint, Poster } from "./types";
 import { usePlayhead } from "./use-playhead";
 import { useReducedMotion } from "./use-reduced-motion";
@@ -28,7 +30,10 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
   const fps = Number(v.fps);
   const grain = v.paper ? v.grain : 0;
   const curve = useEase();
-  const settings = { style: v.style as AnimStyle, duration: v.duration, stagger: v.stagger, turns: v.turns, ease: curve, notes: v.notes };
+  const questions = useQuestions();
+  const questionLines = useMemo(() => assignQuestions(poster, questions), [poster, questions]);
+  const notesMode = v.notes as "questions" | "specs" | "off";
+  const settings = { style: v.style as AnimStyle, duration: v.duration, stagger: v.stagger, turns: v.turns, ease: curve, notes: notesMode, questionLines };
   const reduced = useReducedMotion();
   const ph = usePlayhead(v.duration, fps, !reduced);
   const edit = (fn: (p: Poster) => Poster, group?: string) => editPoster(opts, poster, fn, group);
@@ -109,6 +114,7 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
             onClip={(id, c: Clip | null, group) => edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === id ? ({ ...e, anim: c ?? undefined } as Element) : e)) }), group)}
             onExport={async (onProgress, signal) => download(await exportMP4(poster, palette, grain, settings, fps, onProgress, signal), `motion-now-${v.seed}.mp4`)}
           />
+          {notesMode === "questions" && <div className="pt-4"><QuestionsEditor value={questions} onChange={setQuestions} /></div>}
         </TabsContent>
       </Tabs>
     </main>
