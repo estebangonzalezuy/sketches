@@ -57,7 +57,7 @@ export async function bakePages(size: { w: number; h: number }, setup: PageSetup
     else if (face.layout === "interview-left") {
       const img = imgs[order! - 1];
       const choice = setup.media[order!];
-      drawInterviewLeft(ctx, order!, img && choice ? { img, credit: choice.asset.credit, fill: setup.fill } : null);
+      drawInterviewLeft(ctx, order!, img && choice ? { img, credit: choice.asset.credit, fill: setup.fill, scale: setup.imageScale } : null);
     } else drawInterviewRight(ctx, order!);
     newsprint(ctx, size.w, size.h, size.w / PAGE_PX.w);
     out.set(face.id, canvas);

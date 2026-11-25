@@ -10,7 +10,7 @@ const M = 92;
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
 /** Left page: who, what, and one image from the post (credited), as picked in the panel. */
-export type LeftImage = { img: HTMLImageElement; credit: string; fill: boolean } | null;
+export type LeftImage = { img: HTMLImageElement; credit: string; fill: boolean; scale: number } | null;
 
 export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, image: LeftImage) {
   const it = interview(order);
@@ -42,7 +42,10 @@ export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, image: LeftIma
   if (image) {
     const top = roleBase + 90;
     const place = image.fill ? imageFill : imageFit;
-    const box = place(ctx, image.img, M, top, W - 2 * M, H - M - 90 - top);
+    // the size slider shrinks the image's box, keeping it on the bottom-left corner
+    const bw = (W - 2 * M) * image.scale;
+    const bh = (H - M - 90 - top) * image.scale;
+    const box = place(ctx, image.img, M, H - M - 90 - bh, bw, bh);
     font(ctx, 400, 38);
     right(ctx, image.credit, box.x + box.w, box.y + box.h + 52);
   }

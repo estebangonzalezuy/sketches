@@ -28,7 +28,7 @@ El panel de controles está a la derecha en desktop. En el teléfono se abre con
 - **Image:** cualquiera de las imágenes de su post, en el orden en que aparecen. La portada está marcada. Con **None** la página queda solo tipográfica.
 - **Frame:** para los GIFs, uno de 6 cuadros tomados a lo largo de la animación. Las imágenes fijas tienen un solo cuadro.
 
-Además, **Image: Fit / Fill** muestra la imagen entera o recortada al alto de la caja. Las elecciones se guardan en el browser. **Reset** vuelve a las portadas y **Randomize** arma una combinación al azar. El export usa siempre lo que esté elegido en ese momento.
+Además, **Image: Fit / Fill** muestra la imagen entera o recortada al alto de la caja, e **Image size %** (30–100) la achica hacia la esquina inferior izquierda; el crédito la sigue. Aplica a los cuatro spreads. Las elecciones se guardan en el browser. **Reset** vuelve a las portadas y **Randomize** arma una combinación al azar. El export usa siempre lo que esté elegido en ese momento.
 
 ## Tapa
 
@@ -38,7 +38,7 @@ En el panel, **Cover** elige el estilo:
 - **Full image:** la imagen a sangre, con el tipo encima.
 - **Image on color:** la imagen dentro de un fondo del color que elijas en **Cover color**.
 
-**Cover image** elige de dónde sale la imagen: la que subiste o la imagen elegida para alguno de los cuatro spreads. **Cover type** pone el tipo en negro o en blanco, según el fondo.
+**Cover image** elige de dónde sale la imagen: la que subiste o la imagen elegida para alguno de los cuatro spreads. **Cover image size %** (30–100) achica la imagen dentro de su espacio en Image on color. **Cover type** pone el tipo en negro o en blanco, según el fondo.
 
 Para subir una imagen, tocá el botón **Cover** (el ícono de imagen) en la fila de abajo. La imagen se achica a 1600 px como máximo y queda guardada en este browser; no se sube a ningún lado. Al subirla, la tapa pasa a usarla.
 

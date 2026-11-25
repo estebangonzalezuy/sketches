@@ -161,6 +161,19 @@ describe("cover setup", () => {
     expect([COVER.bg, BACK_COVER.bg]).toEqual(["#FFFFFF", "#FFFFFF"]);
     expect([COVER.ink, BACK_COVER.ink]).toEqual(["#0C0C0C", "#0C0C0C"]);
     const c = pageSetup({ ...v, coverStyle: "Image on color", coverImage: "Doug", coverColor: "#cc84fc", coverInk: "White" }).cover;
-    expect(c).toEqual({ style: "on-color", source: 3, color: "#cc84fc", ink: "#FFFFFF" });
+    expect(c).toEqual({ style: "on-color", source: 3, color: "#cc84fc", ink: "#FFFFFF", scale: 1 });
+  });
+});
+
+describe("image size", () => {
+  it("maps the size sliders to 0.3–1 and survives stale values", async () => {
+    const { controls, pageSetup } = await import("./controls");
+    const { defaultValues } = await import("@/components/controls");
+    const v = defaultValues(controls);
+    expect(pageSetup(v).imageScale).toBe(1);
+    expect(pageSetup({ ...v, imageSize: 50, coverImageSize: 40 }).imageScale).toBe(0.5);
+    expect(pageSetup({ ...v, coverImageSize: 40 }).cover.scale).toBe(0.4);
+    expect(pageSetup({ ...v, imageSize: 5 }).imageScale).toBe(0.3);
+    expect(pageSetup({ ...v, imageSize: undefined }).imageScale).toBe(1);
   });
 });

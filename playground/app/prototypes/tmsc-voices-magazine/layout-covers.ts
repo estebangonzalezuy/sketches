@@ -39,7 +39,11 @@ export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | n
   if (img && style === "on-color") {
     const boxTop = titleBase + 200;
     const ink = ctx.fillStyle;
-    imageFit(ctx, img, M, boxTop, W - 2 * M, top - 150 - boxTop);
+    // the size slider shrinks the image's box around its middle, left edge on the margin
+    const aw = W - 2 * M;
+    const ah = top - 150 - boxTop;
+    const bh = ah * cover.scale;
+    imageFit(ctx, img, M, boxTop + (ah - bh) / 2, aw * cover.scale, bh);
     ctx.fillStyle = ink;
   }
   INTERVIEWS.forEach((it, i) => {

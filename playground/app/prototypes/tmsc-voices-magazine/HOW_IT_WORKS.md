@@ -44,11 +44,11 @@ Record ──► timeline.ts recordFrame(t) ────┘    driver.apply()   
 - Buttons: previous / next, current spread, Record (shows % and cancels).
 - Control panel (`components/controls`, persisted, Reset / Randomize): for each guest an
   image picker (every image of their post in post order, the cover marked, or None) and a
-  frame slider (GIFs were sampled to 6 frames; stills have one), plus Image Fit / Fill and the
+  frame slider (GIFs were sampled to 6 frames; stills have one), plus Image Fit / Fill, Image size % (30–100, shrinks the image box toward the bottom-left corner, credit follows) and the
   export format. A change re-bakes the pages; the old pages stay up until the new ones are
   ready, and the page you're on stays open. Images are cached after the first load.
 - Cover: `coverStyle` Type / Full image / Image on color, `coverImage` Uploaded or a guest's
-  picked image, `coverColor` (a color control: user data), `coverInk` black or white. The
+  picked image, `coverColor` (a color control: user data), `coverImageSize` (30–100 %, Image on color only), `coverInk` black or white. The
   **Cover** button (image icon) uploads a file: it is downscaled to ≤ 1600 px JPEG and kept
   in this browser (`playground:<slug>:cover-image` via `lib/storage`), never sent anywhere;
   uploading switches the cover to that image and flips back to the cover. Back cover: white,
