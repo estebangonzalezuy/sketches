@@ -26,6 +26,8 @@ export const TYPE_CONTRAST = 4.5;
 /** Minimum separation between a coloured block and the background, and between a block and type laid over it. */
 export const MOTIF_CONTRAST = 1.3;
 export const BLOCK_TYPE_CONTRAST = 4.5;
+/** Colour palettes: type over a block meets AA for large text (3:1); the headline and lockup are large and bold. Lets Verde in. */
+export const PALETTE_BLOCK_TYPE_CONTRAST = 3;
 
 /** Motif slot → its natural tMSC colour; a slot whose colour is the figure, too close to the background, or too dark under the type takes a spare. */
 const SLOTS = { blue: "Periwinkle", pink: "Magenta", lilac: "Lila", mint: "Verde", orange: "Naranja", yellow: "Amarillo" } as const;
@@ -34,7 +36,7 @@ const SPARES: Name[] = ["Acid", "Amarillo", "Periwinkle", "Lila", "Magenta", "Na
 /** Paper = background, ink = figure (type, lines); boxes take the background, motifs the rest of the set. */
 export function pairPalette(bg: Name, fg: Name): Palette {
   const ok = (n: Name) =>
-    n !== fg && n !== bg && contrast(TMSC[n], TMSC[bg]) >= MOTIF_CONTRAST && contrast(TMSC[n], TMSC[fg]) >= BLOCK_TYPE_CONTRAST;
+    n !== fg && n !== bg && contrast(TMSC[n], TMSC[bg]) >= MOTIF_CONTRAST && contrast(TMSC[n], TMSC[fg]) >= PALETTE_BLOCK_TYPE_CONTRAST;
   const spares = SPARES.filter(ok);
   let k = 0;
   const slot = (n: Name) => TMSC[ok(n) ? n : spares[k++ % spares.length]];

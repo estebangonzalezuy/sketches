@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { BLOCK_TYPE_CONTRAST, contrast, MONO_COLORS, monoPalette, MOTIF_CONTRAST, PAIR_PALETTES } from "./palettes";
+import { BLOCK_TYPE_CONTRAST, PALETTE_BLOCK_TYPE_CONTRAST, contrast, MONO_COLORS, monoPalette, MOTIF_CONTRAST, PAIR_PALETTES } from "./palettes";
 import type { Palette } from "./types";
 
 const BLOCKS = ["blue", "pink", "lilac", "mint", "orange", "yellow", "green"] as const;
 
-function readable(p: Palette) {
+function readable(p: Palette, blockType = BLOCK_TYPE_CONTRAST) {
   expect(p.paper).toBe("#FFFFFF");
   expect(contrast(p.paper, p.ink)).toBeGreaterThanOrEqual(4.5);
   for (const k of BLOCKS) {
-    expect(contrast(p[k], p.ink)).toBeGreaterThanOrEqual(BLOCK_TYPE_CONTRAST);
+    expect(contrast(p[k], p.ink)).toBeGreaterThanOrEqual(blockType);
     expect(contrast(p[k], p.paper)).toBeGreaterThanOrEqual(MOTIF_CONTRAST);
   }
 }
@@ -16,7 +16,10 @@ function readable(p: Palette) {
 describe("white canvas palettes", () => {
   it("are white, with readable type and blocks", () => {
     expect(Object.keys(PAIR_PALETTES).length).toBeGreaterThanOrEqual(2);
-    Object.values(PAIR_PALETTES).forEach(readable);
+    Object.values(PAIR_PALETTES).forEach((p) => readable(p, PALETTE_BLOCK_TYPE_CONTRAST));
+  });
+  it("include Verde blocks", () => {
+    expect(Object.values(PAIR_PALETTES).some((p) => Object.values(p).includes("#2E7D46"))).toBe(true);
   });
 });
 
