@@ -7,7 +7,7 @@ Generates Motion, Now posters in the style of the flower/rosette references (cre
 ## Architecture
 
 ```
-controls (layout, seed, format, palette, blocks)
+controls (layout, seed, format, palette, mono, blocks)
         │
         ▼
 generate(options, measure)            pure, seeded (random.ts, mosaic.ts, layouts.ts, elements.ts)
@@ -38,7 +38,7 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
 - **Export**: PNG at the format's size; MP4 H.264 (VP9 fallback) at the chosen frame rate (12, 24, 30 or 60 fps).
 - **Responsive**: the poster sits on top, capped at `max-w-md`; panels below; settings in the side panel (desktop) or bottom sheet (mobile). Every button is a 44px target.
 - **Reduced motion**: no autoplay; the playhead rests on the finished poster.
-- **Theme**: chrome uses tokens; the poster uses its own palette (data). Palettes: Pastel, KV yellow, and the tMSC background / figure pairs (`palettes.ts`) that have a light background (luminance ≥ 0.3) and readable type (WCAG contrast ≥ 4.5); motif colours too close to the background (contrast < 1.3) are swapped for another tMSC colour: paper = background, ink = figure (type and lines), boxes take the background, motifs take the rest of the tMSC set, never the pair's own colours.
+- **Theme**: chrome uses tokens; the poster uses its own palette (data). Palettes (`palettes.ts`): white canvas only. Each palette is one tMSC figure colour that reads on white (WCAG ≥ 4.5:1) and leaves at least two block colours: Blanco / Marrón, Ink, Verde osc. Blocks use the other tMSC colours, each ≥ 1.3:1 against white and ≥ 3:1 against the type laid over it (AA for large text; this lets Verde in); the asterisk takes the figure colour. **Mono** (off or any tMSC colour) overrides the palette: white paper, type in a deep shade of the colour (≥ 9:1 on white), blocks in three tints/shades of it, each ≥ 4.5:1 against the type.
 
 ## Key Dependencies
 
