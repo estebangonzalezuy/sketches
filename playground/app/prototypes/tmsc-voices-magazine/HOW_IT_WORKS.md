@@ -2,12 +2,13 @@
 
 ## What It Does
 
-A small 3D zine of the last four tMSC interviews (cover, one spread per guest, back cover) that you page through with a paper curl: drag, click, arrow keys. Record renders a fixed 18 s sequence and downloads an MP4 (1:1 or 4:5).
+A small 3D zine of the last four tMSC interviews (cover, one spread per guest, back cover) that you page through with a paper curl: drag, click, arrow keys. A control panel picks which image from each post goes on each spread (and which frame of a GIF), so you choose how each feature is put together. Record renders a fixed 18 s sequence and downloads an MP4 (1:1 or 4:5).
 
 ## Architecture
 
 ```
 content.json ──► content.ts (typed, dates without year, verbatim quotes)
+media.ts (every post image) ─► controls.ts (panel: image, frame, Fit/Fill, export) ─► PageSetup
                       │
 data.ts (sheets, inks) ┼─► layout-*.ts ──► page-bake.ts ──► 10 canvases (one per printed side)
                       │                                         │ CanvasTexture, mipmaps, anisotropy
@@ -40,8 +41,18 @@ Record ──► timeline.ts recordFrame(t) ────┘    driver.apply()   
   commits, otherwise the sheet settles back. A click turns the page. Hover near an outer edge
   lifts the corner (mouse only). The drag never moves the camera.
 - Keys: ← →, Home (flip-through back to the cover), End.
-- Buttons: previous / next, current spread, 1:1 / 4:5, Record (shows % and cancels).
-- Responsive: the camera refits on resize; narrow frames crop closer at the sides. Phones bake
+- Buttons: previous / next, current spread, Record (shows % and cancels).
+- Control panel (`components/controls`, persisted, Reset / Randomize): for each guest an
+  image picker (every image of their post in post order, the cover marked, or None) and a
+  frame slider (GIFs were sampled to 6 frames; stills have one), plus Image Fit / Fill and the
+  export format. A change re-bakes the pages; the old pages stay up until the new ones are
+  ready, and the page you're on stays open. Images are cached after the first load.
+- Media: `public/prototype-assets/<slug>/media/<id>-<frame>.jpg`, downloaded from the posts'
+  `substack-post-media` originals. The section-divider images were left out, and the
+  "Work by …" strip burned into the GIFs was cropped off. The page prints the credit from the
+  post instead ("Work by …", or the post's caption, or "From the post").
+- Responsive: the camera refits on resize; narrow frames crop closer at the sides, and tall
+  phone frames sit the magazine in the upper half, clear of the controls sheet. Phones bake
   pages at 1008×1400 instead of 1440×2000. `touch-action: none` on the canvas so drags work.
 - Theme: the table (field, grid, crop marks) reads `--background`, `--border`,
   `--muted-foreground` and follows light / dark. The printed pages use the tMSC palette (content).
@@ -56,7 +67,8 @@ Narrow variable from `public/shared/fonts/mb/`.
 ## Component Tree
 
 ```
-TmscMagazine (keys, bake, record state)
+TmscMagazine (keys, bake, record state, useControls)
+├── ControlsLayout (side panel ≥ lg, bottom sheet below)
 ├── MagazineScene (R3F Canvas, theme colors)
 │   ├── Bridge (camera fit, hands three state to the driver)
 │   ├── Stage (lights, grid floor, shadow catcher, crop marks)
@@ -88,7 +100,9 @@ tmsc-voices-magazine/
   timeline.ts            Record sequence (pure, deterministic)
   recorder.ts            WebCodecs → MP4
   page-bake.ts, canvas-type.ts, layout-covers.ts, layout-interview.ts   page textures
+  media.ts               every post image, labels, credits, frame lookup
+  controls.ts            panel schema → PageSetup / export format
   content.ts, data.ts, types.ts, driver.ts, stage-colors.ts, debug-hook.ts, use-reduced-motion.ts
   magazine.test.ts
-public/prototype-assets/tmsc-voices-magazine/stills/   guest stills (credited on the page)
+public/prototype-assets/tmsc-voices-magazine/media/    post images, 6 frames per GIF (credited on the page)
 ```

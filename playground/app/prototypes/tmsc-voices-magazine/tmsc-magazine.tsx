@@ -1,36 +1,42 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ControlsLayout, useControls } from "@/components/controls";
 import { Spinner } from "@/components/ui/spinner";
-import { PAGE_PX, PAGE_PX_SMALL, RECORD_FORMATS } from "./data";
+import { controls, pageSetup, recordFormat } from "./controls";
+import { PAGE_PX, PAGE_PX_SMALL, RECORD_FORMATS, SLUG } from "./data";
 import { Driver } from "./driver";
 import { MagazineControls } from "./magazine-controls";
 import { MagazineScene } from "./magazine-scene";
 import { bakePages } from "./page-bake";
 import { downloadBlob, recordMp4 } from "./recorder";
-import type { RecordFormat } from "./types";
 import { useReducedMotion } from "./use-reduced-motion";
 
 export function TmscMagazine() {
   const driverRef = useRef(new Driver());
   const [pages, setPages] = useState<Map<string, HTMLCanvasElement> | null>(null);
   const [spread, setSpread] = useState(0);
-  const [format, setFormat] = useState<RecordFormat>("square");
+  const c = useControls(SLUG, controls);
+  const setupKey = JSON.stringify(pageSetup(c.values));
+  const format = recordFormat(c.values);
   const [recording, setRecording] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const cancel = useRef({ cancel: false });
   const reduced = useReducedMotion();
 
+  const setup = useMemo(() => JSON.parse(setupKey) as ReturnType<typeof pageSetup>, [setupKey]);
+
+  // re-bake whenever the picked images change; the old pages stay up until the new ones are ready
   useEffect(() => {
     let alive = true;
     const small = Math.min(window.innerWidth, window.innerHeight) < 600;
-    bakePages(small ? PAGE_PX_SMALL : PAGE_PX)
+    bakePages(small ? PAGE_PX_SMALL : PAGE_PX, setup)
       .then((p) => alive && setPages(p))
       .catch(() => alive && setError("The pages didn't load. Reload to try again."));
     return () => {
       alive = false;
     };
-  }, []);
+  }, [setup]);
 
   useEffect(() => {
     const d = driverRef.current;
@@ -44,7 +50,8 @@ export function TmscMagazine() {
     const onKey = (e: KeyboardEvent) => {
       const d = driverRef.current;
       if (d.recording || e.metaKey || e.ctrlKey || e.altKey) return;
-      if ((e.target as HTMLElement)?.closest?.("input, textarea, select, [contenteditable]")) return;
+      if ((e.target as HTMLElement)?.closest?.("input, textarea, select, [contenteditable]"))
+        return;
       if (e.key === "ArrowRight") d.controller.turn(1);
       else if (e.key === "ArrowLeft") d.controller.turn(-1);
       else if (e.key === "Home") d.controller.goTo(0);
@@ -76,17 +83,25 @@ export function TmscMagazine() {
   }, [format, recording]);
 
   return (
-    <main className="relative flex h-[calc(100dvh-3rem-env(safe-area-inset-top))] min-h-80 w-full flex-col">
-      {pages ? (
-        <MagazineScene pages={pages} driverRef={driverRef} />
-      ) : (
-        !error && (
-          <div className="flex flex-1 items-center justify-center text-muted-foreground">
-            <Spinner />
-          </div>
-        )
-      )}
-      <MagazineControls spread={spread} onTurn={turn} format={format} onFormat={setFormat} recording={recording} onRecord={record} error={error} />
-    </main>
+    <ControlsLayout controls={c}>
+      <main className="relative flex h-[calc(100dvh-3rem-env(safe-area-inset-top))] min-h-80 w-full flex-col">
+        {pages ? (
+          <MagazineScene pages={pages} driverRef={driverRef} />
+        ) : (
+          !error && (
+            <div className="flex flex-1 items-center justify-center text-muted-foreground">
+              <Spinner />
+            </div>
+          )
+        )}
+        <MagazineControls
+          spread={spread}
+          onTurn={turn}
+          recording={recording}
+          onRecord={record}
+          error={error}
+        />
+      </main>
+    </ControlsLayout>
   );
 }

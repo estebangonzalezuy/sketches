@@ -30,7 +30,6 @@ export type SpreadTheme = {
   right: PageInk;
   /** Which of the guest's quotes is the hero (index into content.json quotes). */
   heroQuote: number;
-  still: string;
 };
 
 /** Everything the shader needs to place one sheet. */

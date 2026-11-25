@@ -1,4 +1,4 @@
-import { fit, font, imageFit, lines, right, wrap, type Ctx } from "./canvas-type";
+import { fit, font, imageFill, imageFit, lines, right, wrap, type Ctx } from "./canvas-type";
 import { displayDate, heroQuote, interview, pageTitle, roleLabel, seriesLabel } from "./content";
 import { PAGE_PX, SPREADS } from "./data";
 
@@ -9,8 +9,10 @@ const H = PAGE_PX.h;
 const M = 92;
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
-/** Left page: who, what, and one still from their published piece (credited). */
-export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, still: HTMLImageElement | null) {
+/** Left page: who, what, and one image from the post (credited), as picked in the panel. */
+export type LeftImage = { img: HTMLImageElement; credit: string; fill: boolean } | null;
+
+export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, image: LeftImage) {
   const it = interview(order);
   const { bg, ink } = SPREADS[order].left;
   ctx.fillStyle = bg;
@@ -37,11 +39,12 @@ export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, still: HTMLIma
   const role = wrap(ctx, roleLabel(it), W - 2 * M);
   const roleBase = lines(ctx, role, M, titleBase + 90, 58);
 
-  if (still) {
+  if (image) {
     const top = roleBase + 90;
-    const box = imageFit(ctx, still, M, top, W - 2 * M, H - M - 90 - top);
+    const place = image.fill ? imageFill : imageFit;
+    const box = place(ctx, image.img, M, top, W - 2 * M, H - M - 90 - top);
     font(ctx, 400, 38);
-    right(ctx, `Still: ${it.guest}`, box.x + box.w, box.y + box.h + 52);
+    right(ctx, image.credit, box.x + box.w, box.y + box.h + 52);
   }
 
   font(ctx, 500, 42);

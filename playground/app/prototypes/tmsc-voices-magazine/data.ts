@@ -47,10 +47,10 @@ export const BACK_COVER = { bg: INK.black, ink: INK.white, accent: INK.lime };
 
 /** One spread per interview, 2–3 inks each. Keyed by interview order. */
 export const SPREADS: Record<1 | 2 | 3 | 4, SpreadTheme> = {
-  1: { left: { bg: INK.white, ink: INK.black }, right: { bg: INK.tomato, ink: INK.black }, heroQuote: 0, still: "victor.jpg" },
-  2: { left: { bg: INK.lilac, ink: INK.black }, right: { bg: INK.lime, ink: INK.black }, heroQuote: 0, still: "thais.jpg" },
-  3: { left: { bg: INK.green, ink: INK.white }, right: { bg: INK.white, ink: INK.green }, heroQuote: 1, still: "doug.jpg" },
-  4: { left: { bg: INK.black, ink: INK.white }, right: { bg: INK.periwinkle, ink: INK.black }, heroQuote: 2, still: "justin.jpg" },
+  1: { left: { bg: INK.white, ink: INK.black }, right: { bg: INK.tomato, ink: INK.black }, heroQuote: 0 },
+  2: { left: { bg: INK.lilac, ink: INK.black }, right: { bg: INK.lime, ink: INK.black }, heroQuote: 0 },
+  3: { left: { bg: INK.green, ink: INK.white }, right: { bg: INK.white, ink: INK.green }, heroQuote: 1 },
+  4: { left: { bg: INK.black, ink: INK.white }, right: { bg: INK.periwinkle, ink: INK.black }, heroQuote: 2 },
 };
 
 /**

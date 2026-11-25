@@ -13,6 +13,10 @@ Formato: idea, tamaño (S/M/L), estado. Estados: pendiente, en curso, hecha, des
 
 ## Nice
 
+- **Elegir los media de cada feature** — M — hecha. Todas las imágenes de los posts, con imagen + cuadro por invitade, Fit / Fill, persistido en el panel. El crédito "Work by …" quemado en los GIFs se recortó; la página imprime el crédito del post.
+- **GIFs animados en la página** — L — después. Haría falta una textura de video por página y hacer seek por cuadro en el Record para que siga siendo determinista.
+- **Elegir la cita hero** (entre las tres de `content.json`) — S — después.
+
 - **Flip-through en cascada** — M — hecha. Con Home en vivo, y al final del Record.
 - **Grano de papel** — S — hecha. Bakeado en la textura (multiply muy suave), así entra en los mipmaps y no titila al moverse.
 - **Micro-movimiento en reposo** — S — hecha. El canto exterior respira un milímetro. Se apaga con reduced motion.

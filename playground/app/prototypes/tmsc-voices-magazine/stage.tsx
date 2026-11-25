@@ -106,6 +106,8 @@ export function fitCamera(camera: THREE.PerspectiveCamera, aspect: number) {
   camera.near = 0.1;
   camera.far = 60;
   camera.position.set(0, dist * Math.cos(tilt), dist * Math.sin(tilt));
-  camera.lookAt(0, 0, 0.02);
+  // tall phone frames: keep the magazine in the upper half, clear of the controls sheet
+  const lift = aspect < 0.75 ? halfH * 0.9 : 0;
+  camera.lookAt(0, 0, 0.02 + lift);
   camera.updateProjectionMatrix();
 }

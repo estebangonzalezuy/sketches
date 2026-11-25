@@ -124,3 +124,22 @@ describe("flip controller", () => {
     expect(c.turned).toBe(1);
   });
 });
+
+describe("media", () => {
+  it("defaults each spread to its post's cover and resolves frames safely", async () => {
+    const { controls, pageSetup } = await import("./controls");
+    const { defaultValues } = await import("@/components/controls");
+    const { existsSync } = await import("node:fs");
+    const setup = pageSetup(defaultValues(controls));
+    for (const o of [1, 2, 3, 4] as const) {
+      const m = setup.media[o]!;
+      expect(m.asset.cover).toBe(true);
+      expect(existsSync(`public${m.url}`)).toBe(true);
+    }
+    const { resolveMedia, MEDIA, mediaOptions, NO_IMAGE } = await import("./media");
+    expect(resolveMedia(4, mediaOptions(4)[2], 6)!.frame).toBe(0); // a still has one frame
+    expect(resolveMedia(1, NO_IMAGE, 1)).toBeNull();
+    for (const o of [1, 2, 3, 4] as const)
+      for (const a of MEDIA[o]) for (let f = 0; f < a.frames; f++) expect(existsSync(`public/prototype-assets/tmsc-voices-magazine/media/${a.id}-${f}.jpg`)).toBe(true);
+  });
+});

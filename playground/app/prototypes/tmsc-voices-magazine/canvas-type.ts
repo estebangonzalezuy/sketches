@@ -63,6 +63,15 @@ export function imageFit(ctx: Ctx, img: CanvasImageSource & { width: number; hei
   return { x, y: dy, w: dw, h: dh };
 }
 
+/** Draws an image covering the whole box (center crop). Returns the box. */
+export function imageFill(ctx: Ctx, img: CanvasImageSource & { width: number; height: number }, x: number, y: number, w: number, h: number) {
+  const s = Math.max(w / img.width, h / img.height);
+  const sw = w / s;
+  const sh = h / s;
+  ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
+  return { x, y, w, h };
+}
+
 let grainTile: HTMLCanvasElement | null = null;
 
 /** A light paper grain, multiplied in so it darkens paper a touch and leaves ink alone. */
