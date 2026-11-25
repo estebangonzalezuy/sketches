@@ -1,16 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { PAIR_PALETTES } from "./palettes";
+import { contrast, luminance, MOTIF_CONTRAST, PAIR_PALETTES } from "./palettes";
+
+const pals = Object.values(PAIR_PALETTES);
 
 describe("pair palettes", () => {
-  it("has every pair from the sheet", () => expect(Object.keys(PAIR_PALETTES)).toHaveLength(31));
-  it("keeps motif colours apart from the background and the figure", () => {
-    for (const p of Object.values(PAIR_PALETTES)) {
-      for (const k of ["blue", "pink", "lilac", "mint", "orange", "yellow"] as const) {
-        expect(p[k]).not.toBe(p.paper);
+  it("keeps only light backgrounds with readable type", () => {
+    expect(pals.length).toBeGreaterThan(8);
+    for (const p of pals) {
+      expect(luminance(p.paper)).toBeGreaterThanOrEqual(0.3);
+      expect(contrast(p.paper, p.ink)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+  it("keeps every coloured block apart from the background and the figure", () => {
+    for (const p of pals) {
+      for (const k of ["blue", "pink", "lilac", "mint", "orange", "yellow", "green", "brown"] as const) {
         expect(p[k]).not.toBe(p.ink);
+        expect(contrast(p[k], p.paper)).toBeGreaterThanOrEqual(MOTIF_CONTRAST);
       }
-      expect(p.brown).not.toBe(p.paper);
-      expect(p.green).not.toBe(p.paper);
     }
   });
 });

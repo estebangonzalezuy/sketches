@@ -38,7 +38,7 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
 - **Export**: PNG at the format's size; MP4 H.264 (VP9 fallback) at the chosen frame rate (12, 24, 30 or 60 fps).
 - **Responsive**: the poster sits on top, capped at `max-w-md`; panels below; settings in the side panel (desktop) or bottom sheet (mobile). Every button is a 44px target.
 - **Reduced motion**: no autoplay; the playhead rests on the finished poster.
-- **Theme**: chrome uses tokens; the poster uses its own palette (data). Palettes: Pastel, KV yellow, and the 31 tMSC background / figure pairs (`palettes.ts`): paper = background, ink = figure (type and lines), boxes take the background, motifs take the rest of the tMSC set, never the pair's own colours.
+- **Theme**: chrome uses tokens; the poster uses its own palette (data). Palettes: Pastel, KV yellow, and the tMSC background / figure pairs (`palettes.ts`) that have a light background (luminance ≥ 0.3) and readable type (WCAG contrast ≥ 4.5); motif colours too close to the background (contrast < 1.3) are swapped for another tMSC colour: paper = background, ink = figure (type and lines), boxes take the background, motifs take the rest of the tMSC set, never the pair's own colours.
 
 ## Key Dependencies
 
