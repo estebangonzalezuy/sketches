@@ -143,3 +143,10 @@ describe("media", () => {
       for (const a of MEDIA[o]) for (let f = 0; f < a.frames; f++) expect(existsSync(`public/prototype-assets/tmsc-voices-magazine/media/${a.id}-${f}.jpg`)).toBe(true);
   });
 });
+
+describe("back cover", () => {
+  it("points readers to themotionsocialclub.substack.com", async () => {
+    const { PUBLICATION_URL } = await import("./content");
+    expect(PUBLICATION_URL).toBe("themotionsocialclub.substack.com");
+  });
+});

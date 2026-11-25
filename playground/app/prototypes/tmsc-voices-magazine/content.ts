@@ -4,7 +4,8 @@ import type { Interview, Quote } from "./types";
 /** The four interviews, newest first, straight from content.json (the source of truth). */
 export const INTERVIEWS = raw.interviews as Interview[];
 
-export const PUBLICATION_URL = "humanandmotion.substack.com";
+/** Printed on the back cover. Redirects to humanandmotion.substack.com, where the posts live. */
+export const PUBLICATION_URL = "themotionsocialclub.substack.com";
 
 export function interview(order: 1 | 2 | 3 | 4): Interview {
   const found = INTERVIEWS.find((i) => i.order === order);
