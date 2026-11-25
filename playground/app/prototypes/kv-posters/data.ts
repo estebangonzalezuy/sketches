@@ -1,5 +1,5 @@
 import { defineControls } from "@/components/controls";
-import { PAIR_PALETTES } from "./palettes";
+import { MONO_COLORS, PAIR_PALETTES } from "./palettes";
 import type { Element, FormatId, Kind, Palette } from "./types";
 
 export const SLUG = "kv-posters";
@@ -11,18 +11,8 @@ export const FORMATS: Record<FormatId, { label: string; width: number; height: n
   "1x1": { label: "1:1", width: 1080, height: 1080 },
 };
 
-/** Sampled from the reference posters, then the tMSC background / figure pairs. */
-export const PALETTES: Record<string, Palette> = {
-  Pastel: {
-    paper: "#F7F0DA", ink: "#141313", blue: "#A6C3EE", pink: "#F3A9CF", lilac: "#CDA8EC", mint: "#A9D9A6",
-    green: "#2D6B33", orange: "#F2883B", yellow: "#F7E37C", brown: "#5B3A22", cream: "#FBF5E3",
-  },
-  "KV yellow": {
-    paper: "#F5E85A", ink: "#141313", blue: "#BFA1EF", pink: "#FB81BC", lilac: "#BFA1EF", mint: "#FB81BC",
-    green: "#064517", orange: "#FB81BC", yellow: "#FEFEFD", brown: "#3D2A14", cream: "#FEFEFD",
-  },
-  ...PAIR_PALETTES,
-};
+/** White canvas, tMSC colours; one figure colour per palette. */
+export const PALETTES: Record<string, Palette> = PAIR_PALETTES;
 
 export const TEMPLATES = ["auto", "free", "stack", "cascade", "overlap", "vertical", "line"] as const;
 
@@ -30,7 +20,8 @@ export const controls = defineControls({
   template: { type: "select", label: "Layout", options: TEMPLATES, default: "auto" },
   seed: { type: "number", label: "Seed", min: 1, max: 9999, step: 1, default: 12 },
   format: { type: "select", label: "Format", options: ["3x4", "4x5", "9x16", "1x1"], default: "3x4", randomize: false },
-  palette: { type: "select", label: "Palette", options: Object.keys(PALETTES), default: "Pastel" },
+  palette: { type: "select", label: "Palette", options: Object.keys(PALETTES), default: "Blanco / Ink" },
+  mono: { type: "select", label: "Mono", options: ["off", ...MONO_COLORS], default: "off" },
   color: { type: "select", label: "Colour", options: ["squares", "fills"], default: "squares" },
   density: { type: "number", label: "Blocks", min: 0, max: 1, step: 0.05, default: 0.55 },
   paper: { type: "boolean", label: "Paper texture", default: true },

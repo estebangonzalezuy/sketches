@@ -1,22 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { BLOCK_TYPE_CONTRAST, contrast, luminance, MOTIF_CONTRAST, PAIR_PALETTES } from "./palettes";
+import { BLOCK_TYPE_CONTRAST, contrast, MONO_COLORS, monoPalette, MOTIF_CONTRAST, PAIR_PALETTES } from "./palettes";
+import type { Palette } from "./types";
 
-const pals = Object.values(PAIR_PALETTES);
+const BLOCKS = ["blue", "pink", "lilac", "mint", "orange", "yellow", "green"] as const;
 
-describe("pair palettes", () => {
-  it("keeps only light backgrounds with readable type", () => {
-    expect(pals.length).toBeGreaterThan(8);
-    for (const p of pals) {
-      expect(luminance(p.paper)).toBeGreaterThanOrEqual(0.3);
-      expect(contrast(p.paper, p.ink)).toBeGreaterThanOrEqual(4.5);
-    }
+function readable(p: Palette) {
+  expect(p.paper).toBe("#FFFFFF");
+  expect(contrast(p.paper, p.ink)).toBeGreaterThanOrEqual(4.5);
+  for (const k of BLOCKS) {
+    expect(contrast(p[k], p.ink)).toBeGreaterThanOrEqual(BLOCK_TYPE_CONTRAST);
+    expect(contrast(p[k], p.paper)).toBeGreaterThanOrEqual(MOTIF_CONTRAST);
+  }
+}
+
+describe("white canvas palettes", () => {
+  it("are white, with readable type and blocks", () => {
+    expect(Object.keys(PAIR_PALETTES).length).toBeGreaterThanOrEqual(2);
+    Object.values(PAIR_PALETTES).forEach(readable);
   });
-  it("keeps every coloured block apart from the background and readable under the type", () => {
-    for (const p of pals) {
-      for (const k of ["blue", "pink", "lilac", "mint", "orange", "yellow", "green"] as const) {
-        expect(contrast(p[k], p.ink)).toBeGreaterThanOrEqual(BLOCK_TYPE_CONTRAST);
-        expect(contrast(p[k], p.paper)).toBeGreaterThanOrEqual(MOTIF_CONTRAST);
-      }
-    }
-  });
+});
+
+describe("mono", () => {
+  it("keeps every colour readable on white", () => MONO_COLORS.forEach((n) => readable(monoPalette(n))));
+  it("uses the colour itself for type when it is already deep", () => expect(monoPalette("Ink").ink).toBe("#0C0C0C"));
+  it("gives every colour at least two block tones", () =>
+    MONO_COLORS.forEach((n) => {
+      const p = monoPalette(n);
+      expect(new Set([p.blue, p.pink, p.lilac, p.mint]).size).toBeGreaterThanOrEqual(2);
+    }));
 });
