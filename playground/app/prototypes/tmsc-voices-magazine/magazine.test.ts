@@ -150,3 +150,17 @@ describe("back cover", () => {
     expect(PUBLICATION_URL).toBe("themotionsocialclub.substack.com");
   });
 });
+
+describe("cover setup", () => {
+  it("defaults to a white type cover and maps the image styles", async () => {
+    const { controls, pageSetup } = await import("./controls");
+    const { defaultValues } = await import("@/components/controls");
+    const { COVER, BACK_COVER } = await import("./data");
+    const v = defaultValues(controls);
+    expect(pageSetup(v).cover.style).toBe("type");
+    expect([COVER.bg, BACK_COVER.bg]).toEqual(["#FFFFFF", "#FFFFFF"]);
+    expect([COVER.ink, BACK_COVER.ink]).toEqual(["#0C0C0C", "#0C0C0C"]);
+    const c = pageSetup({ ...v, coverStyle: "Image on color", coverImage: "Doug", coverColor: "#cc84fc", coverInk: "White" }).cover;
+    expect(c).toEqual({ style: "on-color", source: 3, color: "#cc84fc", ink: "#FFFFFF" });
+  });
+});

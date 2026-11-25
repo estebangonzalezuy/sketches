@@ -30,6 +30,20 @@ El panel de controles está a la derecha en desktop. En el teléfono se abre con
 
 Además, **Image: Fit / Fill** muestra la imagen entera o recortada al alto de la caja. Las elecciones se guardan en el browser. **Reset** vuelve a las portadas y **Randomize** arma una combinación al azar. El export usa siempre lo que esté elegido en ese momento.
 
+## Tapa
+
+En el panel, **Cover** elige el estilo:
+
+- **Type:** blanco con tipo negro. Es el default.
+- **Full image:** la imagen a sangre, con el tipo encima.
+- **Image on color:** la imagen dentro de un fondo del color que elijas en **Cover color**.
+
+**Cover image** elige de dónde sale la imagen: la que subiste o la imagen elegida para alguno de los cuatro spreads. **Cover type** pone el tipo en negro o en blanco, según el fondo.
+
+Para subir una imagen, tocá el botón **Cover** (el ícono de imagen) en la fila de abajo. La imagen se achica a 1600 px como máximo y queda guardada en este browser; no se sube a ningún lado. Al subirla, la tapa pasa a usarla.
+
+La contratapa es blanca con tipo negro y la URL `themotionsocialclub.substack.com`.
+
 ## Cómo exportar el MP4
 
 1. Elegí el formato en el panel (**Export**): **1:1** (1080×1080) o **4:5** (1080×1350).
@@ -47,4 +61,5 @@ Para sacar stills exactos de cualquier momento de la secuencia, abrí la página
 - **Mobile** usa el mismo curl con un encuadre más cerrado y texturas más chicas. No implementé el plegado distinto para mobile que describe Ksenia.
 - **Imágenes.** Están todas las de los cuatro posts, bajadas de los originales; solo quedaron afuera los separadores de sección. Los GIFs van como stills (6 cuadros a elegir), no animados. Las capturas del post de Justin (el sitio de FrameRate y "Vimeo’s old days") tienen tipo chico que no se lee en la página.
 - **Video de referencia.** El mp4 de la ref no estaba en el entorno. La ref se leyó del contact sheet.
+- **Imagen subida.** Vive en el storage de este browser. En otro browser o dispositivo hay que volver a subirla.
 - **Sin sonido de papel**, ni deep link al spread por URL (ver `ideas.md`).

@@ -71,30 +71,3 @@ export function imageFill(ctx: Ctx, img: CanvasImageSource & { width: number; he
   ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
   return { x, y, w, h };
 }
-
-let grainTile: HTMLCanvasElement | null = null;
-
-/** A light paper grain, multiplied in so it darkens paper a touch and leaves ink alone. */
-export function grain(ctx: Ctx, w: number, h: number) {
-  if (!grainTile) {
-    grainTile = document.createElement("canvas");
-    grainTile.width = grainTile.height = 256;
-    const g = grainTile.getContext("2d")!;
-    const data = g.createImageData(256, 256);
-    // deterministic noise: the same grain on every bake and every export
-    let seed = 1234567;
-    for (let i = 0; i < data.data.length; i += 4) {
-      seed = (seed * 1664525 + 1013904223) >>> 0;
-      const v = 236 + ((seed >>> 24) % 20);
-      data.data[i] = data.data[i + 1] = data.data[i + 2] = v;
-      data.data[i + 3] = 255;
-    }
-    g.putImageData(data, 0, 0);
-  }
-  ctx.save();
-  ctx.globalCompositeOperation = "multiply";
-  ctx.globalAlpha = 0.55;
-  ctx.fillStyle = ctx.createPattern(grainTile, "repeat")!;
-  ctx.fillRect(0, 0, w, h);
-  ctx.restore();
-}

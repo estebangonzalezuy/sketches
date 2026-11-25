@@ -42,8 +42,8 @@ export const INK = {
   tomato: "#EE4B2B",
 } as const;
 
-export const COVER = { bg: INK.lime, ink: INK.black };
-export const BACK_COVER = { bg: INK.black, ink: INK.white, accent: INK.lime };
+export const COVER = { bg: INK.white, ink: INK.black };
+export const BACK_COVER = { bg: INK.white, ink: INK.black };
 
 /** One spread per interview, 2–3 inks each. Keyed by interview order. */
 export const SPREADS: Record<1 | 2 | 3 | 4, SpreadTheme> = {

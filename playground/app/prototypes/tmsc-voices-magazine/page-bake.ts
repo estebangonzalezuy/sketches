@@ -1,4 +1,4 @@
-import { grain } from "./canvas-type";
+import { newsprint } from "./paper-texture";
 import type { PageSetup } from "./controls";
 import { FACES, FONT_FAMILY, FONT_URL, PAGE_PX } from "./data";
 import { drawBackCover, drawCover } from "./layout-covers";
@@ -34,9 +34,15 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
   return p;
 }
 
-export async function bakePages(size: { w: number; h: number }, setup: PageSetup): Promise<Map<string, HTMLCanvasElement>> {
+export async function bakePages(size: { w: number; h: number }, setup: PageSetup, uploaded: string | null): Promise<Map<string, HTMLCanvasElement>> {
   const orders = [1, 2, 3, 4] as const;
-  const [, ...imgs] = await Promise.all([loadFont(), ...orders.map((o) => (setup.media[o] ? loadImage(setup.media[o]!.url) : null))]);
+  const { cover } = setup;
+  const coverUrl = cover.style === "type" ? null : cover.source === "upload" ? uploaded : (setup.media[cover.source]?.url ?? null);
+  const [, coverImg, ...imgs] = await Promise.all([
+    loadFont(),
+    coverUrl ? loadImage(coverUrl) : null,
+    ...orders.map((o) => (setup.media[o] ? loadImage(setup.media[o]!.url) : null)),
+  ]);
   const out = new Map<string, HTMLCanvasElement>();
   for (const face of FACES) {
     const canvas = document.createElement("canvas");
@@ -46,15 +52,14 @@ export async function bakePages(size: { w: number; h: number }, setup: PageSetup
     ctx.scale(size.w / PAGE_PX.w, size.h / PAGE_PX.h);
     ctx.textBaseline = "alphabetic";
     const order = face.interviewOrder;
-    if (face.layout === "cover") drawCover(ctx);
+    if (face.layout === "cover") drawCover(ctx, cover, coverImg);
     else if (face.layout === "back-cover") drawBackCover(ctx);
     else if (face.layout === "interview-left") {
       const img = imgs[order! - 1];
       const choice = setup.media[order!];
       drawInterviewLeft(ctx, order!, img && choice ? { img, credit: choice.asset.credit, fill: setup.fill } : null);
     } else drawInterviewRight(ctx, order!);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    grain(ctx, size.w, size.h);
+    newsprint(ctx, size.w, size.h, size.w / PAGE_PX.w);
     out.set(face.id, canvas);
   }
   return out;

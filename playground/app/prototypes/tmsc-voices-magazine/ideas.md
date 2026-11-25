@@ -14,6 +14,9 @@ Formato: idea, tamaño (S/M/L), estado. Estados: pendiente, en curso, hecha, des
 ## Nice
 
 - **Elegir los media de cada feature** — M — hecha. Todas las imágenes de los posts, con imagen + cuadro por invitade, Fit / Fill, persistido en el panel. El crédito "Work by …" quemado en los GIFs se recortó; la página imprime el crédito del post.
+- **Tapa y contratapa blancas con tipo negro** — S — hecha.
+- **Textura tipo papel de diario (leve)** — S — hecha. Pulpa, grano, fibras cortas y un tono apenas cálido, bakeados en la textura. La primera versión quedó demasiado fuerte y se bajó.
+- **Tapa con imagen** — M — hecha. Subida propia (guardada en el browser) o la imagen de un spread, a sangre o sobre un color a elegir, con tipo negro o blanco.
 - **GIFs animados en la página** — L — después. Haría falta una textura de video por página y hacer seek por cuadro en el Record para que siga siendo determinista.
 - **Elegir la cita hero** (entre las tres de `content.json`) — S — después.
 

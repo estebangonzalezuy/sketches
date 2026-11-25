@@ -2,7 +2,7 @@
 
 ## What It Does
 
-A small 3D zine of the last four tMSC interviews (cover, one spread per guest, back cover) that you page through with a paper curl: drag, click, arrow keys. A control panel picks which image from each post goes on each spread (and which frame of a GIF), so you choose how each feature is put together. Record renders a fixed 18 s sequence and downloads an MP4 (1:1 or 4:5).
+A small 3D zine of the last four tMSC interviews (cover, one spread per guest, back cover) that you page through with a paper curl: drag, click, arrow keys. A control panel picks which image from each post goes on each spread (and which frame of a GIF), so you choose how each feature is put together. The cover can be type only (white, black), a full-bleed image, or an image on a color you pick; the image is your upload or one of the spreads' images. Record renders a fixed 18 s sequence and downloads an MP4 (1:1 or 4:5).
 
 ## Architecture
 
@@ -47,6 +47,15 @@ Record ──► timeline.ts recordFrame(t) ────┘    driver.apply()   
   frame slider (GIFs were sampled to 6 frames; stills have one), plus Image Fit / Fill and the
   export format. A change re-bakes the pages; the old pages stay up until the new ones are
   ready, and the page you're on stays open. Images are cached after the first load.
+- Cover: `coverStyle` Type / Full image / Image on color, `coverImage` Uploaded or a guest's
+  picked image, `coverColor` (a color control: user data), `coverInk` black or white. The
+  **Cover** button (image icon) uploads a file: it is downscaled to ≤ 1600 px JPEG and kept
+  in this browser (`playground:<slug>:cover-image` via `lib/storage`), never sent anywhere;
+  uploading switches the cover to that image and flips back to the cover. Back cover: white,
+  black type, the publication URL.
+- Paper: `paper-texture.ts` bakes a light newsprint finish into every page (soft pulp
+  mottling, grain, short fibers, a slight warm tint, pale specks that lift solid ink a hair).
+  Deterministic, so exports repeat exactly.
 - Media: `public/prototype-assets/<slug>/media/<id>-<frame>.jpg`, downloaded from the posts'
   `substack-post-media` originals. The section-divider images were left out, and the
   "Work by …" strip burned into the GIFs was cropped off. The page prints the credit from the
@@ -79,6 +88,7 @@ TmscMagazine (keys, bake, record state, useControls)
 
 ## Error Handling
 
+- Upload too large for browser storage: a readable message, the previous cover stays.
 - Font or stills fail: a missing still leaves its page typographic; a failed bake shows a message.
 - No WebCodecs or no encoder for the size: Record shows the browser error. H.264 first, VP9 in
   MP4 only as a fallback. Cancel stops between frames and restores the live view.
@@ -101,7 +111,9 @@ tmsc-voices-magazine/
   recorder.ts            WebCodecs → MP4
   page-bake.ts, canvas-type.ts, layout-covers.ts, layout-interview.ts   page textures
   media.ts               every post image, labels, credits, frame lookup
-  controls.ts            panel schema → PageSetup / export format
+  controls.ts            panel schema → PageSetup (spreads + cover) / export format
+  cover-upload.ts        uploaded cover image: downscale, browser storage, hook
+  paper-texture.ts       newsprint finish baked into the pages
   content.ts, data.ts, types.ts, driver.ts, stage-colors.ts, debug-hook.ts, use-reduced-motion.ts
   magazine.test.ts
 public/prototype-assets/tmsc-voices-magazine/media/    post images, 6 frames per GIF (credited on the page)

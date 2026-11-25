@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ControlsLayout, useControls } from "@/components/controls";
 import { Spinner } from "@/components/ui/spinner";
 import { controls, pageSetup, recordFormat } from "./controls";
+import { saveUploadedCover, useUploadedCover } from "./cover-upload";
 import { PAGE_PX, PAGE_PX_SMALL, RECORD_FORMATS, SLUG } from "./data";
 import { Driver } from "./driver";
 import { MagazineControls } from "./magazine-controls";
@@ -23,6 +24,7 @@ export function TmscMagazine() {
   const [error, setError] = useState<string | null>(null);
   const cancel = useRef({ cancel: false });
   const reduced = useReducedMotion();
+  const uploaded = useUploadedCover();
 
   const setup = useMemo(() => JSON.parse(setupKey) as ReturnType<typeof pageSetup>, [setupKey]);
 
@@ -30,19 +32,36 @@ export function TmscMagazine() {
   useEffect(() => {
     let alive = true;
     const small = Math.min(window.innerWidth, window.innerHeight) < 600;
-    bakePages(small ? PAGE_PX_SMALL : PAGE_PX, setup)
+    bakePages(small ? PAGE_PX_SMALL : PAGE_PX, setup, uploaded)
       .then((p) => alive && setPages(p))
       .catch(() => alive && setError("The pages didn't load. Reload to try again."));
     return () => {
       alive = false;
     };
-  }, [setup]);
+  }, [setup, uploaded]);
 
   useEffect(() => {
     const d = driverRef.current;
     d.controller.reduced = reduced;
     d.onFrame = () => setSpread((s) => (s === d.controller.turned ? s : d.controller.turned));
   }, [reduced]);
+
+  const { set } = c;
+  const style = c.values.coverStyle;
+  const upload = useCallback(
+    async (file: File) => {
+      setError(null);
+      try {
+        await saveUploadedCover(file);
+        set("coverImage", "Uploaded");
+        if (style === "Type") set("coverStyle", "Full image");
+        driverRef.current.controller.goTo(0);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "That image didn't load.");
+      }
+    },
+    [set, style],
+  );
 
   const turn = useCallback((dir: 1 | -1) => driverRef.current.controller.turn(dir), []);
 
@@ -100,6 +119,7 @@ export function TmscMagazine() {
           recording={recording}
           onRecord={record}
           error={error}
+          onUpload={upload}
         />
       </main>
     </ControlsLayout>
