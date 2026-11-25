@@ -42,7 +42,7 @@ export const controls = defineControls({
   duration: { type: "number", label: "Length (s)", min: 2, max: 20, step: 0.5, default: 6 },
   stagger: { type: "number", label: "Stagger", min: 0, max: 1, step: 0.05, default: 0.5 },
   turns: { type: "number", label: "Spin", min: 0, max: 4, step: 1, default: 1 },
-  fps: { type: "select", label: "Frame rate", options: ["24", "30", "60"], default: "30", randomize: false },
+  fps: { type: "select", label: "Frame rate", options: ["12", "24", "30", "60"], default: "30", randomize: false },
 });
 
 export const PASTELS = ["blue", "pink", "lilac", "mint", "orange", "yellow"] as const;
