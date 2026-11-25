@@ -27,11 +27,13 @@ export function render(ctx: CanvasRenderingContext2D, p: Poster, pal: Palette, o
   drawGrid(ctx, p, pal, o.anim?.frame ?? 1);
   drawFrame(ctx, p, pal, o.anim?.frame ?? 1);
   for (const e of p.elements) {
-    if (BACK.has(e.kind)) continue;
+    if (BACK.has(e.kind) || e.kind === "headline") continue;
     if (pen.cut && (e.kind === "flower" || e.kind === "spiral")) onLayer(ctx, (l) => paint(l, e));
     else paint(ctx, e);
   }
   drawGrain(ctx, o.grain);
+  // the headline stays sharp: no grain over it
+  for (const e of p.elements) if (e.kind === "headline") paint(ctx, e);
   ctx.restore();
 }
 

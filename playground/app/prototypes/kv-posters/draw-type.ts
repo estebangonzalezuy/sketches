@@ -1,12 +1,12 @@
 import { DEFAULT_TYPE, type HeadlineLayer } from "@/lib/kv/model";
-import { drawHeadline as drawKvHeadline, tracePath, typeGeometry } from "@/lib/kv/render/type";
+import { tracePath, typeGeometry } from "@/lib/kv/render/type";
 import { fillOf, type Pen } from "./draw-shapes";
 import type { Headline, Lockup } from "./types";
 
 /**
  * Headlines use the KV type treatment from lib/kv (the same as the Studio's Letters cell):
  * Archivo Narrow Bold outlines, octagonal facets, keyhole notches in tall counters, round dots
- * and the printed-ink edge.
+ * filled as sharp vectors (no printed-ink edge), drawn above the grain.
  */
 function kvLayer(h: Pick<Headline, "id" | "text" | "size">, x = 0, y = 0): HeadlineLayer {
   return { ...DEFAULT_TYPE, id: h.id, type: "headline", name: "", visible: true, locked: false, text: h.text, x, y, size: h.size, font: "narrow", tracking: -0.01, leading: 0.88, fill: "ink" };
@@ -75,7 +75,11 @@ export function drawHeadline(ctx: CanvasRenderingContext2D, h: Headline, pen: Pe
     ctx.lineJoin = "round";
     ctx.stroke();
   } else {
-    drawKvHeadline(ctx, layer, { scale: pen.scale, compWidth: 1080, color: () => color });
+    // vector fill of the KV outlines: crisp at every scale, no ink-edge raster
+    ctx.beginPath();
+    tracePath(ctx, typeGeometry(layer).contours, layer.x, layer.y);
+    ctx.fillStyle = color;
+    ctx.fill("nonzero");
   }
   ctx.restore();
 }
