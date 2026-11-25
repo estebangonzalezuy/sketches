@@ -30,13 +30,17 @@ El panel de controles está a la derecha en desktop. En el teléfono se abre con
 
 Además, **Image: Fit / Fill** muestra la imagen entera o recortada al alto de la caja, e **Image size %** (30–100) la achica hacia la esquina inferior izquierda; el crédito la sigue. Aplica a los cuatro spreads. Las elecciones se guardan en el browser. **Reset** vuelve a las portadas y **Randomize** arma una combinación al azar. El export usa siempre lo que esté elegido en ese momento.
 
+## Colores de cada página
+
+Cada spread tiene **left page** y **right page** para el color de fondo de cada página. La tapa y la contratapa tienen **Cover color** y **Back cover color**. El texto pasa solo a negro o blanco según el fondo. Mientras una página conserve su color original, mantiene la tinta del diseño (por ejemplo, el verde de Doug sobre blanco).
+
 ## Tapa
 
 En el panel, **Cover** elige el estilo:
 
 - **Type:** blanco con tipo negro. Es el default.
 - **Full image:** la imagen a sangre, con el tipo encima.
-- **Image on color:** la imagen dentro de un fondo del color que elijas en **Cover color**.
+- **Image on color:** la imagen dentro de un fondo del color que elijas en **Cover color** (que también colorea la tapa Type).
 
 **Cover image** elige de dónde sale la imagen: la que subiste o la imagen elegida para alguno de los cuatro spreads. **Cover image size %** (30–100) achica la imagen dentro de su espacio en Image on color. **Cover type** pone el tipo en negro o en blanco, según el fondo.
 

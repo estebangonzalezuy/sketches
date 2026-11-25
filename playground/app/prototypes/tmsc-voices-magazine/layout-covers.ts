@@ -1,7 +1,8 @@
 import { fit, font, imageFill, imageFit, lines, right, type Ctx } from "./canvas-type";
 import { displayDate, INTERVIEWS, PUBLICATION_URL } from "./content";
 import type { CoverSetup } from "./controls";
-import { BACK_COVER, COVER, PAGE_PX } from "./data";
+import { PAGE_PX } from "./data";
+import type { PageInk } from "./types";
 
 /** Cover and back cover, drawn at the design size (PAGE_PX). */
 
@@ -11,15 +12,15 @@ const M = 92;
 const ROW_H = 150;
 
 /**
- * Three covers: type only (white, black), a full-bleed image under the type, or an image set
+ * Three covers: type only on the cover color (white by default), a full-bleed image under the type, or an image set
  * into a color field. The type layout is the same in all three, so the masthead never moves.
  */
 export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | null) {
   const style = img ? cover.style : cover.style === "full" ? "on-color" : cover.style;
-  ctx.fillStyle = style === "type" ? COVER.bg : cover.color;
+  ctx.fillStyle = cover.color;
   ctx.fillRect(0, 0, W, H);
   if (img && style === "full") imageFill(ctx, img, 0, 0, W, H);
-  ctx.fillStyle = style === "type" ? COVER.ink : cover.ink;
+  ctx.fillStyle = cover.ink;
 
   font(ctx, 600, 54);
   ctx.fillText("the Motion Social Club", M, M + 46);
@@ -55,10 +56,10 @@ export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | n
   });
 }
 
-export function drawBackCover(ctx: Ctx) {
-  ctx.fillStyle = BACK_COVER.bg;
+export function drawBackCover(ctx: Ctx, page: PageInk) {
+  ctx.fillStyle = page.bg;
   ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = BACK_COVER.ink;
+  ctx.fillStyle = page.ink;
 
   const name = fit(ctx, "the Motion Social Club", { weight: 700, maxWidth: W - 2 * M, maxHeight: 900, leading: 0.92, max: 300, min: 120, tracking: -0.035 });
   font(ctx, 700, name.size, -0.035);

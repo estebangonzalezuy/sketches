@@ -160,7 +160,7 @@ describe("cover setup", () => {
     expect(pageSetup(v).cover.style).toBe("type");
     expect([COVER.bg, BACK_COVER.bg]).toEqual(["#FFFFFF", "#FFFFFF"]);
     expect([COVER.ink, BACK_COVER.ink]).toEqual(["#0C0C0C", "#0C0C0C"]);
-    const c = pageSetup({ ...v, coverStyle: "Image on color", coverImage: "Doug", coverColor: "#cc84fc", coverInk: "White" }).cover;
+    const c = pageSetup({ ...v, coverStyle: "Image on color", coverImage: "Doug", coverBg: "#cc84fc", coverInk: "White" }).cover;
     expect(c).toEqual({ style: "on-color", source: 3, color: "#cc84fc", ink: "#FFFFFF", scale: 1 });
   });
 });
@@ -175,5 +175,21 @@ describe("image size", () => {
     expect(pageSetup({ ...v, coverImageSize: 40 }).cover.scale).toBe(0.4);
     expect(pageSetup({ ...v, imageSize: 5 }).imageScale).toBe(0.3);
     expect(pageSetup({ ...v, imageSize: undefined }).imageScale).toBe(1);
+  });
+});
+
+describe("page colors", () => {
+  it("keeps the designed inks by default and picks readable type for a new color", async () => {
+    const { pageInk, pageInks, autoInk } = await import("./page-inks");
+    const { SPREADS, INK, BACK_COVER } = await import("./data");
+    const { controls } = await import("./controls");
+    const { defaultValues } = await import("@/components/controls");
+    const inks = pageInks(defaultValues(controls));
+    expect(inks.spreads[3].right).toEqual(SPREADS[3].right); // Doug's green ink on white survives
+    expect(inks.back).toEqual(BACK_COVER);
+    expect(autoInk("#0C540C")).toBe(INK.white);
+    expect(autoInk("#E4FC24")).toBe(INK.black);
+    expect(pageInk("#0C0C0C", SPREADS[1].left)).toEqual({ bg: "#0C0C0C", ink: INK.white });
+    expect(pageInk("not a color", SPREADS[1].left)).toEqual(SPREADS[1].left);
   });
 });

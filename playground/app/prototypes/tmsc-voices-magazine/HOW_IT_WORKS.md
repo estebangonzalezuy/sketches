@@ -47,8 +47,12 @@ Record ──► timeline.ts recordFrame(t) ────┘    driver.apply()   
   frame slider (GIFs were sampled to 6 frames; stills have one), plus Image Fit / Fill, Image size % (30–100, shrinks the image box toward the bottom-left corner, credit follows) and the
   export format. A change re-bakes the pages; the old pages stay up until the new ones are
   ready, and the page you're on stays open. Images are cached after the first load.
+- Page colors: a color control per page (`<guest>Left`, `<guest>Right`, `coverBg`, `backColor`;
+  user data). `page-inks.ts` keeps a page's designed ink while it stays on its designed color,
+  and otherwise sets black or white type by the background's luminance (crossover ≈ 0.18), so
+  type stays readable whatever color is picked.
 - Cover: `coverStyle` Type / Full image / Image on color, `coverImage` Uploaded or a guest's
-  picked image, `coverColor` (a color control: user data), `coverImageSize` (30–100 %, Image on color only), `coverInk` black or white. The
+  picked image, `coverBg` (the cover color, white by default, used by every cover style), `coverImageSize` (30–100 %, Image on color only), `coverInk` black or white. The
   **Cover** button (image icon) uploads a file: it is downscaled to ≤ 1600 px JPEG and kept
   in this browser (`playground:<slug>:cover-image` via `lib/storage`), never sent anywhere;
   uploading switches the cover to that image and flips back to the cover. Back cover: white,
@@ -114,6 +118,7 @@ tmsc-voices-magazine/
   controls.ts            panel schema → PageSetup (spreads + cover) / export format
   cover-upload.ts        uploaded cover image: downscale, browser storage, hook
   paper-texture.ts       newsprint finish baked into the pages
+  page-inks.ts           picked page colors → background + readable ink
   content.ts, data.ts, types.ts, driver.ts, stage-colors.ts, debug-hook.ts, use-reduced-motion.ts
   magazine.test.ts
 public/prototype-assets/tmsc-voices-magazine/media/    post images, 6 frames per GIF (credited on the page)

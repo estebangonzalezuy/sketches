@@ -53,12 +53,12 @@ export async function bakePages(size: { w: number; h: number }, setup: PageSetup
     ctx.textBaseline = "alphabetic";
     const order = face.interviewOrder;
     if (face.layout === "cover") drawCover(ctx, cover, coverImg);
-    else if (face.layout === "back-cover") drawBackCover(ctx);
+    else if (face.layout === "back-cover") drawBackCover(ctx, setup.inks.back);
     else if (face.layout === "interview-left") {
       const img = imgs[order! - 1];
       const choice = setup.media[order!];
-      drawInterviewLeft(ctx, order!, img && choice ? { img, credit: choice.asset.credit, fill: setup.fill, scale: setup.imageScale } : null);
-    } else drawInterviewRight(ctx, order!);
+      drawInterviewLeft(ctx, order!, setup.inks.spreads[order!].left, img && choice ? { img, credit: choice.asset.credit, fill: setup.fill, scale: setup.imageScale } : null);
+    } else drawInterviewRight(ctx, order!, setup.inks.spreads[order!].right);
     newsprint(ctx, size.w, size.h, size.w / PAGE_PX.w);
     out.set(face.id, canvas);
   }

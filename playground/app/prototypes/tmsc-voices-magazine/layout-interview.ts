@@ -1,6 +1,7 @@
 import { fit, font, imageFill, imageFit, lines, right, wrap, type Ctx } from "./canvas-type";
 import { displayDate, heroQuote, interview, pageTitle, roleLabel, seriesLabel } from "./content";
 import { PAGE_PX, SPREADS } from "./data";
+import type { PageInk } from "./types";
 
 /** The two pages of one interview spread, drawn at the design size (PAGE_PX). */
 
@@ -12,9 +13,9 @@ const pad2 = (n: number) => String(n).padStart(2, "0");
 /** Left page: who, what, and one image from the post (credited), as picked in the panel. */
 export type LeftImage = { img: HTMLImageElement; credit: string; fill: boolean; scale: number } | null;
 
-export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, image: LeftImage) {
+export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk, image: LeftImage) {
   const it = interview(order);
-  const { bg, ink } = SPREADS[order].left;
+  const { bg, ink } = page;
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = ink;
@@ -55,9 +56,9 @@ export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, image: LeftIma
 }
 
 /** Right page: the hero quote, verbatim, and who said it. */
-export function drawInterviewRight(ctx: Ctx, order: 1 | 2 | 3 | 4) {
+export function drawInterviewRight(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk) {
   const it = interview(order);
-  const { bg, ink } = SPREADS[order].right;
+  const { bg, ink } = page;
   const q = heroQuote(it, SPREADS[order].heroQuote);
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
