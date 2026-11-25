@@ -1,0 +1,187 @@
+{
+  "source": {
+    "publication": "the Motion Social Club (tMSC)",
+    "requested_url": "https://themotionsocialclub.substack.com",
+    "canonical_base": "https://humanandmotion.substack.com",
+    "rss": "https://themotionsocialclub.substack.com/feed",
+    "rss_resolves_to": "https://humanandmotion.substack.com/feed",
+    "archive_api": "https://humanandmotion.substack.com/api/v1/archive?sort=new&limit=12",
+    "retrieved_at": "2026-11-25T07:02:00+01:00",
+    "timezone_note": "post_date values are UTC. madrid_local is Europe/Madrid."
+  },
+  "selection": {
+    "rule": "The 4 most recent interview or conversation posts (Voice File or guest chat), not other post types.",
+    "method": "RSS (20 items) cross-checked against the archive API. The four newest posts in the feed are all guest conversations.",
+    "excluded_next": {
+      "title": "How to present your work w/Giovanna Crise (@ciofanadrago)",
+      "url": "https://humanandmotion.substack.com/p/how-to-present-your-work-wgiovanna",
+      "post_date": "2026-06-30T06:02:02.035Z",
+      "reason": "Also an interview, but older than the four selected."
+    }
+  },
+  "interviews": [
+    {
+      "order": 1,
+      "newest": true,
+      "title": "Be ready when the opportunity arrives w/Victor Verdugo",
+      "guest": "Victor Verdugo",
+      "guest_role": "3D motion designer",
+      "series": "Voice File",
+      "format_note": "Esteban sends questions; the guest answers as voice notes. The published post includes a transcript.",
+      "post_date": "2026-11-17T07:39:26.471Z",
+      "madrid_local": "Tuesday 17 Nov 2026, 08:39 CET (Europe/Madrid)",
+      "url": "https://humanandmotion.substack.com/p/be-ready-when-the-opportunity-arrives",
+      "substack_id": 222745472,
+      "subtitle": "Victor Verdugo on leaving VFX behind, personal work and the last ten percent AI can’t reach.",
+      "cover_image_url": "https://substackcdn.com/image/fetch/$s_!bEQF!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc4fea09a-5714-4237-a40f-71c7516c5bb7_600x364.gif",
+      "social_preview_url": "https://humanandmotion.substack.com/api/v1/post_preview/222745472/twitter.jpg?version=4",
+      "social_preview_local": "covers/victor-twitter.jpg",
+      "cover_description": "Still from Victor’s personal chocolate-bar piece: a wrapped dark-chocolate bar on a sunlit table, typography reading CHOCOLATE upside-down on the wrapper. The official cover is a GIF; the twitter.jpg is a 1600×800 crop of that still.",
+      "guest_links": {
+        "web": "https://vicver.co/",
+        "instagram": "https://www.instagram.com/vicver"
+      },
+      "quotes": [
+        {
+          "text": "I’d like to feel ready when the opportunity arrives. All these pieces started as a learning method, a way of practicing.",
+          "attribution": "Victor Verdugo",
+          "context": "On why he makes personal 3D projects such as Pick your weapon, The waste we leave, and Anxiety."
+        },
+        {
+          "text": "I want to work for a chocolate brand. So I created my chocolate animation just to be ready when they show up in my inbox.",
+          "attribution": "Victor Verdugo",
+          "context": "Same answer, on practicing toward a specific kind of client."
+        },
+        {
+          "text": "Having a simple effect doesn’t feel enough for me. It just feels like a postcard.",
+          "attribution": "Victor Verdugo",
+          "context": "On needing a story or concept behind the image, a habit he carries from his audiovisual past."
+        }
+      ],
+      "quote_note": "He also relays a friend’s line — “AI only takes you to ninety percent of completion and the last ten percent becomes so painful.” That is not his own wording; do not attribute it to him as if it were."
+    },
+    {
+      "order": 2,
+      "title": "From one Google search to motion w/Thais Macedo",
+      "guest": "Thais Macedo",
+      "guest_role": "Motion / visual designer",
+      "series": "Voice File (transcript format; the post is a spoken answer to Esteban’s questions)",
+      "format_note": "Published with a Transcript heading, same Q&A structure as the Voice File pieces.",
+      "post_date": "2026-11-03T08:46:27.458Z",
+      "madrid_local": "Tuesday 3 Nov 2026, 09:46 CET (Europe/Madrid)",
+      "url": "https://humanandmotion.substack.com/p/from-one-google-search-to-motion",
+      "substack_id": 222295083,
+      "subtitle": "And how one Google search changed everything",
+      "og_description": "Make your little things, put them out there, and trust your gut",
+      "cover_image_url": "https://substackcdn.com/image/fetch/$s_!JdBT!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7dabe0ac-a7c9-4ece-9d79-79d914ce136e_900x546.gif",
+      "social_preview_url": "https://humanandmotion.substack.com/api/v1/post_preview/222295083/twitter.jpg?version=4",
+      "social_preview_local": "covers/thais-twitter.jpg",
+      "cover_description": "Still from Thais’s OFFF suitcase piece: a flat illustrated suitcase on a lime field, covered in stickers (star, ticket, flower), framed in lilac. The official cover is a GIF. The 1600×800 twitter crop leaves a large empty orange field — do not use that crop as a full-bleed magazine cover.",
+      "guest_links": {
+        "web": "https://heymacedotha.com/",
+        "instagram": "https://www.instagram.com/hey.macedotha/"
+      },
+      "quotes": [
+        {
+          "text": "So yeah, if I had any advice, it'd be: make your little things, put them out there, and trust your gut. You never know… so why not?",
+          "attribution": "Thais Macedo",
+          "context": "Closing her story about the OFFF projection and the sticker sheets."
+        },
+        {
+          "text": "I thought it was just gonna be an Instagram post. So seeing it on this giant building, together with all these amazing studios and artists, was completely surreal.",
+          "attribution": "Thais Macedo",
+          "context": "On the OFFF Barcelona suitcase animation being selected for the Disseny Hub façade."
+        },
+        {
+          "text": "I always say: good pre-production, happy project.",
+          "attribution": "Thais Macedo",
+          "context": "On why the process matters to her, in the AI question."
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Personal work gets you jobs w/Doug Alberts",
+      "guest": "Doug Alberts",
+      "guest_role": "Director, co-founder of Noodle (with Steph, creative producer)",
+      "series": "Voice File",
+      "format_note": "Esteban introduces this as the first Voice File: questions sent, answers as voice notes, published as a transcript.",
+      "post_date": "2026-10-13T06:02:40.728Z",
+      "madrid_local": "Tuesday 13 Oct 2026, 08:02 CEST (Europe/Madrid)",
+      "url": "https://humanandmotion.substack.com/p/personal-work-gets-you-jobs-wdoug",
+      "substack_id": 218505161,
+      "subtitle": "Doug Alberts on AI, new tools and where motion design is going.",
+      "cover_image_url": "https://substackcdn.com/image/fetch/$s_!35ik!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8380b23a-949a-4621-acb3-385d806e1cb9_600x337.gif",
+      "social_preview_url": "https://humanandmotion.substack.com/api/v1/post_preview/218505161/twitter.jpg?version=4",
+      "social_preview_local": "covers/doug-twitter.jpg",
+      "cover_description": "Still from personal work: a small framed illustration of a green-headed match (or fidget form) on a dusty beige field, with the word “mind” beside it. Official cover is a GIF. The twitter crop is mostly empty beige — do not use that crop as a full-bleed cover.",
+      "guest_links": {
+        "web": "https://www.douglasalberts.com/",
+        "studio": "https://www.noodleanimation.com/"
+      },
+      "quotes": [
+        {
+          "text": "Personal work has gotten me actual jobs too, sometimes from the weirdest places, stuff I made years ago turning up in a client’s mood board out of nowhere.",
+          "attribution": "Doug Alberts",
+          "context": "On the role of personal projects after client work wraps."
+        },
+        {
+          "text": "If I was starting over, I’d just make as much personal work that I actually care about as I can.",
+          "attribution": "Doug Alberts",
+          "context": "Advice for someone starting in motion design today."
+        },
+        {
+          "text": "When you’re exploring something you genuinely care about, it shows, and that’s what makes someone want to hire you for that thing, you already know what they want because you’ve already explored it.",
+          "attribution": "Doug Alberts",
+          "context": "Same answer, on why personal work leads to jobs."
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "oldest_of_the_four": true,
+      "title": "Motion got harder to browse, framerate.tv is trying to change that",
+      "guest": "Justin Cone",
+      "guest_role": "Co-founder of FrameRate; previously co-founded Motionographer",
+      "series": "Guest conversation (not labelled Voice File)",
+      "format_note": "Written Q&A / chat. Esteban introduces it as “the chat with Justin.” Collaborator mentioned: Tyler Williams (prev. co-founder of Motion Array).",
+      "post_date": "2026-09-08T07:00:34.701Z",
+      "madrid_local": "Tuesday 8 Sep 2026, 09:00 CEST (Europe/Madrid)",
+      "url": "https://humanandmotion.substack.com/p/motion-got-harder-to-browse-frameratetv",
+      "substack_id": 212801791,
+      "subtitle": "ft. Justin Cone, co-founder of FrameRate",
+      "cover_image_url": "https://substackcdn.com/image/fetch/$s_!ncO3!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F964d6d21-133a-45b8-b57d-861410cc5eba_800x450.webp",
+      "social_preview_url": "https://humanandmotion.substack.com/api/v1/post_preview/212801791/twitter.jpg?version=4",
+      "social_preview_local": "covers/justin-twitter.jpg",
+      "cover_description": "Graphic collage on black: overlapping stills and color fields (lime, teal, grey) with a small white diamond at the center. Official cover appears to be a static webp (plus other in-post images/GIFs). Usable as a pictorial reference, but the magazine spread should still be redesigned in the tMSC system rather than pasted full-bleed.",
+      "guest_links": {
+        "framerate": "https://framerate.tv/"
+      },
+      "quotes": [
+        {
+          "text": "It’s no longer enough to simply share your work. You have to perform around it, either by creating process content or by inserting yourself, the creator, into the work.",
+          "attribution": "Justin Cone",
+          "context": "On how Instagram’s shift to Reels changed how designers present work. He follows this with: “For some people, that’s fine. For most people, it’s exhausting.”"
+        },
+        {
+          "text": "For some people, that’s fine. For most people, it’s exhausting.",
+          "attribution": "Justin Cone",
+          "context": "Immediate follow-up to the “creative theater” observation."
+        },
+        {
+          "text": "An intentional space is like a museum. You go there to be inspired or challenged, or simply to see familiar things in a new way. And I think we’re all craving that.",
+          "attribution": "Justin Cone",
+          "context": "On what FrameRate is trying to be, versus algorithmic feeds."
+        }
+      ]
+    }
+  ],
+  "usage_rules": [
+    "Use only these verbatim quotes, attributed to the named guest.",
+    "Do not invent quotes, bios, or project titles.",
+    "Do not quote Esteban’s introductions as if they were the guest.",
+    "Do not reprint the interviews in full on the pages — pull quotes, titles, names, and short context only.",
+    "Guest work stills may be used as pictorial elements if downloaded from the published posts, credited to the guest. Do not use other people’s work.",
+    "Do not print the year 2026 anywhere in the magazine copy or UI. Dates may be month + day (e.g. 17 Nov) unless Esteban says otherwise."
+  ]
+}

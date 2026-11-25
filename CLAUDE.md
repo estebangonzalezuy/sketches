@@ -374,3 +374,7 @@ Add to this list whenever something breaks and gets fixed. Newest last.
   (format switch) and draws squashed. Compare and set both `width` and `height`.
 - Noise or grain drawn as a pattern in scaled poster units gets averaged away in a small preview. Lay
   texture tiles in device pixels (`setTransform(1, 0, 0, 1, 0, 0)`) so it reads at every size.
+- A three.js `shadow.normalBias` offsets along the *vertex* normal, which points down on a flipped
+  double-sided sheet, so the surface sinks into its own shadow (pages go grey). Use `bias` only there.
+- Design tokens can carry alpha (`--border: oklch(1 0 0 / 10%)`). Before handing one to three.js,
+  composite it over `--background` on a 1×1 canvas, or it reads as opaque white.
