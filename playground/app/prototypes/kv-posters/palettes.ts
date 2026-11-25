@@ -35,16 +35,18 @@ export function contrast(a: string, b: string): number {
 /** Light backgrounds only, and type that reads on them (WCAG AA, 4.5:1). */
 export const LIGHT_BG = 0.3;
 export const TYPE_CONTRAST = 4.5;
-/** Minimum separation between a coloured block and the background. */
+/** Minimum separation between a coloured block and the background, and between a block and type laid over it. */
 export const MOTIF_CONTRAST = 1.3;
+export const BLOCK_TYPE_CONTRAST = 3;
 
-/** Motif slot → its natural tMSC colour; a slot whose colour is the figure or too close to the background takes a spare. */
+/** Motif slot → its natural tMSC colour; a slot whose colour is the figure, too close to the background, or too dark under the type takes a spare. */
 const SLOTS = { blue: "Periwinkle", pink: "Magenta", lilac: "Lila", mint: "Verde", orange: "Naranja", yellow: "Amarillo" } as const;
 const SPARES: Name[] = ["Acid", "Amarillo", "Periwinkle", "Lila", "Magenta", "Naranja", "Verde"];
 
 /** Paper = background, ink = figure (type, lines); boxes take the background, motifs the rest of the set. */
 export function pairPalette(bg: Name, fg: Name): Palette {
-  const ok = (n: Name) => n !== fg && n !== bg && contrast(TMSC[n], TMSC[bg]) >= MOTIF_CONTRAST;
+  const ok = (n: Name) =>
+    n !== fg && n !== bg && contrast(TMSC[n], TMSC[bg]) >= MOTIF_CONTRAST && contrast(TMSC[n], TMSC[fg]) >= BLOCK_TYPE_CONTRAST;
   const spares = SPARES.filter(ok);
   let k = 0;
   const slot = (n: Name) => TMSC[ok(n) ? n : spares[k++ % spares.length]];
@@ -52,8 +54,8 @@ export function pairPalette(bg: Name, fg: Name): Palette {
     paper: TMSC[bg], ink: TMSC[fg],
     blue: slot(SLOTS.blue), pink: slot(SLOTS.pink), lilac: slot(SLOTS.lilac),
     mint: slot(SLOTS.mint), orange: slot(SLOTS.orange), yellow: slot(SLOTS.yellow),
-    green: TMSC[fg === "Verde osc." ? "Verde" : "Verde osc."],
-    brown: TMSC[fg === "Marrón" ? "Ink" : "Marrón"],
+    green: TMSC[spares[k++ % spares.length]],
+    brown: TMSC[fg],
     cream: TMSC[bg],
   };
 }
