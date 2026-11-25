@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { magazineShift } from "./pose";
-import { PAGE_H, PAGE_W, SHEET_COUNT } from "./data";
+import { PAGE_H, PAGE_W } from "./data";
 import type { DriverRef } from "./driver";
 
 /**
@@ -28,7 +28,8 @@ export function PointerInput({ driverRef }: { driverRef: DriverRef }) {
       ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
       ray.setFromCamera(ndc, camera);
       if (!ray.ray.intersectPlane(plane, hit)) return null;
-      const shift = magazineShift(driverRef.current.controller.progress, SHEET_COUNT, PAGE_W);
+      const c = driverRef.current.controller;
+      const shift = magazineShift(c.progress, c.count, PAGE_W);
       return { x: hit.x - shift, v: -hit.z };
     };
 

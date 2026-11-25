@@ -1,42 +1,43 @@
-import { BEND_CASCADE, BEND_TURN, HOVER_LIFT, SHEET_COUNT } from "./data";
+import { BEND_CASCADE, BEND_TURN, HOVER_LIFT } from "./data";
+import type { Book } from "./faces";
 import { clamp, ease, smoothstep } from "./pose";
 import type { SheetPose } from "./types";
 
 /**
  * The Record sequence, as a pure function of time. Same t → same frame, always: no clocks,
- * no randomness. Follows the storyboard table (cover hold, four spreads, back cover, then a
- * quick flip-through back to the cover).
+ * no randomness. Cover hold, every spread in order, back cover, then a quick flip-through
+ * back to the cover.
  */
-
-export const RECORD_DURATION = 18;
 
 type Turn = { sheet: number; dir: 1 | -1; start: number; dur: number; bend: number; lift: boolean };
 
 /** Lift-in before a hand turn: the corner rises first, then the page goes. */
 const LIFT_IN = 0.32;
-
-const FORWARD: [number, number][] = [
-  [2.0, 1.2], // cover → Victor
-  [5.0, 1.0], // Victor → Thais
-  [7.6, 1.0], // Thais → Doug
-  [10.2, 1.0], // Doug → Justin
-  [13.0, 0.9], // Justin → back cover
-];
-const CASCADE_START = 14.5;
-const CASCADE_STAGGER = 0.38;
+const FIRST_TURN = 2.0;
+const HOLD = { "interview-left": 1.7, "editorial-left": 1.5, "back-cover": 0.6 } as Record<string, number>;
 const CASCADE_DUR = 1.05;
+const END_HOLD = 0.9;
 
-export const RECORD_TURNS: Turn[] = [
-  ...FORWARD.map(([start, dur], sheet) => ({ sheet, dir: 1 as const, start, dur, bend: BEND_TURN, lift: true })),
-  ...Array.from({ length: SHEET_COUNT }, (_, i) => ({
-    sheet: SHEET_COUNT - 1 - i,
-    dir: -1 as const,
-    start: CASCADE_START + i * CASCADE_STAGGER,
-    dur: CASCADE_DUR,
-    bend: BEND_CASCADE,
-    lift: false,
-  })),
-];
+export type RecordPlan = { turns: Turn[]; duration: number; sheets: number };
+
+/**
+ * Forward through every spread (a hold long enough to read each one), then a quick
+ * flip-through back to the cover. Depends only on the page order, so a re-export is identical.
+ */
+export function recordPlan(book: Book): RecordPlan {
+  const n = book.sheets;
+  const turns: Turn[] = [];
+  let t = FIRST_TURN;
+  for (let k = 0; k < n; k++) {
+    const dur = k === 0 ? 1.2 : k === n - 1 ? 0.9 : 1.0;
+    turns.push({ sheet: k, dir: 1, start: t, dur, bend: BEND_TURN, lift: true });
+    const landed = book.faces[2 * k + 1]; // left page of the spread this turn opens
+    t += dur + (HOLD[landed.layout] ?? 1.5);
+  }
+  const stagger = Math.min(0.38, 2.4 / Math.max(1, n - 1));
+  for (let i = 0; i < n; i++) turns.push({ sheet: n - 1 - i, dir: -1, start: t + i * stagger, dur: CASCADE_DUR, bend: BEND_CASCADE, lift: false });
+  return { turns, duration: t + (n - 1) * stagger + CASCADE_DUR + END_HOLD, sheets: n };
+}
 
 function turnProgress(turn: Turn, t: number): number | null {
   const lead = turn.lift ? LIFT_IN : 0;
@@ -50,9 +51,9 @@ function turnProgress(turn: Turn, t: number): number | null {
 
 export type RecordFrame = { sheets: SheetPose[]; drop: number; shadow: number };
 
-export function recordFrame(t: number): RecordFrame {
-  const sheets: SheetPose[] = Array.from({ length: SHEET_COUNT }, () => ({ p: 0, sign: 1, bend: BEND_TURN, phi: 0 }));
-  for (const turn of RECORD_TURNS) {
+export function recordFrame(plan: RecordPlan, t: number): RecordFrame {
+  const sheets: SheetPose[] = Array.from({ length: plan.sheets }, () => ({ p: 0, sign: 1, bend: BEND_TURN, phi: 0 }));
+  for (const turn of plan.turns) {
     const q = turnProgress(turn, t);
     if (q === null) continue;
     const s = sheets[turn.sheet];

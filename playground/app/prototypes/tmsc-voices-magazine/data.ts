@@ -1,4 +1,4 @@
-import type { PageFace, RecordFormat, SpreadTheme } from "./types";
+import type { RecordFormat, SpreadTheme } from "./types";
 
 export const SLUG = "tmsc-voices-magazine";
 export const ASSET_BASE = `/prototype-assets/${SLUG}`;
@@ -12,7 +12,6 @@ export const PAGE_PX = { w: 1440, h: 2000 } as const;
 /** Smaller bake for phones: still sharp at that size, a third of the GPU memory. */
 export const PAGE_PX_SMALL = { w: 1008, h: 1400 } as const;
 
-export const SHEET_COUNT = 5;
 /** Height between stacked sheets: enough for the depth buffer, too thin to read as a gap. */
 export const STACK_GAP = 0.0032;
 export const SEGMENTS = { u: 96, v: 24 } as const;
@@ -52,25 +51,6 @@ export const SPREADS: Record<1 | 2 | 3 | 4, SpreadTheme> = {
   3: { left: { bg: INK.green, ink: INK.white }, right: { bg: INK.white, ink: INK.green }, heroQuote: 1 },
   4: { left: { bg: INK.black, ink: INK.white }, right: { bg: INK.periwinkle, ink: INK.black }, heroQuote: 2 },
 };
-
-/**
- * Saddle-stitched sheets. Spread k shows the back of sheet k−1 (left) and the front of
- * sheet k (right), so each interview gets a clean two-page spread.
- */
-export const FACES: PageFace[] = [
-  { id: "cover", sheet: 0, side: "front", layout: "cover" },
-  { id: "victor-a", sheet: 0, side: "back", layout: "interview-left", interviewOrder: 1 },
-  { id: "victor-b", sheet: 1, side: "front", layout: "interview-right", interviewOrder: 1 },
-  { id: "thais-a", sheet: 1, side: "back", layout: "interview-left", interviewOrder: 2 },
-  { id: "thais-b", sheet: 2, side: "front", layout: "interview-right", interviewOrder: 2 },
-  { id: "doug-a", sheet: 2, side: "back", layout: "interview-left", interviewOrder: 3 },
-  { id: "doug-b", sheet: 3, side: "front", layout: "interview-right", interviewOrder: 3 },
-  { id: "justin-a", sheet: 3, side: "back", layout: "interview-left", interviewOrder: 4 },
-  { id: "justin-b", sheet: 4, side: "front", layout: "interview-right", interviewOrder: 4 },
-  { id: "back-cover", sheet: 4, side: "back", layout: "back-cover" },
-];
-
-export const SPREAD_NAMES = ["Cover", "Victor Verdugo", "Thais Macedo", "Doug Alberts", "Justin Cone", "Back cover"];
 
 export const RECORD_FORMATS: Record<RecordFormat, { w: number; h: number; label: string }> = {
   square: { w: 1080, h: 1080, label: "1:1" },

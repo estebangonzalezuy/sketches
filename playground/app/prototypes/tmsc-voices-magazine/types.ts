@@ -7,11 +7,12 @@ export type Interview = {
   guest_role?: string;
   series?: string;
   url: string;
+  subtitle?: string;
   post_date: string;
   quotes: Quote[];
 };
 
-export type FaceLayout = "cover" | "interview-left" | "interview-right" | "back-cover";
+export type FaceLayout = "cover" | "interview-left" | "interview-right" | "editorial-left" | "editorial-right" | "back-cover";
 
 /** One printed side of one sheet. */
 export type PageFace = {
@@ -20,6 +21,8 @@ export type PageFace = {
   side: "front" | "back";
   layout: FaceLayout;
   interviewOrder?: 1 | 2 | 3 | 4;
+  /** Printed page number (cover = 1). */
+  folio: number;
 };
 
 /** Colors of one printed page: background and ink, from the tMSC palette. */

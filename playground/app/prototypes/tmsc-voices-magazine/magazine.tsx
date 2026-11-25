@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { createCurlUniforms, createSheetDepthMaterial, createSheetGeometry, createSheetMaterial } from "./curl-material";
-import { BEND_TURN, FACES, FOLD_LENGTH, PAGE_H, PAGE_W, SEGMENTS, SHEET_COUNT, STACK_GAP } from "./data";
+import { BEND_TURN, FOLD_LENGTH, PAGE_H, PAGE_W, SEGMENTS, STACK_GAP } from "./data";
+import type { Book } from "./faces";
 import { clamp, magazineShift, shaderPose, stackHeight } from "./pose";
 import type { DriverRef } from "./driver";
 import type { SheetPose } from "./types";
@@ -27,8 +28,8 @@ function contactShadowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
-/** The five sheets, their contact shadow, and the per-frame mapping from poses to shader uniforms. */
-export function Magazine({ pages, driverRef }: { pages: Map<string, HTMLCanvasElement>; driverRef: DriverRef }) {
+/** The sheets, their contact shadow, and the per-frame mapping from poses to shader uniforms. */
+export function Magazine({ book, pages, driverRef }: { book: Book; pages: Map<string, HTMLCanvasElement>; driverRef: DriverRef }) {
   const gl = useThree((s) => s.gl);
   const group = useRef<THREE.Group>(null);
   const shadowL = useRef<THREE.MeshBasicMaterial>(null);
@@ -44,9 +45,9 @@ export function Magazine({ pages, driverRef }: { pages: Map<string, HTMLCanvasEl
       return t;
     };
     const geometry = createSheetGeometry(PAGE_W, PAGE_H, SEGMENTS.u, SEGMENTS.v);
-    const sheets = Array.from({ length: SHEET_COUNT }, (_, k) => {
-      const front = tex(FACES.find((f) => f.sheet === k && f.side === "front")!.id);
-      const back = tex(FACES.find((f) => f.sheet === k && f.side === "back")!.id);
+    const sheets = Array.from({ length: book.sheets }, (_, k) => {
+      const front = tex(book.faces.find((f) => f.sheet === k && f.side === "front")!.id);
+      const back = tex(book.faces.find((f) => f.sheet === k && f.side === "back")!.id);
       const uniforms = createCurlUniforms(PAGE_W, PAGE_H, PAGE_W * FOLD_LENGTH);
       const mesh = new THREE.Mesh(geometry, createSheetMaterial(uniforms, front, back));
       mesh.customDepthMaterial = createSheetDepthMaterial(uniforms);
@@ -55,7 +56,7 @@ export function Magazine({ pages, driverRef }: { pages: Map<string, HTMLCanvasEl
       return { mesh, uniforms, textures: [front, back] };
     });
     return { geometry, sheets, contact: contactShadowTexture() };
-  }, [gl, pages]);
+  }, [gl, pages, book]);
 
   useEffect(
     () => () => {
@@ -73,7 +74,10 @@ export function Magazine({ pages, driverRef }: { pages: Map<string, HTMLCanvasEl
   // the one place poses become uniforms; live mode and Record both go through it
   useEffect(() => {
     const driver = driverRef.current;
+    const count = built.sheets.length;
     driver.apply = (poses: SheetPose[], drop: number, shadow: number, time: number) => {
+      // a controller from another page order (mid re-bake) has nothing to say to these meshes
+      if (poses.length !== count) return;
       let turned = 0;
       poses.forEach((s, k) => {
         const u = built.sheets[k].uniforms;
@@ -82,17 +86,17 @@ export function Magazine({ pages, driverRef }: { pages: Map<string, HTMLCanvasEl
         u.uBend.value = pose.bend;
         u.uPhi.value = s.phi;
         u.uSign.value = s.sign;
-        u.uYOff.value = BASE_Y + stackHeight(k, s.p, SHEET_COUNT, STACK_GAP);
+        u.uYOff.value = BASE_Y + stackHeight(k, s.p, count, STACK_GAP);
         u.uWave.value = 0.04 * Math.sin(Math.PI * clamp(s.p)) * (s.bend / BEND_TURN);
         u.uIdle.value = IDLE_LIFT;
         u.uTime.value = time;
         turned += s.p;
       });
       if (group.current) {
-        group.current.position.x = magazineShift(turned, SHEET_COUNT, PAGE_W);
+        group.current.position.x = magazineShift(turned, count, PAGE_W);
         group.current.position.y = drop * DROP_HEIGHT;
       }
-      if (shadowR.current) shadowR.current.opacity = 0.28 * shadow * clamp(SHEET_COUNT - turned);
+      if (shadowR.current) shadowR.current.opacity = 0.28 * shadow * clamp(count - turned);
       if (shadowL.current) shadowL.current.opacity = 0.28 * shadow * clamp(turned);
     };
     return () => {

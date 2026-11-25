@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import raw from "./content.json";
 import { displayDate, heroQuote, INTERVIEWS, pageTitle, roleLabel, seriesLabel } from "./content";
-import { FACES, SHEET_COUNT, SPREADS, STACK_GAP } from "./data";
+import { SPREADS, STACK_GAP } from "./data";
+import { buildBook } from "./faces";
 import { FlipController } from "./flip-controller";
 import { dragProgress, magazineShift, shaderPose, stackHeight } from "./pose";
-import { RECORD_DURATION, recordFrame } from "./timeline";
+import { recordFrame, recordPlan } from "./timeline";
+
+const SHEET_COUNT = 5;
 
 describe("content", () => {
   it("hero quotes are verbatim from content.json and attributed to the guest", () => {
@@ -28,13 +31,20 @@ describe("content", () => {
     }
   });
 
-  it("maps a clean spread per interview", () => {
-    expect(FACES).toHaveLength(SHEET_COUNT * 2);
-    for (let k = 1; k <= 4; k++) {
-      const left = FACES.find((f) => f.sheet === k - 1 && f.side === "back")!;
-      const right = FACES.find((f) => f.sheet === k && f.side === "front")!;
-      expect(left.interviewOrder).toBe(k);
-      expect(right.interviewOrder).toBe(k);
+  it("maps a clean spread per interview, with or without the Q&A spreads", () => {
+    for (const editorial of [false, true]) {
+      const { faces, sheets, spreadNames } = buildBook(editorial);
+      expect(faces).toHaveLength(sheets * 2);
+      expect(sheets).toBe(editorial ? 9 : 5);
+      expect(spreadNames).toHaveLength(sheets + 1);
+      expect(faces.map((f) => f.folio)).toEqual(faces.map((_, i) => i + 1));
+      // every spread pairs the back of one sheet with the front of the next, same interview
+      for (let k = 1; k < sheets; k++) {
+        const left = faces.find((f) => f.sheet === k - 1 && f.side === "back")!;
+        const right = faces.find((f) => f.sheet === k && f.side === "front")!;
+        expect(left.interviewOrder).toBe(right.interviewOrder);
+        expect(left.layout.replace("-left", "")).toBe(right.layout.replace("-right", ""));
+      }
     }
   });
 });
@@ -75,10 +85,15 @@ describe("pose", () => {
 
 describe("record timeline", () => {
   it("is deterministic, ends on the cover and visits the back cover", () => {
-    expect(recordFrame(7.3)).toEqual(recordFrame(7.3));
-    expect(recordFrame(RECORD_DURATION).sheets.every((s) => s.p === 0)).toBe(true);
-    expect(recordFrame(14.3).sheets.every((s) => s.p === 1)).toBe(true);
-    expect(recordFrame(4).sheets.map((s) => s.p)).toEqual([1, 0, 0, 0, 0]);
+    for (const editorial of [false, true]) {
+      const plan = recordPlan(buildBook(editorial));
+      expect(recordFrame(plan, 7.3)).toEqual(recordFrame(plan, 7.3));
+      expect(recordFrame(plan, plan.duration).sheets.every((s) => s.p === 0)).toBe(true);
+      expect(recordFrame(plan, 4).sheets.map((s) => s.p)).toEqual([1, ...Array(plan.sheets - 1).fill(0)]);
+      const cascade = Math.min(...plan.turns.filter((t) => t.dir === -1).map((t) => t.start));
+      expect(recordFrame(plan, cascade - 0.05).sheets.every((s) => s.p === 1)).toBe(true);
+    }
+    expect(recordPlan(buildBook(false)).duration).toBeLessThan(20);
   });
 });
 
@@ -88,7 +103,7 @@ describe("flip controller", () => {
   };
 
   it("turns with keys and flips back home", () => {
-    const c = new FlipController();
+    const c = new FlipController(SHEET_COUNT);
     c.turn(1);
     c.turn(1);
     settle(c);
@@ -100,7 +115,7 @@ describe("flip controller", () => {
   });
 
   it("cancels a short drag and commits a long one", () => {
-    const c = new FlipController();
+    const c = new FlipController(SHEET_COUNT);
     c.pointerDown(0.9, 0);
     c.pointerMove(0.6, 0, 1 / 60);
     for (let i = 0; i < 60; i++) c.update(1 / 60);
@@ -117,7 +132,7 @@ describe("flip controller", () => {
   });
 
   it("turns on a click", () => {
-    const c = new FlipController();
+    const c = new FlipController(SHEET_COUNT);
     c.pointerDown(0.5, 0.2);
     c.pointerUp();
     settle(c);
@@ -191,5 +206,43 @@ describe("page colors", () => {
     expect(autoInk("#E4FC24")).toBe(INK.black);
     expect(pageInk("#0C0C0C", SPREADS[1].left)).toEqual({ bg: "#0C0C0C", ink: INK.white });
     expect(pageInk("not a color", SPREADS[1].left)).toEqual(SPREADS[1].left);
+  });
+});
+
+describe("Q&A text", () => {
+  it("is verbatim from the posts and only places whole paragraphs", async () => {
+    const { EDITORIAL, flow, columns } = await import("./editorial-flow");
+    for (const o of ["1", "2", "3", "4"] as const) {
+      const blocks = EDITORIAL[o];
+      expect(blocks.length).toBeGreaterThan(10);
+      expect(blocks[0].kind).toBe("q");
+    }
+    // a monospace stand-in measure: 10 units per character
+    const measure = (s: string) => s.length * 10;
+    const frames = [...columns(0, 0, 0, 1000, 600, 2, 40), ...columns(1, 0, 0, 1000, 600, 2, 40)];
+    const { lines, placed, partial } = flow(EDITORIAL["1"], frames, 30, 15, measure);
+    expect(placed).toBeGreaterThan(0);
+    expect(placed).toBeLessThan(EDITORIAL["1"].length);
+    // the placed lines spell the first paragraphs verbatim; a cut last answer ends on a whole sentence
+    const text = lines.map((l) => l.text).join(" ");
+    const whole = EDITORIAL["1"].slice(0, placed - (partial ? 1 : 0)).map((b) => b.text).join(" ");
+    expect(text.startsWith(whole)).toBe(true);
+    if (partial) {
+      const rest = text.slice(whole.length).trim();
+      expect(EDITORIAL["1"][placed - 1].text.startsWith(rest)).toBe(true);
+      expect(rest).toMatch(/[.!?…]$/);
+    } else expect(text).toBe(whole);
+    expect(lines.every((l) => l.y + 30 <= 600)).toBe(true);
+  });
+
+  it("never ends on a question", async () => {
+    const { flow } = await import("./editorial-flow");
+    const blocks = [
+      { kind: "a" as const, text: "one two" },
+      { kind: "q" as const, text: "a question" },
+      { kind: "a" as const, text: "a very long answer that will not fit anywhere at all in this tiny frame" },
+    ];
+    const { placed } = flow(blocks, [{ page: 0, x: 0, y: 0, w: 120, h: 60 }], 30, 0, (s) => s.length * 10);
+    expect(placed).toBe(1);
   });
 });

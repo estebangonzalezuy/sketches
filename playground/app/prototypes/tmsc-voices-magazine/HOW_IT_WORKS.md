@@ -4,6 +4,35 @@
 
 A small 3D zine of the last four tMSC interviews (cover, one spread per guest, back cover) that you page through with a paper curl: drag, click, arrow keys. A control panel picks which image from each post goes on each spread (and which frame of a GIF), so you choose how each feature is put together. The cover can be type only (white, black), a full-bleed image, or an image on a color you pick; the image is your upload or one of the spreads' images. Record renders a fixed 18 s sequence and downloads an MP4 (1:1 or 4:5).
 
+## Editorial (Q&A) spreads
+
+With **Q&A pages** on (default), every interview gets a second spread after its intro spread:
+the conversation set in columns, as in a printed magazine.
+
+- Text: `editorial.json`, verbatim questions (Esteban, bold) and answers (the guest), taken
+  from the published posts. Esteban's intro, the "Transcript" label, pull-quote repeats, the
+  site announcement in Justin's post, the embedded-post reference and the closing links were
+  left out (picked by paragraph index from the post HTML).
+- `editorial-flow.ts` (pure) flows the blocks through column frames on both pages. Whole
+  paragraphs only; the last answer may stop at the end of a sentence to fill the space, and
+  a question never ends the text without its answer. A "Read the full conversation at
+  themotionsocialclub.substack.com" line follows if it fits.
+- `layout-editorial.ts` lays both pages out at once: standfirst (the post subtitle), image 2
+  at the foot of the left page, image 1 at the head of the right page, then columns.
+- Panel: Q&A pages on/off, columns 1/2/3, text Small/Medium/Large (28/34/42 px at 1440),
+  Q&A image size %, Q&A page color (readable ink picked automatically), and per guest
+  Q&A image 1 and 2 (any image from their post, or None).
+- The page order (`faces.ts`) and sheet count follow the toggle: 5 sheets without Q&A pages,
+  9 with them. A new count starts the magazine again at the cover. Record follows the same
+  order (`recordPlan`): about 18 s without Q&A spreads, about 29 s with them.
+
+## Background
+
+The table under the magazine uses the picked **Background** color (default `#EAEAEA`), the
+same newsprint finish as the pages (**Background paper**, on by default) and an optional
+**Grid** with crop marks (off by default). Grid lines are a shade off the field: darker on
+light colors, lighter on dark ones. The stage no longer follows the light / dark theme.
+
 ## Architecture
 
 ```
@@ -67,8 +96,8 @@ Record ──► timeline.ts recordFrame(t) ────┘    driver.apply()   
 - Responsive: the camera refits on resize; narrow frames crop closer at the sides, and tall
   phone frames sit the magazine in the upper half, clear of the controls sheet. Phones bake
   pages at 1008×1400 instead of 1440×2000. `touch-action: none` on the canvas so drags work.
-- Theme: the table (field, grid, crop marks) reads `--background`, `--border`,
-  `--muted-foreground` and follows light / dark. The printed pages use the tMSC palette (content).
+- Theme: the playground UI follows light / dark; the table and the pages use colors picked in
+  the panel (data), so an export looks the same in either theme.
 - Reduced motion: turns land immediately, no idle paper movement, no hover lift.
 - `?debug=1` exposes `window.__tmsc.frame(t, w, h)` (exact Record frame as PNG) for stills.
 
@@ -117,9 +146,13 @@ tmsc-voices-magazine/
   media.ts               every post image, labels, credits, frame lookup
   controls.ts            panel schema → PageSetup (spreads + cover) / export format
   cover-upload.ts        uploaded cover image: downscale, browser storage, hook
-  paper-texture.ts       newsprint finish baked into the pages
+  paper-texture.ts       newsprint finish baked into the pages and the table
+  faces.ts               page order and sheet count (with or without Q&A spreads)
+  editorial.json         verbatim Q&A from the posts
+  editorial-flow.ts      column text flow (pure)
+  layout-editorial.ts    Q&A spread layout and drawing
   page-inks.ts           picked page colors → background + readable ink
-  content.ts, data.ts, types.ts, driver.ts, stage-colors.ts, debug-hook.ts, use-reduced-motion.ts
+  content.ts, data.ts, types.ts, driver.ts, debug-hook.ts, use-reduced-motion.ts
   magazine.test.ts
 public/prototype-assets/tmsc-voices-magazine/media/    post images, 6 frames per GIF (credited on the page)
 ```

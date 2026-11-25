@@ -3,30 +3,45 @@
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { PAGE_H, PAGE_W } from "./data";
-import type { StageColors } from "./stage-colors";
+import type { StageSetup } from "./controls";
+import { newsprint } from "./paper-texture";
 
 /**
- * The table: a flat field in the theme's background color with a fine grid and four crop
- * marks, a shadow catcher on top, one hemisphere light and one shadow-casting directional.
+ * The table: a flat field in the picked background color, optionally with the same paper
+ * finish as the pages and a fine grid with crop marks; a shadow catcher on top, one
+ * hemisphere light and one shadow-casting directional.
  */
 
 const FLOOR = 30;
-const CELL = 0.1; // world units per grid cell
+const TILE_UNITS = 2; // world units one texture tile covers
+const CELLS = 20; // grid cells per tile (0.1 units each)
 
-function gridTexture(c: StageColors) {
-  const px = 64;
+/** A color a little off the field (darker on light fields, lighter on dark), for grid lines and crop marks. */
+function shade(hex: string, k: number): string {
+  const c = new THREE.Color(hex);
+  const dark = c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722 < 0.35;
+  return `#${(dark ? c.lerp(new THREE.Color(1, 1, 1), k * 1.4) : c.multiplyScalar(1 - k)).getHexString()}`;
+}
+
+function floorTexture(stage: StageSetup) {
+  const px = 1024;
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = px;
   const g = canvas.getContext("2d")!;
-  g.fillStyle = c.field;
+  g.fillStyle = stage.color;
   g.fillRect(0, 0, px, px);
-  g.globalAlpha = 0.55;
-  g.fillStyle = c.line;
-  g.fillRect(0, 0, px, 2);
-  g.fillRect(0, 0, 2, px);
+  if (stage.paper) newsprint(g, px, px, 1);
+  if (stage.grid) {
+    g.fillStyle = shade(stage.color, 0.07);
+    for (let i = 0; i < CELLS; i++) {
+      const p = Math.round((i * px) / CELLS);
+      g.fillRect(p, 0, 2, px);
+      g.fillRect(0, p, px, 2);
+    }
+  }
   const t = new THREE.CanvasTexture(canvas);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  t.repeat.set(FLOOR / CELL, FLOOR / CELL);
+  t.repeat.set(FLOOR / TILE_UNITS, FLOOR / TILE_UNITS);
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 8;
   return t;
@@ -57,9 +72,9 @@ function CropMarks({ color }: { color: string }) {
   );
 }
 
-export function Stage({ colors }: { colors: StageColors }) {
-  const grid = useMemo(() => gridTexture(colors), [colors]);
-  useEffect(() => () => grid.dispose(), [grid]);
+export function Stage({ stage }: { stage: StageSetup }) {
+  const floor = useMemo(() => floorTexture(stage), [stage]);
+  useEffect(() => () => floor.dispose(), [floor]);
 
   const light = useMemo(() => {
     const l = new THREE.DirectionalLight(0xffffff, 0.78);
@@ -75,19 +90,19 @@ export function Stage({ colors }: { colors: StageColors }) {
 
   return (
     <>
-      <color attach="background" args={[colors.field]} />
+      <color attach="background" args={[stage.color]} />
       <hemisphereLight args={[0xffffff, 0xd9d6cf, 2.25]} />
       <primitive object={light} />
       <primitive object={light.target} />
       <mesh rotation-x={-Math.PI / 2}>
         <planeGeometry args={[FLOOR, FLOOR]} />
-        <meshBasicMaterial map={grid} toneMapped={false} />
+        <meshBasicMaterial map={floor} toneMapped={false} />
       </mesh>
       <mesh rotation-x={-Math.PI / 2} position-y={0.0002} receiveShadow>
         <planeGeometry args={[FLOOR, FLOOR]} />
         <shadowMaterial opacity={0.12} />
       </mesh>
-      <CropMarks color={colors.mark} />
+      {stage.grid && <CropMarks color={shade(stage.color, 0.4)} />}
     </>
   );
 }

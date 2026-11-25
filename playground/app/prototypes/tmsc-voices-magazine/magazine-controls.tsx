@@ -3,10 +3,11 @@
 import { useRef } from "react";
 import { ChevronLeftIcon, ChevronRightIcon, CircleIcon, ImageUpIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SHEET_COUNT, SPREAD_NAMES } from "./data";
 
 type Props = {
   spread: number;
+  /** One name per spread, cover first. */
+  names: string[];
   onTurn: (dir: 1 | -1) => void;
   recording: number | null;
   onRecord: () => void;
@@ -15,7 +16,7 @@ type Props = {
 };
 
 /** The row under the piece: previous / next, where you are, a cover upload, and Record. */
-export function MagazineControls({ spread, onTurn, recording, onRecord, error, onUpload }: Props) {
+export function MagazineControls({ spread, names, onTurn, recording, onRecord, error, onUpload }: Props) {
   const busy = recording !== null;
   const file = useRef<HTMLInputElement>(null);
   return (
@@ -29,9 +30,9 @@ export function MagazineControls({ spread, onTurn, recording, onRecord, error, o
           <ChevronLeftIcon />
         </Button>
         <p className="w-20 truncate text-center sm:w-32 text-sm tabular-nums text-muted-foreground" aria-live="polite">
-          {SPREAD_NAMES[spread]}
+          {names[spread]}
         </p>
-        <Button variant="ghost" size="icon" aria-label="Next page" disabled={busy || spread === SHEET_COUNT} onClick={() => onTurn(1)}>
+        <Button variant="ghost" size="icon" aria-label="Next page" disabled={busy || spread >= names.length - 1} onClick={() => onTurn(1)}>
           <ChevronRightIcon />
         </Button>
         <input

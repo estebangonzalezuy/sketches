@@ -34,6 +34,24 @@ Además, **Image: Fit / Fill** muestra la imagen entera o recortada al alto de l
 
 Cada spread tiene **left page** y **right page** para el color de fondo de cada página. La tapa y la contratapa tienen **Cover color** y **Back cover color**. El texto pasa solo a negro o blanco según el fondo. Mientras una página conserve su color original, mantiene la tinta del diseño (por ejemplo, el verde de Doug sobre blanco).
 
+## Páginas Q&A (editoriales)
+
+Con **Q&A pages** activado, cada entrevista suma un segundo spread con la conversación en columnas, como una revista impresa. Las preguntas de Esteban van en negrita y las respuestas del invitade debajo, verbatim de los posts publicados.
+
+- **Q&A columns:** 1 (texto corrido), 2 o 3 columnas.
+- **Q&A text:** tamaño Small, Medium o Large.
+- **Q&A image 1 / 2** (por invitade): cualquier imagen de su post, o None. La 1 va arriba en la página derecha y la 2 abajo en la izquierda.
+- **Q&A image size %:** el tamaño de esas imágenes.
+- **Q&A page color:** el color de esas páginas. El texto se ajusta a negro o blanco solo.
+
+El texto entra hasta donde haya lugar y nunca corta una frase a la mitad. Si queda espacio, cierra con "Read the full conversation at themotionsocialclub.substack.com". Con Q&A pages apagado, la revista vuelve a tener 5 hojas.
+
+## Fondo
+
+- **Background:** el color del fondo detrás de la revista. Por defecto #EAEAEA.
+- **Background paper:** la misma textura de papel que las páginas, sobre el fondo.
+- **Grid:** la grilla fina con crop marks. Viene apagada.
+
 ## Tapa
 
 En el panel, **Cover** elige el estilo:
@@ -51,7 +69,7 @@ La contratapa es blanca con tipo negro y la URL `themotionsocialclub.substack.co
 ## Cómo exportar el MP4
 
 1. Elegí el formato en el panel (**Export**): **1:1** (1080×1080) o **4:5** (1080×1350).
-2. Tocá **Record**. La pieza recorre la secuencia del storyboard (18 s, 60 fps) cuadro por cuadro, con las mismas luces y texturas que el modo interactivo, sin cursor ni UI.
+2. Tocá **Record**. La pieza recorre todos los spreads en orden y vuelve a la tapa en cascada: unos 18 s sin páginas Q&A y unos 29 s con ellas, a 60 fps cuadro por cuadro, con las mismas luces y texturas que el modo interactivo, sin cursor ni UI.
 3. Al terminar baja `tmsc-voices-1080x1080.mp4` (o `…1080x1350.mp4`). Es H.264, nunca GIF. Mientras graba, el botón muestra el % y sirve para cancelar.
 
 La secuencia es determinista: el mismo export da los mismos cuadros. El fondo sigue el tema del playground (claro o oscuro), así que grabá con el tema que quieras en el post.

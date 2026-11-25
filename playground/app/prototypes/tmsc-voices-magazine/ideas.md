@@ -20,6 +20,9 @@ Formato: idea, tamaño (S/M/L), estado. Estados: pendiente, en curso, hecha, des
 - **Tamaño de imagen** — S — hecha. Un slider para la imagen de los spreads (global) y otro para la tapa en Image on color.
 - **Color de cada página** — S — hecha. Fondo por página (8 páginas de entrevista, tapa y contratapa); el tipo cambia a negro o blanco según el fondo.
 - **Tamaño por spread** — S — después, si hace falta ajustar cada uno por separado.
+- **Spreads editoriales (Q&A)** — L — hecha. Un spread por entrevista con la conversación verbatim en 1 a 3 columnas, tamaño de texto, dos imágenes del post con tamaño ajustable y color de página. Corta solo en fin de oración.
+- **Fondo del canvas** — S — hecha. Color a elegir, textura de papel y grilla opcional (apagada por defecto).
+- **Record más corto con Q&A** (por ejemplo, saltear los spreads Q&A en el video) — S — después. Hoy el video con Q&A dura unos 29 s.
 - **GIFs animados en la página** — L — después. Haría falta una textura de video por página y hacer seek por cuadro en el Record para que siga siendo determinista.
 - **Elegir la cita hero** (entre las tres de `content.json`) — S — después.
 

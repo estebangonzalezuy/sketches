@@ -13,7 +13,7 @@ const pad2 = (n: number) => String(n).padStart(2, "0");
 /** Left page: who, what, and one image from the post (credited), as picked in the panel. */
 export type LeftImage = { img: HTMLImageElement; credit: string; fill: boolean; scale: number } | null;
 
-export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk, image: LeftImage) {
+export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk, image: LeftImage, folio: number) {
   const it = interview(order);
   const { bg, ink } = page;
   ctx.fillStyle = bg;
@@ -52,11 +52,11 @@ export function drawInterviewLeft(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk,
   }
 
   font(ctx, 500, 42);
-  ctx.fillText(pad2(order * 2), M, H - M + 8);
+  ctx.fillText(pad2(folio), M, H - M + 8);
 }
 
 /** Right page: the hero quote, verbatim, and who said it. */
-export function drawInterviewRight(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk) {
+export function drawInterviewRight(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk, folio: number) {
   const it = interview(order);
   const { bg, ink } = page;
   const q = heroQuote(it, SPREADS[order].heroQuote);
@@ -82,5 +82,5 @@ export function drawInterviewRight(ctx: Ctx, order: 1 | 2 | 3 | 4, page: PageInk
   ctx.fillText(`— ${q.attribution}`, M, Math.max(last, top + quote.size * 0.8) + 150);
 
   font(ctx, 500, 42);
-  right(ctx, pad2(order * 2 + 1), W - M, H - M + 8);
+  right(ctx, pad2(folio), W - M, H - M + 8);
 }

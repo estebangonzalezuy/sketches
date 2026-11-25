@@ -1,4 +1,4 @@
-import { BEND_CASCADE, BEND_TURN, HOVER_LIFT, PAGE_H, PAGE_W, SHEET_COUNT } from "./data";
+import { BEND_CASCADE, BEND_TURN, HOVER_LIFT, PAGE_H, PAGE_W } from "./data";
 import { clamp, dragProgress, ease, foldAngle } from "./pose";
 import type { SheetPose } from "./types";
 
@@ -16,7 +16,10 @@ const CASCADE_STAGGER = 0.12;
 const CLICK_SLOP = 0.03; // page widths of movement that still count as a click
 
 export class FlipController {
-  sheets: Sheet[] = Array.from({ length: SHEET_COUNT }, () => ({ p: 0, sign: 1, bend: BEND_TURN, phi: 0, anim: null, hover: 0 }));
+  sheets: Sheet[];
+  constructor(readonly count: number) {
+    this.sheets = Array.from({ length: count }, () => ({ p: 0, sign: 1, bend: BEND_TURN, phi: 0, anim: null, hover: 0 }));
+  }
   /** Sheets turned once every running animation lands. The spread being shown. */
   turned = 0;
   private drag: Drag | null = null;
@@ -34,13 +37,13 @@ export class FlipController {
   }
 
   turn(dir: 1 | -1) {
-    if (dir === 1 && this.turned < SHEET_COUNT) this.animate(this.turned++, 1, 0, BEND_TURN);
+    if (dir === 1 && this.turned < this.count) this.animate(this.turned++, 1, 0, BEND_TURN);
     if (dir === -1 && this.turned > 0) this.animate(--this.turned, 0, 0, BEND_TURN);
   }
 
   /** Flip through to spread k, sheets cascading one after another. */
   goTo(k: number) {
-    const target = clamp(Math.round(k), 0, SHEET_COUNT);
+    const target = clamp(Math.round(k), 0, this.count);
     let i = 0;
     while (this.turned > target) this.animate(--this.turned, 0, i++ * CASCADE_STAGGER, BEND_CASCADE);
     while (this.turned < target) this.animate(this.turned++, 1, i++ * CASCADE_STAGGER, BEND_CASCADE);
@@ -49,7 +52,7 @@ export class FlipController {
   pointerDown(x: number, v: number) {
     if (Math.abs(v) > PAGE_H / 2 || Math.abs(x) > PAGE_W) return false;
     const sheet = x >= 0 ? this.turned : this.turned - 1;
-    if (sheet < 0 || sheet >= SHEET_COUNT || this.sheets[sheet].anim) return false;
+    if (sheet < 0 || sheet >= this.count || this.sheets[sheet].anim) return false;
     this.drag = { sheet, grabX: x, grabV: v, startX: x, x, v, vx: 0, moved: false };
     this.sheets[sheet].sign = x >= 0 ? 1 : -1;
     this.sheets[sheet].bend = BEND_TURN;
@@ -69,7 +72,7 @@ export class FlipController {
     const onRight = x > PAGE_W * 0.62 && x <= PAGE_W && Math.abs(v) <= PAGE_H / 2;
     const onLeft = x < -PAGE_W * 0.62 && x >= -PAGE_W && Math.abs(v) <= PAGE_H / 2;
     this.hoverSheet = onRight ? this.turned : onLeft ? this.turned - 1 : -1;
-    if (this.hoverSheet >= SHEET_COUNT) this.hoverSheet = -1;
+    if (this.hoverSheet >= this.count) this.hoverSheet = -1;
     this.hoverPhi = foldAngle(v, v, PAGE_H);
   }
 

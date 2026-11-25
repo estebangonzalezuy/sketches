@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { useTheme } from "next-themes";
+import { useEffect } from "react";
 import * as THREE from "three";
 import { Canvas, useThree } from "@react-three/fiber";
 import { installDebugHook } from "./debug-hook";
+import type { StageSetup } from "./controls";
 import type { DriverRef } from "./driver";
+import type { Book } from "./faces";
 import { Magazine } from "./magazine";
 import { PointerInput } from "./pointer-input";
 import { fitCamera, Stage } from "./stage";
-import { readStageColors } from "./stage-colors";
 
 /** Keeps the camera framed on resize and hands the live three.js state to the driver. */
 function Bridge({ driverRef }: { driverRef: DriverRef }) {
@@ -31,12 +31,9 @@ function Bridge({ driverRef }: { driverRef: DriverRef }) {
   return null;
 }
 
-export function MagazineScene({ pages, driverRef }: { pages: Map<string, HTMLCanvasElement>; driverRef: DriverRef }) {
-  const { resolvedTheme } = useTheme();
-  // the stage reads the theme tokens; recompute when the theme flips
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const colors = useMemo(() => readStageColors(), [resolvedTheme]);
+type Props = { book: Book; pages: Map<string, HTMLCanvasElement>; stage: StageSetup; driverRef: DriverRef };
 
+export function MagazineScene({ book, pages, stage, driverRef }: Props) {
   return (
     <Canvas
       shadows="soft"
@@ -49,8 +46,8 @@ export function MagazineScene({ pages, driverRef }: { pages: Map<string, HTMLCan
       style={{ touchAction: "none" }}
     >
       <Bridge driverRef={driverRef} />
-      <Stage colors={colors} />
-      <Magazine pages={pages} driverRef={driverRef} />
+      <Stage stage={stage} />
+      <Magazine book={book} pages={pages} driverRef={driverRef} />
       <PointerInput driverRef={driverRef} />
     </Canvas>
   );

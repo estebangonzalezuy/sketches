@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { RECORD_FORMATS, RECORD_FPS } from "./data";
 import type { Driver } from "./driver";
 import { fitCamera } from "./stage";
-import { RECORD_DURATION, recordFrame } from "./timeline";
+import { recordFrame, recordPlan } from "./timeline";
 import type { RecordFormat } from "./types";
 
 /**
@@ -19,7 +19,9 @@ export async function recordMp4(driver: Driver, format: RecordFormat, onProgress
   const cam = camera as THREE.PerspectiveCamera;
   const { w, h } = RECORD_FORMATS[format];
   const fps = RECORD_FPS;
-  const frames = Math.round(RECORD_DURATION * fps);
+  if (!driver.book) throw new Error("The magazine isn't ready yet.");
+  const plan = recordPlan(driver.book);
+  const frames = Math.round(plan.duration * fps);
   const { codec, mux } = await pickCodec(w, h, fps);
 
   const muxer = new Muxer({ target: new ArrayBufferTarget(), video: { codec: mux, width: w, height: h, frameRate: fps }, fastStart: "in-memory" });
@@ -40,7 +42,7 @@ export async function recordMp4(driver: Driver, format: RecordFormat, onProgress
       if (signal.cancel) throw new Error("Cancelled");
       if (failure) throw failure;
       const t = i / fps;
-      const f = recordFrame(t);
+      const f = recordFrame(plan, t);
       driver.apply(f.sheets, f.drop, f.shadow, t);
       gl.render(scene, cam);
       const frame = new VideoFrame(gl.domElement, { timestamp: Math.round((i * 1e6) / fps), duration: Math.round(1e6 / fps) });
