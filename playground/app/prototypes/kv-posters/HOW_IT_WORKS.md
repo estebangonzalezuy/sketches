@@ -35,7 +35,7 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
 - **Animate**: styles `build` (everything builds in, then holds), `loop` (finished poster, motifs spin), `build + loop`, `in + out` (builds in and back out, so it loops). Kinds start in order (blocks → frames → spirals/flowers → headline → lockup → asterisk), staggered top to bottom. Spin advances by whole rotational-symmetry periods, so loops are seamless. Scrub with the time slider; Space plays and pauses. **Easing**: the Studio's curve editor (`lib/studio/ui/curve-editor.tsx`) shapes each element's build (drag the two bezier handles or start from a preset; stored as `playground:kv-posters:ease`); spins stay linear so loops close.
 - **Paper texture**: a checkbox turns the grain on or off; Grain sets its strength. It is a seeded noise tile laid in device pixels over the whole print (paper, colour and ink), so it reads the same in the preview, the PNG and the MP4.
 - **Formats**: motif and mark sizes use a unit `U = min(width, height × 0.75)` (the width on 3:4 and taller), so 1:1 and 4:5 don't overflow; the canvas resizes both sides on a format change.
-- **Export**: PNG at the format's size; MP4 H.264 (VP9 fallback) at the chosen frame rate.
+- **Export**: PNG at the format's size; MP4 H.264 (VP9 fallback) at the chosen frame rate (12, 24, 30 or 60 fps).
 - **Responsive**: the poster sits on top, capped at `max-w-md`; panels below; settings in the side panel (desktop) or bottom sheet (mobile). Every button is a 44px target.
 - **Reduced motion**: no autoplay; the playhead rests on the finished poster.
 - **Theme**: chrome uses tokens; the poster uses its own palette (data).
