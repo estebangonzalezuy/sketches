@@ -24,6 +24,8 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
                           export-mp4.ts (WebCodecs + mp4-muxer)
 ```
 
+- **Lockup and asterisk**: each seed puts them in two different random corners (with a small random inset), never over the headline; the lockup's box is a coin flip.
+
 ## Frontend
 
 - **Layouts**: `stack` (stacked headline top-right, spiral), `cascade` (three flowers), `overlap` (one-line headline, two flowers), `vertical` (headline down the left edge, one big flower), `line` (line art: scalloped rosette, outlined type), `free` (one to three motifs anywhere). `auto` picks one per seed. Layouts are starting points: `vary.ts` moves, scales, turns and re-petals the motifs per seed, often re-splits, resizes and re-places the headline (sometimes vertical), swaps the lockup and asterisk corners, and flips a coin for each box's outline.

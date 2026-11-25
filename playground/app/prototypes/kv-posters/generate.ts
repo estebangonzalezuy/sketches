@@ -2,9 +2,9 @@ import { FORMATS, TEMPLATES } from "./data";
 import { approxMeasure, lockup, mark, type Measure } from "./elements";
 import { LAYOUTS, type Frame } from "./layouts";
 import { cuts, paintSquares } from "./mosaic";
-import { rng } from "./random";
+import { rng, type Rng } from "./random";
 import { vary } from "./vary";
-import type { Element, FormatId, Paint, Poster, Template } from "./types";
+import type { Element, FormatId, Headline, Lockup, Mark, Paint, Poster, Template } from "./types";
 
 export interface GenOptions {
   template: (typeof TEMPLATES)[number];
@@ -38,15 +38,8 @@ export function generate(o: GenOptions, measure: Measure = approxMeasure): Poste
   if (squares) body = [...paintSquares(r, f, width, o.density), ...body.filter((e) => e.kind !== "block" && e.kind !== "bands").map(outlined)];
   const lk = Math.round(f.U * r.range(0.05, 0.066));
   const ms = Math.round(f.U * r.range(0.06, 0.09));
-  const swap = r.chance(0.35);
-  const lockupEl = lockup(f.x + width * 0.015, f.y + f.h - lk * 2.6, lk);
-  const markEl = { ...mark(f.x + f.w - ms * 1.15, f.y + f.h - ms * 1.15, ms, squares || t === "cascade" ? "brown" : "ink"), box: !squares, round: r.chance(0.7) ? 1 : r.range(0, 0.6), ...(squares ? { size: ms * 1.6, cx: f.x + f.w - ms * 1.7, cy: f.y + f.h - ms * 1.7 } : {}) };
-  if (swap) {
-    // asterisk bottom-left, lockup bottom-right
-    const lw = lk * 7.4;
-    lockupEl.x = f.x + f.w - lw;
-    markEl.cx = f.x + (f.x + f.w - markEl.cx);
-  }
+  const markEl = { ...mark(0, 0, ms, squares || t === "cascade" ? "brown" : "ink"), box: !squares, round: r.chance(0.7) ? 1 : r.range(0, 0.6), ...(squares ? { size: ms * 1.6 } : {}) };
+  const { lockupEl } = placeCorners(body, f, r, lk, markEl, measure);
   const boxes = (e: Element): Element => (e.kind === "headline" || e.kind === "lockup" || e.kind === "mark" ? { ...e, boxLine: r.chance(0.55) } : e);
   return {
     version: 1,
@@ -61,6 +54,42 @@ export function generate(o: GenOptions, measure: Measure = approxMeasure): Poste
 }
 
 /** Squares mode: rosettes become scalloped outlines, the headline loses its box. */
+type Rect = { x: number; y: number; w: number; h: number };
+const hit = (a: Rect, b: Rect) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+const CORNERS = ["bl", "br", "tl", "tr"] as const;
+
+/** Lockup and asterisk go to two different random corners, clear of the headline; the lockup's box is a coin flip. */
+function placeCorners(body: Element[], f: Frame, r: Rng, lk: number, markEl: Mark, measure: Measure): { lockupEl: Lockup } {
+  const lw = lk * 7.4;
+  const lh = lk * 2.6;
+  const d = markEl.size * (markEl.box ? 2.3 : 2.1);
+  const head = body.find((e): e is Headline => e.kind === "headline");
+  const hb: Rect | null = head
+    ? (() => {
+        const b = measure(head.text, head.size);
+        const [w, h] = head.vertical ? [b.h, b.w] : [b.w, b.h];
+        const pad = head.size * 0.25;
+        return { x: head.x - pad, y: head.y - pad, w: w + pad * 2, h: h + pad * 2 };
+      })()
+    : null;
+  const inset = () => r.range(0, f.U * 0.03);
+  const at = (c: (typeof CORNERS)[number], w: number, h: number): Rect => {
+    const x = c[1] === "l" ? f.x + inset() : f.x + f.w - w - inset();
+    const y = c[0] === "t" ? f.y + inset() : f.y + f.h - h - inset();
+    return { x, y, w, h };
+  };
+  const order = [...CORNERS].map((c) => [r(), c] as const).sort((a, b) => a[0] - b[0]).map(([, c]) => c);
+  const clear = (rc: Rect) => !hb || !hit(rc, hb);
+  const lc = order.find((c) => clear(at(c, lw, lh))) ?? "bl";
+  const lr = at(lc, lw, lh);
+  const mc = order.find((c) => c !== lc && clear(at(c, d, d)) && !hit(at(c, d, d), lr)) ?? order.find((c) => c !== lc)!;
+  const mr = at(mc, d, d);
+  markEl.cx = mr.x + d / 2;
+  markEl.cy = mr.y + d / 2;
+  const lockupEl = { ...lockup(lr.x, lr.y, lk), box: r.chance(0.5) };
+  return { lockupEl };
+}
+
 function outlined(e: Element): Element {
   if (e.kind === "flower") return { ...e, style: "scallop", petals: Math.max(12, e.petals + 4), r: e.r * 1.15 };
   if (e.kind === "headline") return { ...e, box: false };
