@@ -8,8 +8,8 @@ import type { Controls } from "@/components/controls";
 import { animate, clipsFor } from "./animate";
 import { AnimatePanel } from "./animate-panel";
 import { moved } from "./bounds";
-import { controls, PALETTES } from "./data";
-import { monoPalette, type MonoName } from "./palettes";
+import { controls } from "./data";
+import { paletteFor } from "./palettes";
 import { DesignPanel } from "./design-panel";
 import { exportMP4 } from "./export-mp4";
 import { PosterCanvas } from "./poster-canvas";
@@ -26,8 +26,8 @@ export function PosterEditor({ c }: { c: Controls<typeof controls> }) {
   const opts = { template: v.template, seed: v.seed, format: v.format as FormatId, density: v.density, paint: v.color as Paint };
   const poster = usePoster(opts);
   const palette = useMemo(
-    () => (v.mono !== "off" ? monoPalette(v.mono as MonoName) : (PALETTES[v.palette] ?? PALETTES["Blanco / Ink"])),
-    [v.mono, v.palette],
+    () => paletteFor(v.palette, v.background, v.mono),
+    [v.mono, v.palette, v.background],
   );
   const [tab, setTab] = useState("design");
   const [selected, setSelected] = useState<string | null>(null);

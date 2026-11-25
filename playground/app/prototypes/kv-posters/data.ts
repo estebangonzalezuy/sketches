@@ -1,6 +1,6 @@
 import { defineControls } from "@/components/controls";
-import { MONO_COLORS, PAIR_PALETTES } from "./palettes";
-import type { Element, FormatId, Kind, Palette } from "./types";
+import { FIGURES, MONO_COLORS, PAPERS } from "./palettes";
+import type { Element, FormatId, Kind } from "./types";
 
 export const SLUG = "kv-posters";
 
@@ -11,16 +11,14 @@ export const FORMATS: Record<FormatId, { label: string; width: number; height: n
   "1x1": { label: "1:1", width: 1080, height: 1080 },
 };
 
-/** White canvas, tMSC colours; one figure colour per palette. */
-export const PALETTES: Record<string, Palette> = PAIR_PALETTES;
-
 export const TEMPLATES = ["auto", "free", "stack", "cascade", "overlap", "vertical", "line"] as const;
 
 export const controls = defineControls({
   template: { type: "select", label: "Layout", options: TEMPLATES, default: "auto" },
   seed: { type: "number", label: "Seed", min: 1, max: 9999, step: 1, default: 12 },
   format: { type: "select", label: "Format", options: ["3x4", "4x5", "9x16", "1x1"], default: "3x4", randomize: false },
-  palette: { type: "select", label: "Palette", options: Object.keys(PALETTES), default: "Blanco / Ink" },
+  background: { type: "select", label: "Background", options: Object.keys(PAPERS), default: "Blanco" },
+  palette: { type: "select", label: "Type colour", options: FIGURES, default: "Ink" },
   mono: { type: "select", label: "Mono", options: ["off", ...MONO_COLORS], default: "off" },
   color: { type: "select", label: "Colour", options: ["squares", "fills"], default: "squares" },
   density: { type: "number", label: "Blocks", min: 0, max: 1, step: 0.05, default: 0.55 },

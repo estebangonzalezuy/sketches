@@ -34,31 +34,40 @@ const SLOTS = { blue: "Periwinkle", pink: "Magenta", lilac: "Lila", mint: "Verde
 const SPARES: Name[] = ["Acid", "Amarillo", "Periwinkle", "Lila", "Magenta", "Naranja", "Verde"];
 
 /** Paper = background, ink = figure (type, lines); boxes take the background, motifs the rest of the set. */
-export function pairPalette(bg: Name, fg: Name): Palette {
+export function pairPalette(paper: string, fg: Name): Palette {
   const ok = (n: Name) =>
-    n !== fg && n !== bg && contrast(TMSC[n], TMSC[bg]) >= MOTIF_CONTRAST && contrast(TMSC[n], TMSC[fg]) >= PALETTE_BLOCK_TYPE_CONTRAST;
+    n !== fg && TMSC[n] !== paper && contrast(TMSC[n], paper) >= MOTIF_CONTRAST && contrast(TMSC[n], TMSC[fg]) >= PALETTE_BLOCK_TYPE_CONTRAST;
   const spares = SPARES.filter(ok);
   let k = 0;
   const slot = (n: Name) => TMSC[ok(n) ? n : spares[k++ % spares.length]];
   return {
-    paper: TMSC[bg], ink: TMSC[fg],
+    paper, ink: TMSC[fg],
     blue: slot(SLOTS.blue), pink: slot(SLOTS.pink), lilac: slot(SLOTS.lilac),
     mint: slot(SLOTS.mint), orange: slot(SLOTS.orange), yellow: slot(SLOTS.yellow),
     green: TMSC[spares[k++ % spares.length]],
     brown: TMSC[fg],
-    cream: TMSC[bg],
+    cream: paper,
   };
 }
 
-const blockColours = (p: Palette) => new Set([p.blue, p.pink, p.lilac, p.mint, p.orange, p.yellow]).size;
+export const blockColours = (p: Palette) => new Set([p.blue, p.pink, p.lilac, p.mint, p.orange, p.yellow]).size;
 
-/** Figure colours that read on white (WCAG AA) and leave at least two block colours. */
-export const WHITE_FIGURES = (Object.keys(TMSC) as Name[]).filter(
-  (n) => n !== "Blanco" && contrast(TMSC[n], TMSC.Blanco) >= TYPE_CONTRAST && blockColours(pairPalette("Blanco", n)) >= 2,
+/** Background options: white, a light sky blue, and the beige of the first posters. */
+export const PAPERS = { Blanco: "#FFFFFF", Celeste: "#C9E6F7", Beige: "#F7F0DA" } as const;
+export type PaperName = keyof typeof PAPERS;
+
+/** Figure colours that read on every background (WCAG AA) and leave at least two block colours. */
+export const FIGURES = (Object.keys(TMSC) as Name[]).filter((n) =>
+  Object.values(PAPERS).every((paper) => contrast(TMSC[n], paper) >= TYPE_CONTRAST && blockColours(pairPalette(paper, n)) >= 2),
 );
+export type FigureName = (typeof FIGURES)[number];
 
-/** White canvas, colourful blocks, one figure colour for type and lines. */
-export const PAIR_PALETTES: Record<string, Palette> = Object.fromEntries(WHITE_FIGURES.map((f) => [`Blanco / ${f}`, pairPalette("Blanco", f)]));
+/** The poster palette: a figure colour (or Mono colour) on the chosen background. */
+export function paletteFor(figure: string, paper: string, mono: string): Palette {
+  const hex = PAPERS[paper as PaperName] ?? PAPERS.Blanco;
+  if (mono !== "off" && (MONO_COLORS as string[]).includes(mono)) return monoPalette(mono as MonoName, hex);
+  return pairPalette(hex, ((FIGURES as string[]).includes(figure) ? figure : "Ink") as Name);
+}
 
 // ---------------------------------------------------------------- mono
 
@@ -76,10 +85,9 @@ export function shade(h: string, t: number): string {
   return hex(rgbOf(h).map((c) => c + (to - c) * Math.abs(t)));
 }
 
-/** One colour on white: the colour and its tints for blocks, type in a deep shade of it. */
-export function monoPalette(name: Name): Palette {
+/** One colour on the background: the colour and its tints for blocks, type in a deep shade of it. */
+export function monoPalette(name: Name, paper: string = PAPERS.Blanco): Palette {
   const c = TMSC[name];
-  const paper = TMSC.Blanco;
   // type is the colour deepened well past the minimum, so its tints have room to read under it
   let ink: string = c;
   for (let t = 0.05; contrast(ink, paper) < MONO_INK_CONTRAST && t <= 1; t += 0.05) ink = shade(c, -t);
