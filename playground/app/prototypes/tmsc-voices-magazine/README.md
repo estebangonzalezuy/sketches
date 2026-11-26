@@ -46,10 +46,42 @@ Con **Q&A pages** activado, cada entrevista suma un segundo spread con la conver
 
 El texto entra hasta donde haya lugar y nunca corta una frase a la mitad. Si queda espacio, cierra con "Read the full conversation at themotionsocialclub.substack.com". Con Q&A pages apagado, la revista vuelve a tener 5 hojas.
 
+## Tiempos, easing y línea de tiempo
+
+En el panel están los valores generales:
+
+- **Turn duration:** cuánto dura cada giro de página.
+- **Turn easing:** la curva del giro. Opciones: Hand (el default), Ease in-out, Ease out, Ease in, Snappy, Soft y Linear, todas como cubic-bézier.
+- **Hold on spreads / Hold on Q&A:** cuánto se queda en cada spread.
+- **Flip-through gap / sheet:** el ritmo de la cascada final.
+
+Estos valores rigen tanto los clicks y las flechas en vivo como el Record.
+
+El botón **Timeline** abre la secuencia del Record como una línea de tiempo:
+
+- **Play** la reproduce en la escena tal cual va a exportarse. La regla de arriba sirve para scrub.
+- Los bloques están a escala. Cada giro muestra su curva de easing.
+- Arrastrá el borde derecho de un bloque para alargarlo o acortarlo. Con un click lo seleccionás y podés escribir la duración exacta y elegir el easing de ese giro. **Use default** quita la edición de ese bloque y **Reset edits** las quita todas.
+- Los bloques editados aparecen resaltados y las ediciones se guardan en el browser.
+- Tocar la revista, una flecha o Record sale del preview y deja la revista en el spread que se estaba viendo.
+
+## Texturas
+
+**Page texture** y **Background texture** eligen el papel de las páginas y del fondo por separado, cada uno con su intensidad (0–200 %). Opciones:
+
+- Newsprint
+- Recycled (más fibras)
+- Laid (líneas de papel verjurado)
+- Linen (tejido)
+- Riso grain
+- Smooth (sin textura)
+- Uploaded
+
+Para probar una textura propia: **Upload → Paper texture…**. La imagen se repite como mosaico y se normaliza para que agregue textura sin teñir. Queda guardada en el browser.
+
 ## Fondo
 
 - **Background:** el color del fondo detrás de la revista. Por defecto #EAEAEA.
-- **Background paper:** la misma textura de papel que las páginas, sobre el fondo.
 - **Grid:** la grilla fina con crop marks. Viene apagada.
 
 ## Tapa
@@ -62,7 +94,7 @@ En el panel, **Cover** elige el estilo:
 
 **Cover image** elige de dónde sale la imagen: la que subiste o la imagen elegida para alguno de los cuatro spreads. **Cover image size %** (30–100) achica la imagen dentro de su espacio en Image on color. **Cover type** pone el tipo en negro o en blanco, según el fondo.
 
-Para subir una imagen, tocá el botón **Cover** (el ícono de imagen) en la fila de abajo. La imagen se achica a 1600 px como máximo y queda guardada en este browser; no se sube a ningún lado. Al subirla, la tapa pasa a usarla.
+Para subir una imagen, usá **Upload → Cover image…** en la fila de abajo. La imagen se achica a 1600 px como máximo y queda guardada en este browser; no se sube a ningún lado. Al subirla, la tapa pasa a usarla.
 
 La contratapa es blanca con tipo negro y la URL `themotionsocialclub.substack.com`.
 

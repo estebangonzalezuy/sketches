@@ -1,6 +1,6 @@
 import { fit, font, imageFill, imageFit, lines, right, type Ctx } from "./canvas-type";
 import { displayDate, INTERVIEWS, PUBLICATION_URL } from "./content";
-import type { CoverSetup } from "./controls";
+import type { CoverSetup } from "./setup";
 import { PAGE_PX } from "./data";
 import type { PageInk } from "./types";
 

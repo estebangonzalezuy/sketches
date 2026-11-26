@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { Driver } from "./driver";
 import { fitCamera } from "./stage";
-import { recordFrame, recordPlan } from "./timeline";
+import { recordFrame } from "./timeline";
 
 /**
  * Only with ?debug=1: exposes `window.__tmsc` so a script can render exact Record frames
@@ -12,7 +12,7 @@ export function installDebugHook(driver: Driver): () => void {
   const w = window as unknown as { __tmsc?: unknown };
   w.__tmsc = {
     driver,
-    duration: () => (driver.book ? recordPlan(driver.book).duration : 0),
+    duration: () => driver.plan?.duration ?? 0,
     /** Renders the Record sequence at time t into a w×h PNG data URL, then restores the live view. */
     frame(t: number, width = 1080, height = 1080): string {
       const st = driver.three?.();
@@ -24,7 +24,7 @@ export function installDebugHook(driver: Driver): () => void {
       st.gl.setPixelRatio(1);
       st.gl.setSize(width, height, false);
       fitCamera(cam, width / height);
-      const f = recordFrame(recordPlan(driver.book!), t);
+      const f = recordFrame(driver.plan!, t);
       driver.apply(f.sheets, f.drop, f.shadow, t);
       st.gl.render(st.scene, cam);
       const url = st.gl.domElement.toDataURL("image/png");

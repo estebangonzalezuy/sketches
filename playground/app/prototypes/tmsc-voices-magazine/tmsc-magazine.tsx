@@ -3,33 +3,53 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ControlsLayout, useControls } from "@/components/controls";
 import { Spinner } from "@/components/ui/spinner";
-import { controls, pageSetup, recordFormat, stageSetup } from "./controls";
-import { saveUploadedCover, useUploadedCover } from "./cover-upload";
-import { PAGE_PX, PAGE_PX_SMALL, RECORD_FORMATS, SLUG } from "./data";
+import { controls } from "./controls";
+import { PAGE_PX, PAGE_PX_SMALL, SLUG } from "./data";
 import { Driver } from "./driver";
 import { buildBook, type Book } from "./faces";
 import { MagazineControls } from "./magazine-controls";
 import { MagazineScene } from "./magazine-scene";
 import { bakePages } from "./page-bake";
-import { downloadBlob, recordMp4 } from "./recorder";
+import { pageSetup, recordFormat, stageSetup } from "./setup";
+import { recordPlan, spreadAt } from "./timeline";
+import { TimelinePanel } from "./timeline-panel";
+import { timingFrom } from "./timing";
+import { setOverrides, useOverrides } from "./timing-store";
+import { coverUpload, loadDataImage, textureUpload } from "./uploads";
+import { useMagazineKeys } from "./use-magazine-keys";
+import { useRecord } from "./use-record";
 import { useReducedMotion } from "./use-reduced-motion";
 
 export function TmscMagazine() {
   const driverRef = useRef(new Driver());
   const [baked, setBaked] = useState<{ book: Book; pages: Map<string, HTMLCanvasElement> } | null>(null);
   const [spread, setSpread] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [timelineOpen, setTimelineOpen] = useState(false);
+  const [textureImage, setTextureImage] = useState<HTMLImageElement | null>(null);
+  const reduced = useReducedMotion();
   const c = useControls(SLUG, controls);
+  const uploadedCover = coverUpload.use();
+  const uploadedTexture = textureUpload.use();
+  const overrides = useOverrides();
+
+  // JSON keys keep these stable while unrelated controls move
   const setupKey = JSON.stringify(pageSetup(c.values));
   const stageKey = JSON.stringify(stageSetup(c.values));
-  const format = recordFormat(c.values);
-  const [recording, setRecording] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const cancel = useRef({ cancel: false });
-  const reduced = useReducedMotion();
-  const uploaded = useUploadedCover();
-
+  const timingKey = JSON.stringify(timingFrom(c.values, overrides));
   const setup = useMemo(() => JSON.parse(setupKey) as ReturnType<typeof pageSetup>, [setupKey]);
   const stage = useMemo(() => JSON.parse(stageKey) as ReturnType<typeof stageSetup>, [stageKey]);
+  const timing = useMemo(() => JSON.parse(timingKey) as ReturnType<typeof timingFrom>, [timingKey]);
+  const plan = useMemo(() => (baked ? recordPlan(baked.book, timing) : null), [baked, timing]);
+  const format = recordFormat(c.values);
+
+  useEffect(() => {
+    let alive = true;
+    loadDataImage(uploadedTexture).then((img) => alive && setTextureImage(img));
+    return () => {
+      alive = false;
+    };
+  }, [uploadedTexture]);
 
   // re-bake whenever the setup changes; the old pages stay up until the new ones are ready.
   // Toggling the Q&A pages changes the sheet count, so the controller starts again at the cover.
@@ -37,7 +57,7 @@ export function TmscMagazine() {
     let alive = true;
     const small = Math.min(window.innerWidth, window.innerHeight) < 600;
     const book = buildBook(setup.editorial.on);
-    bakePages(small ? PAGE_PX_SMALL : PAGE_PX, book, setup, uploaded)
+    bakePages(small ? PAGE_PX_SMALL : PAGE_PX, book, setup, uploadedCover, textureImage)
       .then((pages) => {
         if (!alive) return;
         driverRef.current.useBook(book);
@@ -47,7 +67,9 @@ export function TmscMagazine() {
     return () => {
       alive = false;
     };
-  }, [setup, uploaded]);
+  }, [setup, uploadedCover, textureImage]);
+
+  useEffect(() => driverRef.current.setTiming(timing), [timing]);
 
   useEffect(() => {
     const d = driverRef.current;
@@ -55,60 +77,45 @@ export function TmscMagazine() {
     d.onFrame = () => setSpread((s) => (s === d.controller.turned ? s : d.controller.turned));
   }, [reduced]);
 
+  /** Leaves the timeline preview, staying on the spread it showed. */
+  const live = useCallback(() => {
+    const d = driverRef.current;
+    if (d.preview && d.plan) d.endPreview(spreadAt(d.plan, d.preview.t));
+  }, []);
+  useMagazineKeys(driverRef, live);
+
   const { set } = c;
-  const style = c.values.coverStyle;
+  const coverStyle = c.values.coverStyle;
   const upload = useCallback(
-    async (file: File) => {
+    async (what: "cover" | "texture", file: File) => {
       setError(null);
       try {
-        await saveUploadedCover(file);
-        set("coverImage", "Uploaded");
-        if (style === "Type") set("coverStyle", "Full image");
-        driverRef.current.controller.goTo(0);
+        if (what === "cover") {
+          await coverUpload.save(file);
+          set("coverImage", "Uploaded");
+          if (coverStyle === "Type") set("coverStyle", "Full image");
+          live();
+          driverRef.current.controller.goTo(0);
+        } else {
+          await textureUpload.save(file);
+          set("pageTexture", "Uploaded");
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "That image didn't load.");
       }
     },
-    [set, style],
+    [set, coverStyle, live],
   );
 
-  const turn = useCallback((dir: 1 | -1) => driverRef.current.controller.turn(dir), []);
+  const turn = useCallback(
+    (dir: 1 | -1) => {
+      live();
+      driverRef.current.controller.turn(dir);
+    },
+    [live],
+  );
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const d = driverRef.current;
-      if (d.recording || e.metaKey || e.ctrlKey || e.altKey) return;
-      if ((e.target as HTMLElement)?.closest?.("input, textarea, select, [contenteditable]"))
-        return;
-      if (e.key === "ArrowRight") d.controller.turn(1);
-      else if (e.key === "ArrowLeft") d.controller.turn(-1);
-      else if (e.key === "Home") d.controller.goTo(0);
-      else if (e.key === "End") d.controller.goTo(Infinity);
-      else return;
-      e.preventDefault();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  const record = useCallback(async () => {
-    if (recording !== null) {
-      cancel.current.cancel = true;
-      return;
-    }
-    cancel.current = { cancel: false };
-    setError(null);
-    setRecording(0);
-    try {
-      const blob = await recordMp4(driverRef.current, format, setRecording, cancel.current);
-      const { w, h } = RECORD_FORMATS[format];
-      downloadBlob(blob, `tmsc-voices-${w}x${h}.mp4`);
-    } catch (e) {
-      if (!cancel.current.cancel) setError(e instanceof Error ? e.message : "Recording failed.");
-    } finally {
-      setRecording(null);
-    }
-  }, [format, recording]);
+  const { recording, record } = useRecord(driverRef, format, live, setError);
 
   return (
     <ControlsLayout controls={c}>
@@ -116,7 +123,7 @@ export function TmscMagazine() {
       <main className="relative flex min-h-[max(20rem,calc(100dvh-3rem-1px-env(safe-area-inset-top)))] w-full flex-1 flex-col">
         {baked ? (
           <div className="absolute inset-0">
-            <MagazineScene book={baked.book} pages={baked.pages} stage={stage} driverRef={driverRef} />
+            <MagazineScene book={baked.book} pages={baked.pages} stage={stage} textureImage={textureImage} driverRef={driverRef} />
           </div>
         ) : (
           !error && (
@@ -133,7 +140,25 @@ export function TmscMagazine() {
           onRecord={record}
           error={error}
           onUpload={upload}
-        />
+          timelineOpen={timelineOpen}
+          onTimeline={() => {
+            if (timelineOpen) live();
+            setTimelineOpen(!timelineOpen);
+          }}
+        >
+          {timelineOpen && plan && recording === null && (
+            <TimelinePanel
+              plan={plan}
+              driverRef={driverRef}
+              overrides={overrides}
+              onOverrides={setOverrides}
+              onClose={() => {
+                live();
+                setTimelineOpen(false);
+              }}
+            />
+          )}
+        </MagazineControls>
       </main>
     </ControlsLayout>
   );

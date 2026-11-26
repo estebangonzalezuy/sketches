@@ -3,8 +3,8 @@
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { PAGE_H, PAGE_W } from "./data";
-import type { StageSetup } from "./controls";
-import { newsprint } from "./paper-texture";
+import type { StageSetup } from "./setup";
+import { applyTexture } from "./textures";
 
 /**
  * The table: a flat field in the picked background color, optionally with the same paper
@@ -23,14 +23,14 @@ function shade(hex: string, k: number): string {
   return `#${(dark ? c.lerp(new THREE.Color(1, 1, 1), k * 1.4) : c.multiplyScalar(1 - k)).getHexString()}`;
 }
 
-function floorTexture(stage: StageSetup) {
+function floorTexture(stage: StageSetup, image: HTMLImageElement | null) {
   const px = 1024;
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = px;
   const g = canvas.getContext("2d")!;
   g.fillStyle = stage.color;
   g.fillRect(0, 0, px, px);
-  if (stage.paper) newsprint(g, px, px, 1);
+  if (stage.texture.kind !== "None") applyTexture(g, px, px, 1, { kind: stage.texture.kind, strength: stage.texture.strength, image });
   if (stage.grid) {
     g.fillStyle = shade(stage.color, 0.07);
     for (let i = 0; i < CELLS; i++) {
@@ -72,8 +72,8 @@ function CropMarks({ color }: { color: string }) {
   );
 }
 
-export function Stage({ stage }: { stage: StageSetup }) {
-  const floor = useMemo(() => floorTexture(stage), [stage]);
+export function Stage({ stage, textureImage }: { stage: StageSetup; textureImage: HTMLImageElement | null }) {
+  const floor = useMemo(() => floorTexture(stage, textureImage), [stage, textureImage]);
   useEffect(() => () => floor.dispose(), [floor]);
 
   const light = useMemo(() => {

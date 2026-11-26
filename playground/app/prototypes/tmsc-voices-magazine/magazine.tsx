@@ -8,6 +8,7 @@ import { BEND_TURN, FOLD_LENGTH, PAGE_H, PAGE_W, SEGMENTS, STACK_GAP } from "./d
 import type { Book } from "./faces";
 import { clamp, magazineShift, shaderPose, stackHeight } from "./pose";
 import type { DriverRef } from "./driver";
+import { recordFrame } from "./timeline";
 import type { SheetPose } from "./types";
 
 const BASE_Y = 0.004;
@@ -107,6 +108,18 @@ export function Magazine({ book, pages, driverRef }: { book: Book; pages: Map<st
   useFrame((_, dt) => {
     const driver = driverRef.current;
     if (driver.recording || !driver.apply) return;
+    const pv = driver.preview;
+    if (pv && driver.plan) {
+      // the timeline is playing or scrubbing: show the exact Record frame
+      if (pv.playing) {
+        pv.t = Math.min(driver.plan.duration, pv.t + Math.min(dt, 1 / 20));
+        if (pv.t >= driver.plan.duration) pv.playing = false;
+      }
+      const f = recordFrame(driver.plan, pv.t);
+      driver.apply(f.sheets, f.drop, f.shadow, pv.t);
+      driver.onPreview?.(pv.t);
+      return;
+    }
     const c = driver.controller;
     c.update(Math.min(dt, 1 / 20));
     if (!c.reduced) driver.time += dt;

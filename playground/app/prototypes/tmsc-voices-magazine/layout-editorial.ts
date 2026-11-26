@@ -1,6 +1,6 @@
 import { font, right, wrap, type Ctx } from "./canvas-type";
 import { displayDate, interview, PUBLICATION_URL, seriesLabel } from "./content";
-import type { EditorialSetup } from "./controls";
+import type { EditorialSetup } from "./setup";
 import { PAGE_PX } from "./data";
 import { columns, EDITORIAL, flow, wrapWords, type Frame, type Line } from "./editorial-flow";
 import type { MediaChoice } from "./media";

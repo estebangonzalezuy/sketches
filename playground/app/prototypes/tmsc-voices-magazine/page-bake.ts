@@ -1,11 +1,11 @@
-import type { PageSetup } from "./controls";
+import type { PageSetup } from "./setup";
 import { FONT_FAMILY, FONT_URL, PAGE_PX } from "./data";
 import type { Book } from "./faces";
 import { drawBackCover, drawCover } from "./layout-covers";
 import { drawEditorialLeft, drawEditorialRight, layoutEditorial, type EditorialImage, type EditorialLayout } from "./layout-editorial";
 import { drawInterviewLeft, drawInterviewRight } from "./layout-interview";
 import type { MediaChoice } from "./media";
-import { newsprint } from "./paper-texture";
+import { applyTexture } from "./textures";
 
 /**
  * Bakes every printed side to its own canvas after Archivo Narrow and the chosen images load.
@@ -45,7 +45,13 @@ async function withImage(choice: MediaChoice): Promise<EditorialImage> {
   return img && choice ? { img, choice } : null;
 }
 
-export async function bakePages(size: { w: number; h: number }, book: Book, setup: PageSetup, uploaded: string | null): Promise<Map<string, HTMLCanvasElement>> {
+export async function bakePages(
+  size: { w: number; h: number },
+  book: Book,
+  setup: PageSetup,
+  uploaded: string | null,
+  textureImage: HTMLImageElement | null,
+): Promise<Map<string, HTMLCanvasElement>> {
   const { cover, editorial } = setup;
   const coverUrl = cover.style === "type" ? null : cover.source === "upload" ? uploaded : setup.media[cover.source]?.url;
   const [, coverImg, intro, textImages] = await Promise.all([
@@ -92,7 +98,7 @@ export async function bakePages(size: { w: number; h: number }, book: Book, setu
         break;
       }
     }
-    newsprint(ctx, size.w, size.h, size.w / PAGE_PX.w);
+    if (setup.texture.kind !== "None") applyTexture(ctx, size.w, size.h, size.w / PAGE_PX.w, { kind: setup.texture.kind, strength: setup.texture.strength, image: textureImage });
     out.set(face.id, canvas);
   }
   return out;

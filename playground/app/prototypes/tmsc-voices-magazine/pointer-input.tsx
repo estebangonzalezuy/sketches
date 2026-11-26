@@ -6,6 +6,7 @@ import { useThree } from "@react-three/fiber";
 import { magazineShift } from "./pose";
 import { PAGE_H, PAGE_W } from "./data";
 import type { DriverRef } from "./driver";
+import { spreadAt } from "./timeline";
 
 /**
  * Pointer → page-plane coordinates. Rays hit the table plane; x is measured from the spine
@@ -37,6 +38,8 @@ export function PointerInput({ driverRef }: { driverRef: DriverRef }) {
       const d = driverRef.current;
       const q = toPage(e);
       if (d.recording || !q || e.button > 0) return;
+      // touching the magazine leaves the timeline preview where it was
+      if (d.preview && d.plan) d.endPreview(spreadAt(d.plan, d.preview.t));
       if (d.controller.pointerDown(q.x, q.v)) {
         el.setPointerCapture(e.pointerId);
         el.style.cursor = "grabbing";

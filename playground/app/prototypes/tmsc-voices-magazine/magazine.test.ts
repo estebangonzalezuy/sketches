@@ -6,6 +6,7 @@ import { buildBook } from "./faces";
 import { FlipController } from "./flip-controller";
 import { dragProgress, magazineShift, shaderPose, stackHeight } from "./pose";
 import { recordFrame, recordPlan } from "./timeline";
+import { DEFAULT_TIMING } from "./timing";
 
 const SHEET_COUNT = 5;
 
@@ -86,14 +87,14 @@ describe("pose", () => {
 describe("record timeline", () => {
   it("is deterministic, ends on the cover and visits the back cover", () => {
     for (const editorial of [false, true]) {
-      const plan = recordPlan(buildBook(editorial));
+      const plan = recordPlan(buildBook(editorial), DEFAULT_TIMING);
       expect(recordFrame(plan, 7.3)).toEqual(recordFrame(plan, 7.3));
       expect(recordFrame(plan, plan.duration).sheets.every((s) => s.p === 0)).toBe(true);
       expect(recordFrame(plan, 4).sheets.map((s) => s.p)).toEqual([1, ...Array(plan.sheets - 1).fill(0)]);
       const cascade = Math.min(...plan.turns.filter((t) => t.dir === -1).map((t) => t.start));
       expect(recordFrame(plan, cascade - 0.05).sheets.every((s) => s.p === 1)).toBe(true);
     }
-    expect(recordPlan(buildBook(false)).duration).toBeLessThan(20);
+    expect(recordPlan(buildBook(false), DEFAULT_TIMING).duration).toBeLessThan(20);
   });
 });
 
@@ -142,7 +143,8 @@ describe("flip controller", () => {
 
 describe("media", () => {
   it("defaults each spread to its post's cover and resolves frames safely", async () => {
-    const { controls, pageSetup } = await import("./controls");
+    const { controls } = await import("./controls");
+    const { pageSetup } = await import("./setup");
     const { defaultValues } = await import("@/components/controls");
     const { existsSync } = await import("node:fs");
     const setup = pageSetup(defaultValues(controls));
@@ -168,7 +170,8 @@ describe("back cover", () => {
 
 describe("cover setup", () => {
   it("defaults to a white type cover and maps the image styles", async () => {
-    const { controls, pageSetup } = await import("./controls");
+    const { controls } = await import("./controls");
+    const { pageSetup } = await import("./setup");
     const { defaultValues } = await import("@/components/controls");
     const { COVER, BACK_COVER } = await import("./data");
     const v = defaultValues(controls);
@@ -182,7 +185,8 @@ describe("cover setup", () => {
 
 describe("image size", () => {
   it("maps the size sliders to 0.3–1 and survives stale values", async () => {
-    const { controls, pageSetup } = await import("./controls");
+    const { controls } = await import("./controls");
+    const { pageSetup } = await import("./setup");
     const { defaultValues } = await import("@/components/controls");
     const v = defaultValues(controls);
     expect(pageSetup(v).imageScale).toBe(1);
@@ -244,5 +248,49 @@ describe("Q&A text", () => {
     ];
     const { placed } = flow(blocks, [{ page: 0, x: 0, y: 0, w: 120, h: 60 }], 30, 0, (s) => s.length * 10);
     expect(placed).toBe(1);
+  });
+});
+
+describe("easing and timing", () => {
+  it("matches the bézier presets at their ends and is monotonic", async () => {
+    const { cubicBezier, easeFn, EASE_NAMES } = await import("./easing");
+    expect(cubicBezier(0, 0, 1, 1)(0.3)).toBeCloseTo(0.3, 4);
+    for (const n of EASE_NAMES) {
+      const f = easeFn(n);
+      expect(f(0)).toBe(0);
+      expect(f(1)).toBe(1);
+      let last = 0;
+      for (let x = 0.05; x <= 1; x += 0.05) {
+        expect(f(x)).toBeGreaterThanOrEqual(last - 1e-6);
+        last = f(x);
+      }
+    }
+    expect(easeFn("Ease out")(0.2)).toBeGreaterThan(easeFn("Ease in")(0.2));
+  });
+
+  it("stretches the sequence with longer turns and per-segment edits", async () => {
+    const { timingFrom, withOverride, withEase, withoutOverride } = await import("./timing");
+    const book = buildBook(false);
+    const base = recordPlan(book, DEFAULT_TIMING).duration;
+    const slow = timingFrom({ turnDuration: 2 }, {});
+    expect(recordPlan(book, slow).duration).toBeCloseTo(base + book.sheets * 1, 5);
+    const o = withOverride({}, 2, "hold", 3);
+    const plan = recordPlan(book, { ...DEFAULT_TIMING, overrides: withEase(o, 1, "Linear") });
+    expect(plan.segments.find((s) => s.kind === "hold" && s.key === 2)!.dur).toBe(3);
+    expect(plan.segments.find((s) => s.kind === "turn" && s.key === 1)!.ease).toBe("Linear");
+    expect(withoutOverride(o, 2, "hold")).toEqual({});
+    // out-of-range stored values fall back or clamp
+    expect(timingFrom({ turnDuration: -1, turnEase: "Nope" }, {}).turn).toBe(DEFAULT_TIMING.turn);
+    expect(withOverride({}, 0, "turn", 99)[0].turn).toBe(4);
+  });
+
+  it("segments tile the sequence with no gaps", () => {
+    const plan = recordPlan(buildBook(true), DEFAULT_TIMING);
+    for (let i = 1; i < plan.segments.length; i++) {
+      const a = plan.segments[i - 1];
+      expect(plan.segments[i].start).toBeCloseTo(a.start + a.dur, 6);
+    }
+    const last = plan.segments[plan.segments.length - 1];
+    expect(last.start + last.dur).toBeCloseTo(plan.duration, 6);
   });
 });

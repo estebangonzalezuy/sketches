@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { RECORD_FORMATS, RECORD_FPS } from "./data";
 import type { Driver } from "./driver";
 import { fitCamera } from "./stage";
-import { recordFrame, recordPlan } from "./timeline";
+import { recordFrame } from "./timeline";
 import type { RecordFormat } from "./types";
 
 /**
@@ -19,8 +19,8 @@ export async function recordMp4(driver: Driver, format: RecordFormat, onProgress
   const cam = camera as THREE.PerspectiveCamera;
   const { w, h } = RECORD_FORMATS[format];
   const fps = RECORD_FPS;
-  if (!driver.book) throw new Error("The magazine isn't ready yet.");
-  const plan = recordPlan(driver.book);
+  const plan = driver.plan;
+  if (!plan) throw new Error("The magazine isn't ready yet.");
   const frames = Math.round(plan.duration * fps);
   const { codec, mux } = await pickCodec(w, h, fps);
 

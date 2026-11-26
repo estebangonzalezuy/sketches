@@ -1,5 +1,7 @@
 import { BEND_CASCADE, BEND_TURN, HOVER_LIFT, PAGE_H, PAGE_W } from "./data";
+import { easeFn } from "./easing";
 import { clamp, dragProgress, ease, foldAngle } from "./pose";
+import { DEFAULT_TIMING, type Timing } from "./timing";
 import type { SheetPose } from "./types";
 
 /**
@@ -11,8 +13,8 @@ type Anim = { from: number; to: number; t: number; dur: number; curve: (x: numbe
 type Sheet = SheetPose & { anim: Anim | null; hover: number };
 type Drag = { sheet: number; grabX: number; grabV: number; startX: number; x: number; v: number; vx: number; moved: boolean };
 
-const TURN_DUR = 0.95;
-const CASCADE_STAGGER = 0.12;
+/** Live flip-through (Home / End) runs faster than the recorded one: a hand riffling pages. */
+const LIVE_CASCADE = 0.5;
 const CLICK_SLOP = 0.03; // page widths of movement that still count as a click
 
 export class FlipController {
@@ -26,6 +28,8 @@ export class FlipController {
   private hoverSheet = -1;
   private hoverPhi = 0;
   reduced = false;
+  /** Turn duration and easing for clicks, keys and the flip-through; set from the panel. */
+  timing: Timing = DEFAULT_TIMING;
 
   get dragging() {
     return this.drag !== null;
@@ -41,12 +45,24 @@ export class FlipController {
     if (dir === -1 && this.turned > 0) this.animate(--this.turned, 0, 0, BEND_TURN);
   }
 
+  /** Shows spread k at once, no animation (after a timeline preview). */
+  jumpTo(k: number) {
+    this.turned = clamp(Math.round(k), 0, this.count);
+    this.sheets.forEach((s, i) => {
+      s.anim = null;
+      s.hover = 0;
+      s.phi = 0;
+      s.p = i < this.turned ? 1 : 0;
+    });
+  }
+
   /** Flip through to spread k, sheets cascading one after another. */
   goTo(k: number) {
     const target = clamp(Math.round(k), 0, this.count);
     let i = 0;
-    while (this.turned > target) this.animate(--this.turned, 0, i++ * CASCADE_STAGGER, BEND_CASCADE);
-    while (this.turned < target) this.animate(this.turned++, 1, i++ * CASCADE_STAGGER, BEND_CASCADE);
+    const gap = this.timing.stagger * LIVE_CASCADE;
+    while (this.turned > target) this.animate(--this.turned, 0, i++ * gap, BEND_CASCADE);
+    while (this.turned < target) this.animate(this.turned++, 1, i++ * gap, BEND_CASCADE);
   }
 
   pointerDown(x: number, v: number) {
@@ -96,7 +112,10 @@ export class FlipController {
     const to = commit === forward ? 1 : 0;
     if (commit) this.turned += forward ? 1 : -1;
     const dist = Math.abs(to - s.p);
-    s.anim = { from: s.p, to, t: 0, dur: d.moved ? 0.22 + 0.55 * dist : TURN_DUR, curve: d.moved ? ease.out : ease.turn };
+    // a released drag is already moving, so it eases out; a click is a full turn with the chosen easing
+    s.anim = d.moved
+      ? { from: s.p, to, t: 0, dur: (0.22 + 0.55 * dist) * this.timing.turn, curve: ease.out }
+      : { from: s.p, to, t: 0, dur: this.timing.turn, curve: easeFn(this.timing.ease) };
   }
 
   update(dt: number) {
@@ -136,6 +155,7 @@ export class FlipController {
     const s = this.sheets[sheet];
     s.sign = to === 1 ? 1 : -1;
     s.bend = bend;
-    s.anim = { from: s.p, to, t: -delay, dur: bend === BEND_CASCADE ? 0.8 : TURN_DUR, curve: ease.turn };
+    const dur = bend === BEND_CASCADE ? this.timing.cascade * LIVE_CASCADE * 1.5 : this.timing.turn;
+    s.anim = { from: s.p, to, t: -delay, dur, curve: easeFn(this.timing.ease) };
   }
 }

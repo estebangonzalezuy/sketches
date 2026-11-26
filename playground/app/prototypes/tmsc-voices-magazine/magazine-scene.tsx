@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import * as THREE from "three";
 import { Canvas, useThree } from "@react-three/fiber";
 import { installDebugHook } from "./debug-hook";
-import type { StageSetup } from "./controls";
+import type { StageSetup } from "./setup";
 import type { DriverRef } from "./driver";
 import type { Book } from "./faces";
 import { Magazine } from "./magazine";
@@ -31,9 +31,9 @@ function Bridge({ driverRef }: { driverRef: DriverRef }) {
   return null;
 }
 
-type Props = { book: Book; pages: Map<string, HTMLCanvasElement>; stage: StageSetup; driverRef: DriverRef };
+type Props = { book: Book; pages: Map<string, HTMLCanvasElement>; stage: StageSetup; textureImage: HTMLImageElement | null; driverRef: DriverRef };
 
-export function MagazineScene({ book, pages, stage, driverRef }: Props) {
+export function MagazineScene({ book, pages, stage, textureImage, driverRef }: Props) {
   return (
     <Canvas
       shadows="soft"
@@ -46,7 +46,7 @@ export function MagazineScene({ book, pages, stage, driverRef }: Props) {
       style={{ touchAction: "none" }}
     >
       <Bridge driverRef={driverRef} />
-      <Stage stage={stage} />
+      <Stage stage={stage} textureImage={textureImage} />
       <Magazine book={book} pages={pages} driverRef={driverRef} />
       <PointerInput driverRef={driverRef} />
     </Canvas>

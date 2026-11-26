@@ -26,11 +26,38 @@ the conversation set in columns, as in a printed magazine.
   9 with them. A new count starts the magazine again at the cover. Record follows the same
   order (`recordPlan`): about 18 s without Q&A spreads, about 29 s with them.
 
+## Timing, easing and the timeline
+
+- `easing.ts`: page-turn easings as cubic-bézier curves (Hand, Ease in-out, Ease out, Ease in,
+  Snappy, Soft, Linear), with a bézier solver and an SVG path of each curve.
+- `timing.ts`: the panel's **Turn duration**, **Turn easing**, **Hold on spreads**, **Hold on
+  Q&A**, **Flip-through gap / sheet**, plus per-segment overrides (turn or hold duration, a
+  turn's own easing) keyed by sheet (-1 = cover hold). Live clicks, keys and Home / End use
+  the same duration and easing; a released drag still eases out from where it is.
+- `timeline.ts` turns book + timing into the Record plan and its segments (cover hold, turn,
+  hold, …, flip-through, end hold). Durations follow, so the export length changes with them.
+- **Timeline** button opens `timeline-panel.tsx` above the row: Play previews the sequence in
+  the scene exactly as it will export (the render loop shows `recordFrame(plan, t)` while
+  `driver.preview` is set); the ruler scrubs; blocks are to scale, turns show their easing
+  curve; drag a block's right edge to stretch it, or click it to type a duration and pick
+  that turn's easing ("Use default" clears it). Edited blocks are outlined; **Reset edits**
+  clears them all. Edits persist in this browser (`timing-store.ts`). Touching the magazine,
+  a key, prev / next or Record leaves the preview on the spread it was showing.
+
+## Textures
+
+`textures.ts` bakes one of seven paper finishes into every page and, separately, the table:
+Newsprint, Recycled (heavier fibres, a few coloured ones), Laid (laid and chain lines),
+Linen (woven), Riso grain, Smooth (none), or **Uploaded** (your image, tiled and brightness-
+normalised so it adds texture without a cast). Each has a strength (0–200 %). Upload a paper
+texture from the **Upload** menu; it is downscaled to 1024 px and kept in browser storage
+(`uploads.ts`, shared with the cover upload). All built-in tiles are deterministic.
+
 ## Background
 
-The table under the magazine uses the picked **Background** color (default `#EAEAEA`), the
-same newsprint finish as the pages (**Background paper**, on by default) and an optional
-**Grid** with crop marks (off by default). Grid lines are a shade off the field: darker on
+The table under the magazine uses the picked **Background** color (default `#EAEAEA`), a
+**Background texture** (any of the paper finishes, Newsprint by default, with its own
+strength) and an optional **Grid** with crop marks (off by default). Grid lines are a shade off the field: darker on
 light colors, lighter on dark ones. The stage no longer follows the light / dark theme.
 
 ## Architecture
@@ -145,8 +172,13 @@ tmsc-voices-magazine/
   page-bake.ts, canvas-type.ts, layout-covers.ts, layout-interview.ts   page textures
   media.ts               every post image, labels, credits, frame lookup
   controls.ts            panel schema → PageSetup (spreads + cover) / export format
-  cover-upload.ts        uploaded cover image: downscale, browser storage, hook
-  paper-texture.ts       newsprint finish baked into the pages and the table
+  uploads.ts             uploaded cover / texture images: downscale, browser storage, hooks
+  textures.ts            paper finishes (built-in tiles and uploaded) baked into pages and table
+  easing.ts, timing.ts   bézier easings, durations, per-segment overrides (pure)
+  timing-store.ts        timeline edits in browser storage
+  timeline-panel.tsx, timeline-track.tsx   the timeline UI
+  setup.ts               panel values → page / stage setup
+  use-magazine-keys.ts   keyboard
   faces.ts               page order and sheet count (with or without Q&A spreads)
   editorial.json         verbatim Q&A from the posts
   editorial-flow.ts      column text flow (pure)
