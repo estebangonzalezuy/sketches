@@ -2,7 +2,7 @@
 
 ## What It Does
 
-A small 3D zine of the last four tMSC interviews (cover, one spread per guest, back cover) that you page through with a paper curl: drag, click, arrow keys. A control panel picks which image from each post goes on each spread (and which frame of a GIF), so you choose how each feature is put together. The cover can be type only (white, black), a full-bleed image, or an image on a color you pick; the image is your upload or one of the spreads' images. Record renders a fixed 18 s sequence and downloads an MP4 (1:1 or 4:5).
+A small 3D zine of the last four tMSC interviews (cover, one spread per guest, back cover) that you page through with a paper curl: drag, click, arrow keys. A control panel picks which image from each post goes on each spread (and which frame of a GIF), so you choose how each feature is put together. The cover can be type only (white, black), a full-bleed image, or an image on a color you pick; the image is your upload or one of the spreads' images. Record renders a fixed 18 s sequence and downloads an MP4 (1:1, 4:5, 9:16 or 16:9).
 
 ## Editorial (Q&A) spreads
 
@@ -102,7 +102,10 @@ Record and the debug hook all frame through `fitCamera(camera, aspect, view)`. "
 is the magazine's top edge turned by the yaw, so a straight-down view works. The timeline
 shows a camera lane (the opening as a block you can stretch, the drift as a bar).
 
-Export formats: 1:1 (1080×1080), 4:5 (1080×1350), 9:16 (1080×1920).
+Export formats, at double the 1080 social sizes: 1:1 (2160×2160), 4:5 (2160×2700), 9:16
+(2160×3840), 16:9 (3840×2160), 60 fps, bitrate ≈ 0.16 bit per pixel per frame. Codecs are tried from H.264 High
+level 5.2 down, then VP9 in MP4; if none can encode the 2× size, Record falls back to the 1080
+size and says so.
 
 ## Textures
 
@@ -162,7 +165,7 @@ pointer / keys ──► FlipController (pure) ─┐                      ▼
                                           ├─► SheetPose[] ──► Magazine (R3F) ──► curl-material.ts
 Record ──► timeline.ts recordFrame(t) ────┘    driver.apply()      uniforms        vertex shader:
               │                                                                    fold + spine turn
-              └─► recorder.ts: render at 1080×N, VideoFrame → VideoEncoder → mp4-muxer → .mp4
+              └─► recorder.ts: render at 2160×N (1080 fallback), VideoFrame → VideoEncoder → mp4-muxer → .mp4
 ```
 
 - **Sheets.** Five double-sided sheets, saddle-stitched. Spread k = back of sheet k−1 (left) +

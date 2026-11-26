@@ -11,23 +11,29 @@ import type { RecordFormat } from "./types";
  * renderer, lights and textures as the live piece, and encodes an MP4 (H.264, VP9-in-MP4 only
  * if the browser has no H.264 encoder). No cursor, no UI, no watermark. Never GIF.
  */
-export async function recordMp4(driver: Driver, format: RecordFormat, onProgress: (p: number) => void, signal: { cancel: boolean }): Promise<Blob> {
+export type Recording = { blob: Blob; w: number; h: number; /** true when the browser couldn't encode the full size */ reduced: boolean };
+
+export async function recordMp4(driver: Driver, format: RecordFormat, onProgress: (p: number) => void, signal: { cancel: boolean }): Promise<Recording> {
   if (typeof VideoEncoder === "undefined") throw new Error("This browser has no WebCodecs. Try Chrome, Edge or Safari 17+.");
   const state = driver.three?.();
   if (!state || !driver.apply) throw new Error("The magazine isn't ready yet.");
   const { gl, scene, camera } = state;
   const cam = camera as THREE.PerspectiveCamera;
-  const { w, h } = RECORD_FORMATS[format];
+  const full = RECORD_FORMATS[format];
   const fps = RECORD_FPS;
   const plan = driver.plan;
   if (!plan) throw new Error("The magazine isn't ready yet.");
   const frames = Math.round(plan.duration * fps);
-  const { codec, mux } = await pickCodec(w, h, fps);
+  // the full (2×) size when the browser can encode it, otherwise half of it (the 1080 sizes)
+  const pick = (await pickCodec(full.w, full.h, fps)) ?? (await pickCodec(full.w / 2, full.h / 2, fps));
+  if (!pick) throw new Error(`This browser can't encode ${full.w / 2}×${full.h / 2} video.`);
+  const { codec, mux, w, h } = pick;
+  const bitrate = Math.round(w * h * fps * 0.16);
 
   const muxer = new Muxer({ target: new ArrayBufferTarget(), video: { codec: mux, width: w, height: h, frameRate: fps }, fastStart: "in-memory" });
   let failure: unknown = null;
   const enc = new VideoEncoder({ output: (chunk, meta) => muxer.addVideoChunk(chunk, meta), error: (e) => (failure = e) });
-  enc.configure({ codec, width: w, height: h, bitrate: 14_000_000, framerate: fps });
+  enc.configure({ codec, width: w, height: h, bitrate, framerate: fps });
 
   const prevRatio = gl.getPixelRatio();
   const prevSize = gl.getSize(new THREE.Vector2());
@@ -59,7 +65,7 @@ export async function recordMp4(driver: Driver, format: RecordFormat, onProgress
     if (failure) throw failure;
     muxer.finalize();
     onProgress(1);
-    return new Blob([muxer.target.buffer], { type: "video/mp4" });
+    return { blob: new Blob([muxer.target.buffer], { type: "video/mp4" }), w, h, reduced: w < full.w };
   } finally {
     if (enc.state !== "closed") enc.close();
     gl.setPixelRatio(prevRatio);
@@ -71,21 +77,25 @@ export async function recordMp4(driver: Driver, format: RecordFormat, onProgress
   }
 }
 
-async function pickCodec(width: number, height: number, fps: number): Promise<{ codec: string; mux: "avc" | "vp9" }> {
+async function pickCodec(w: number, h: number, fps: number): Promise<{ codec: string; mux: "avc" | "vp9"; w: number; h: number } | null> {
+  // High profile up to level 5.2 (2160×3840 at 60 fps), then main, then VP9 inside MP4
   const tries: [string, "avc" | "vp9"][] = [
+    ["avc1.640034", "avc"],
+    ["avc1.640033", "avc"],
     ["avc1.640032", "avc"],
     ["avc1.64002A", "avc"],
     ["avc1.4D402A", "avc"],
+    ["vp09.00.51.08", "vp9"],
     ["vp09.00.41.08", "vp9"],
   ];
   for (const [codec, mux] of tries) {
     try {
-      if ((await VideoEncoder.isConfigSupported({ codec, width, height, framerate: fps, bitrate: 14_000_000 })).supported) return { codec, mux };
+      if ((await VideoEncoder.isConfigSupported({ codec, width: w, height: h, framerate: fps, bitrate: Math.round(w * h * fps * 0.16) })).supported) return { codec, mux, w, h };
     } catch {
       // try the next one
     }
   }
-  throw new Error(`This browser can't encode ${width}×${height} video.`);
+  return null;
 }
 
 export function downloadBlob(blob: Blob, name: string) {

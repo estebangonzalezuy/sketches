@@ -73,7 +73,13 @@ describe("camera", () => {
   it("offers 9:16 for stories", async () => {
     const { recordFormat } = await import("./setup");
     const { RECORD_FORMATS } = await import("./data");
-    expect(RECORD_FORMATS[recordFormat({ format: "9:16" })]).toMatchObject({ w: 1080, h: 1920 });
+    expect(RECORD_FORMATS[recordFormat({ format: "9:16" })]).toMatchObject({ w: 2160, h: 3840 });
+  });
+
+  it("offers 16:9 for landscape video", async () => {
+    const { recordFormat } = await import("./setup");
+    const { RECORD_FORMATS } = await import("./data");
+    expect(RECORD_FORMATS[recordFormat({ format: "16:9" })]).toMatchObject({ w: 3840, h: 2160 });
   });
 });
 

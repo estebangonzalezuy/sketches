@@ -46,4 +46,4 @@ export type SheetPose = {
   phi: number;
 };
 
-export type RecordFormat = "square" | "portrait" | "story";
+export type RecordFormat = "square" | "portrait" | "story" | "wide";

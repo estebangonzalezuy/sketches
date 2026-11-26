@@ -67,9 +67,11 @@ export const SPREADS: Record<1 | 2 | 3 | 4, SpreadTheme> = {
   4: { left: { bg: INK.black, ink: INK.white }, right: { bg: INK.periwinkle, ink: INK.black } },
 };
 
+/** Export sizes: double the 1080 social sizes, for a sharper video. */
 export const RECORD_FORMATS: Record<RecordFormat, { w: number; h: number; label: string }> = {
-  square: { w: 1080, h: 1080, label: "1:1" },
-  portrait: { w: 1080, h: 1350, label: "4:5" },
-  story: { w: 1080, h: 1920, label: "9:16" },
+  square: { w: 2160, h: 2160, label: "1:1" },
+  portrait: { w: 2160, h: 2700, label: "4:5" },
+  story: { w: 2160, h: 3840, label: "9:16" },
+  wide: { w: 3840, h: 2160, label: "16:9" },
 };
 export const RECORD_FPS = 60;
