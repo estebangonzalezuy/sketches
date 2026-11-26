@@ -57,7 +57,7 @@ export const controls = defineControls({
   cameraIntroDuration: { type: "number", label: "Opening s", min: 0.3, max: 10, step: 0.1, default: DEFAULT_CAMERA.introDur },
   cameraDrift: { type: "select", label: "Record drift", options: DRIFTS, default: DEFAULT_CAMERA.drift },
   cameraDriftAmount: { type: "number", label: "Drift %", min: 0, max: 200, step: 5, default: DEFAULT_CAMERA.driftAmount * 100 },
-  format: { type: "select", label: "Export", options: ["1:1", "4:5", "9:16"], default: "1:1", randomize: false },
+  format: { type: "select", label: "Export", options: ["1:1", "4:5", "9:16", "16:9"], default: "1:1", randomize: false },
 });
 
 export type Values = ControlValues<typeof controls>;

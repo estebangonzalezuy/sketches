@@ -72,5 +72,6 @@ export const RECORD_FORMATS: Record<RecordFormat, { w: number; h: number; label:
   square: { w: 2160, h: 2160, label: "1:1" },
   portrait: { w: 2160, h: 2700, label: "4:5" },
   story: { w: 2160, h: 3840, label: "9:16" },
+  wide: { w: 3840, h: 2160, label: "16:9" },
 };
 export const RECORD_FPS = 60;

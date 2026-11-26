@@ -83,5 +83,5 @@ export function stageSetup(v: Record<string, unknown>): StageSetup {
 }
 
 export function recordFormat(v: Record<string, unknown>): RecordFormat {
-  return v.format === "4:5" ? "portrait" : v.format === "9:16" ? "story" : "square";
+  return v.format === "4:5" ? "portrait" : v.format === "9:16" ? "story" : v.format === "16:9" ? "wide" : "square";
 }

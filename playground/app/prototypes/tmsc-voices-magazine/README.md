@@ -115,7 +115,7 @@ Con distintas combinaciones salen videos distintos de la misma revista. **Random
 
 En la línea de tiempo, la entrada de cámara aparece como un bloque que se estira desde el borde y la deriva como una barra. Play muestra el movimiento tal cual se va a grabar.
 
-Formatos de export, al doble de los tamaños de redes: **1:1** (2160×2160), **4:5** (2160×2700) y **9:16** (2160×3840, para stories y reels).
+Formatos de export, al doble de los tamaños de redes: **1:1** (2160×2160), **4:5** (2160×2700), **9:16** (2160×3840, para stories y reels) y **16:9** (3840×2160, 4K horizontal, para YouTube o una pantalla).
 
 ## Texturas
 
@@ -163,7 +163,7 @@ La contratapa es blanca con tipo negro y la URL `themotionsocialclub.substack.co
 
 ## Cómo exportar el MP4
 
-1. Elegí el formato en el panel (**Export**): **1:1** (2160×2160), **4:5** (2160×2700) o **9:16** (2160×3840).
+1. Elegí el formato en el panel (**Export**): **1:1** (2160×2160), **4:5** (2160×2700), **9:16** (2160×3840) o **16:9** (3840×2160).
 2. Tocá **Record**. La pieza recorre todos los spreads en orden y vuelve a la tapa en cascada: unos 18 s sin páginas Q&A y unos 29 s con ellas, a 60 fps cuadro por cuadro, con las mismas luces y texturas que el modo interactivo, sin cursor ni UI.
 3. Al terminar baja `tmsc-voices-2160x2160.mp4` (o el tamaño del formato elegido). Es H.264, nunca GIF. Mientras graba, el botón muestra el % y sirve para cancelar.
 
