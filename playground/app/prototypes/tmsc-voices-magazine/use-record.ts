@@ -20,9 +20,12 @@ export function useRecord(driverRef: DriverRef, format: RecordFormat, live: () =
     setError(null);
     setRecording(0);
     try {
-      const blob = await recordMp4(driverRef.current, format, setRecording, cancel.current);
-      const { w, h } = RECORD_FORMATS[format];
+      const { blob, w, h, reduced } = await recordMp4(driverRef.current, format, setRecording, cancel.current);
       downloadBlob(blob, `tmsc-voices-${w}x${h}.mp4`);
+      if (reduced) {
+        const full = RECORD_FORMATS[format];
+        setError(`This browser can't encode ${full.w}×${full.h}, so the video was saved at ${w}×${h}.`);
+      }
     } catch (e) {
       if (!cancel.current.cancel) setError(e instanceof Error ? e.message : "Recording failed.");
     } finally {

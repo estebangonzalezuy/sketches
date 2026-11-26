@@ -115,7 +115,7 @@ Con distintas combinaciones salen videos distintos de la misma revista. **Random
 
 En la línea de tiempo, la entrada de cámara aparece como un bloque que se estira desde el borde y la deriva como una barra. Play muestra el movimiento tal cual se va a grabar.
 
-Formatos de export: **1:1**, **4:5** y **9:16** (1080×1920, para stories y reels).
+Formatos de export, al doble de los tamaños de redes: **1:1** (2160×2160), **4:5** (2160×2700) y **9:16** (2160×3840, para stories y reels).
 
 ## Texturas
 
@@ -163,9 +163,9 @@ La contratapa es blanca con tipo negro y la URL `themotionsocialclub.substack.co
 
 ## Cómo exportar el MP4
 
-1. Elegí el formato en el panel (**Export**): **1:1** (1080×1080), **4:5** (1080×1350) o **9:16** (1080×1920).
+1. Elegí el formato en el panel (**Export**): **1:1** (2160×2160), **4:5** (2160×2700) o **9:16** (2160×3840).
 2. Tocá **Record**. La pieza recorre todos los spreads en orden y vuelve a la tapa en cascada: unos 18 s sin páginas Q&A y unos 29 s con ellas, a 60 fps cuadro por cuadro, con las mismas luces y texturas que el modo interactivo, sin cursor ni UI.
-3. Al terminar baja `tmsc-voices-1080x1080.mp4` (o `…1080x1350.mp4`). Es H.264, nunca GIF. Mientras graba, el botón muestra el % y sirve para cancelar.
+3. Al terminar baja `tmsc-voices-2160x2160.mp4` (o el tamaño del formato elegido). Es H.264, nunca GIF. Mientras graba, el botón muestra el % y sirve para cancelar.
 
 La secuencia es determinista: el mismo export da los mismos cuadros. El fondo sigue el tema del playground (claro o oscuro), así que grabá con el tema que quieras en el post.
 
@@ -173,7 +173,8 @@ Para sacar stills exactos de cualquier momento de la secuencia, abrí la página
 
 ## Límites
 
-- **Hace falta WebCodecs** (Chrome, Edge o Safari 17+). Si el browser no tiene encoder H.264, el export cae a VP9 dentro de MP4.
+- **Hace falta WebCodecs** (Chrome, Edge o Safari 17+). Si el browser no tiene encoder H.264, el export cae a VP9 dentro de MP4. Si no puede codificar el tamaño doble, graba a 1080 y avisa.
+- **Exportar al doble tarda unas 4 veces más** que a 1080, porque cada cuadro tiene 4 veces más píxeles.
 - **El export no es en tiempo real.** En una laptop tarda unos segundos; en una máquina sin GPU (un CI headless, por ejemplo) puede tardar minutos.
 - **Mobile** usa el mismo curl con un encuadre más cerrado y texturas más chicas. No implementé el plegado distinto para mobile que describe Ksenia.
 - **Imágenes.** Están todas las de los cuatro posts, bajadas de los originales; solo quedaron afuera los separadores de sección. Los GIFs van como stills (6 cuadros a elegir), no animados. Las capturas del post de Justin (el sitio de FrameRate y "Vimeo’s old days") tienen tipo chico que no se lee en la página.
