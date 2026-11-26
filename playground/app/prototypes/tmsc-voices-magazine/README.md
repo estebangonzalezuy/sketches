@@ -88,6 +88,20 @@ El botón **Timeline** abre la secuencia del Record como una línea de tiempo:
 - Los bloques editados aparecen resaltados y las ediciones se guardan en el browser.
 - Tocar la revista, una flecha o Record sale del preview y deja la revista en el spread que se estaba viendo.
 
+## Cámara y formatos
+
+En el panel:
+
+- **Camera tilt / turn / zoom:** el ángulo y el encuadre base. Se ven en vivo.
+- **Record opening:** cómo arranca el video (None, Zoom in, Zoom out, Swing, Rise, Top-down) y cuánto dura (**Opening s**).
+- **Record drift:** un movimiento suave durante el resto (Slow push, Orbit, Float), con su intensidad.
+
+Con distintas combinaciones salen videos distintos de la misma revista. **Randomize** también mueve la cámara.
+
+En la línea de tiempo, la entrada de cámara aparece como un bloque que se estira desde el borde y la deriva como una barra. Play muestra el movimiento tal cual se va a grabar.
+
+Formatos de export: **1:1**, **4:5** y **9:16** (1080×1920, para stories y reels).
+
 ## Texturas
 
 **Page texture** y **Background texture** eligen el papel de las páginas y del fondo por separado, cada uno con su intensidad (0–200 %). Opciones:
@@ -134,7 +148,7 @@ La contratapa es blanca con tipo negro y la URL `themotionsocialclub.substack.co
 
 ## Cómo exportar el MP4
 
-1. Elegí el formato en el panel (**Export**): **1:1** (1080×1080) o **4:5** (1080×1350).
+1. Elegí el formato en el panel (**Export**): **1:1** (1080×1080), **4:5** (1080×1350) o **9:16** (1080×1920).
 2. Tocá **Record**. La pieza recorre todos los spreads en orden y vuelve a la tapa en cascada: unos 18 s sin páginas Q&A y unos 29 s con ellas, a 60 fps cuadro por cuadro, con las mismas luces y texturas que el modo interactivo, sin cursor ni UI.
 3. Al terminar baja `tmsc-voices-1080x1080.mp4` (o `…1080x1350.mp4`). Es H.264, nunca GIF. Mientras graba, el botón muestra el % y sirve para cancelar.
 

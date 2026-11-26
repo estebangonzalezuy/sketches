@@ -74,6 +74,21 @@ Bitter 800 (OFL, `public/prototype-assets/<slug>/fonts/`, built from dots by `do
 
 Page textures are uploaded once per bake; changing finish or relief only rebuilds materials.
 
+## Camera
+
+`camera.ts` (pure): a view is tilt (° from straight down), turn / yaw (° around the
+magazine) and zoom (1 = the spread fits). The panel sets the base view, which the live
+piece uses too, so you see the angle before recording. Record adds an **opening**
+(None, Zoom in, Zoom out, Swing, Rise, Top-down: from a start view into the base view over
+**Opening s**, ease in-out) and a **drift** for the rest (Slow push, Orbit, Float, at
+**Drift %**); the drift starts from zero where the opening ends, so they join without a
+jump. `viewAt(camera, t, duration)` is deterministic; the render loop, the timeline preview,
+Record and the debug hook all frame through `fitCamera(camera, aspect, view)`. "Up" on screen
+is the magazine's top edge turned by the yaw, so a straight-down view works. The timeline
+shows a camera lane (the opening as a block you can stretch, the drift as a bar).
+
+Export formats: 1:1 (1080×1080), 4:5 (1080×1350), 9:16 (1080×1920).
+
 ## Textures
 
 `textures.ts` bakes one of seven paper finishes into every page and, separately, the table:

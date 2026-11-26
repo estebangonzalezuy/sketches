@@ -43,6 +43,7 @@ export async function recordMp4(driver: Driver, format: RecordFormat, onProgress
       if (failure) throw failure;
       const t = i / fps;
       const f = recordFrame(plan, t);
+      fitCamera(cam, w / h, driver.view(t));
       driver.apply(f.sheets, f.drop, f.shadow, t);
       gl.render(scene, cam);
       const frame = new VideoFrame(gl.domElement, { timestamp: Math.round((i * 1e6) / fps), duration: Math.round(1e6 / fps) });
@@ -63,7 +64,7 @@ export async function recordMp4(driver: Driver, format: RecordFormat, onProgress
     if (enc.state !== "closed") enc.close();
     gl.setPixelRatio(prevRatio);
     gl.setSize(prevSize.x, prevSize.y, false);
-    fitCamera(cam, prevSize.x / prevSize.y);
+    fitCamera(cam, prevSize.x / prevSize.y, driver.view(null), true);
     gl.domElement.style.objectFit = "";
     driver.recording = false;
     state.setFrameloop("always");

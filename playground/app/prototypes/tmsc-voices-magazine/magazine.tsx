@@ -11,6 +11,7 @@ import type { Book } from "./faces";
 import { clamp, magazineShift, shaderPose, stackHeight } from "./pose";
 import type { DriverRef } from "./driver";
 import { recordFrame } from "./timeline";
+import { fitCamera } from "./stage";
 import type { SheetPose } from "./types";
 
 const BASE_Y = 0.004;
@@ -143,10 +144,14 @@ export function Magazine({ book, pages, paper, texture, driverRef }: Props) {
     };
   }, [built, driverRef, paper.weight, paper.waviness]);
 
-  useFrame((_, dt) => {
+  useFrame((state, dt) => {
     const driver = driverRef.current;
     if (driver.recording || !driver.apply) return;
     const pv = driver.preview;
+    const cam = state.camera as THREE.PerspectiveCamera;
+    const aspect = state.size.width / Math.max(1, state.size.height);
+    // the preview shows the Record camera exactly; live uses the base view
+    fitCamera(cam, aspect, driver.view(pv ? pv.t : null), !pv);
     if (pv && driver.plan) {
       // the timeline is playing or scrubbing: show the exact Record frame
       if (pv.playing) {

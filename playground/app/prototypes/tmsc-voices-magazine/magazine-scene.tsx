@@ -19,7 +19,7 @@ function Bridge({ driverRef }: { driverRef: DriverRef }) {
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const size = useThree((s) => s.size);
   useEffect(() => {
-    if (!driverRef.current.recording) fitCamera(camera, size.width / Math.max(1, size.height));
+    if (!driverRef.current.recording) fitCamera(camera, size.width / Math.max(1, size.height), driverRef.current.view(null), true);
   }, [camera, size, driverRef]);
   useEffect(() => {
     const driver = driverRef.current;

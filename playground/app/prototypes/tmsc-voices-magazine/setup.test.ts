@@ -50,3 +50,27 @@ describe("page colors", () => {
     expect(pageInk("not a color", SPREADS[1].left)).toEqual(SPREADS[1].left);
   });
 });
+
+describe("camera", () => {
+  it("opens from its start view and lands on the base view without a jump", async () => {
+    const { viewAt, cameraFrom, DEFAULT_CAMERA, INTROS, DRIFTS } = await import("./camera");
+    for (const intro of INTROS)
+      for (const drift of DRIFTS) {
+        const c = { ...DEFAULT_CAMERA, tilt: 25, yaw: 10, zoom: 1.2, intro, drift, driftAmount: 1 };
+        expect(viewAt(c, 3.3, 20)).toEqual(viewAt(c, 3.3, 20)); // deterministic
+        const a = viewAt(c, c.introDur - 1e-4, 20);
+        const b = viewAt(c, c.introDur + 1e-4, 20);
+        for (const k of ["tilt", "yaw", "zoom"] as const) expect(Math.abs(a[k] - b[k])).toBeLessThan(0.01);
+        if (drift === "None") expect(viewAt(c, 15, 20)).toEqual({ tilt: 25, yaw: 10, zoom: 1.2 });
+      }
+    expect(viewAt({ ...DEFAULT_CAMERA, intro: "Zoom in" }, 0, 20).zoom).toBeLessThan(DEFAULT_CAMERA.zoom);
+    expect(viewAt({ ...DEFAULT_CAMERA, intro: "Top-down" }, 0, 20).tilt).toBe(0);
+    expect(cameraFrom({ cameraTilt: 999, cameraIntro: "Nope", cameraZoom: 150 })).toMatchObject({ tilt: 70, intro: DEFAULT_CAMERA.intro, zoom: 1.5 });
+  });
+
+  it("offers 9:16 for stories", async () => {
+    const { recordFormat } = await import("./setup");
+    const { RECORD_FORMATS } = await import("./data");
+    expect(RECORD_FORMATS[recordFormat({ format: "9:16" })]).toMatchObject({ w: 1080, h: 1920 });
+  });
+});

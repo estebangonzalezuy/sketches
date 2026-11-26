@@ -5,20 +5,29 @@ import { PauseIcon, PlayIcon, RotateCcwIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import type { CameraSetup } from "./camera";
 import type { DriverRef } from "./driver";
 import { EASE_NAMES, type EaseName } from "./easing";
 import { segmentId, TimelineTrack } from "./timeline-track";
 import type { RecordPlan } from "./timeline";
 import { LIMITS, withEase, withOverride, withoutOverride, type Overrides } from "./timing";
 
-type Props = { plan: RecordPlan; driverRef: DriverRef; overrides: Overrides; onOverrides: (o: Overrides) => void; onClose: () => void };
+type Props = {
+  plan: RecordPlan;
+  driverRef: DriverRef;
+  overrides: Overrides;
+  onOverrides: (o: Overrides) => void;
+  camera: CameraSetup;
+  onIntroDuration: (seconds: number) => void;
+  onClose: () => void;
+};
 
 /**
  * The Record sequence as a timeline. Play previews it in the scene exactly as it will export;
  * the ruler scrubs; blocks show each hold and turn to scale and can be stretched or selected
  * to set a precise duration and, for turns, their own easing.
  */
-export function TimelinePanel({ plan, driverRef, overrides, onOverrides, onClose }: Props) {
+export function TimelinePanel({ plan, driverRef, overrides, onOverrides, camera, onIntroDuration, onClose }: Props) {
   const playhead = useRef<HTMLDivElement>(null);
   const readout = useRef<HTMLSpanElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -75,7 +84,7 @@ export function TimelinePanel({ plan, driverRef, overrides, onOverrides, onClose
           <XIcon />
         </Button>
       </div>
-      <TimelineTrack plan={plan} overrides={overrides} onOverrides={onOverrides} selected={selected} onSelect={setSelected} onScrub={scrub} playheadRef={playhead} />
+      <TimelineTrack plan={plan} overrides={overrides} onOverrides={onOverrides} selected={selected} onSelect={setSelected} onScrub={scrub} playheadRef={playhead} camera={camera} onIntroDuration={onIntroDuration} />
       {seg && seg.kind !== "flip" && !(seg.kind === "hold" && seg.key === plan.sheets) && (
         <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
           <span className="min-w-0 flex-1 truncate">{seg.kind === "turn" ? seg.label : `Hold · ${seg.label}`}</span>

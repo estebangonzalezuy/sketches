@@ -5,6 +5,8 @@ import { cn } from "cn";
 import { easePath } from "./easing";
 import type { RecordPlan, Segment } from "./timeline";
 import { withOverride, type Overrides } from "./timing";
+import { CameraLane } from "./timeline-camera";
+import type { CameraSetup } from "./camera";
 
 type Props = {
   plan: RecordPlan;
@@ -15,6 +17,9 @@ type Props = {
   /** Scrubbing: a time in seconds while the pointer is down on the track. */
   onScrub: (t: number) => void;
   playheadRef: RefObject<HTMLDivElement | null>;
+  /** The Record camera: an opening move (resizable) and a drift over the rest. */
+  camera: CameraSetup;
+  onIntroDuration: (seconds: number) => void;
 };
 
 export const segmentId = (s: Segment) => `${s.kind}:${s.key}`;
@@ -24,7 +29,7 @@ export const segmentId = (s: Segment) => `${s.kind}:${s.key}`;
  * flip-through. Press or drag on the ruler to scrub; click a block to select it; drag a
  * block's right edge to change its duration.
  */
-export function TimelineTrack({ plan, overrides, onOverrides, selected, onSelect, onScrub, playheadRef }: Props) {
+export function TimelineTrack({ plan, overrides, onOverrides, selected, onSelect, onScrub, playheadRef, camera, onIntroDuration }: Props) {
   const track = useRef<HTMLDivElement>(null);
   const pct = (s: number) => `${(s / plan.duration) * 100}%`;
 
@@ -114,6 +119,7 @@ export function TimelineTrack({ plan, overrides, onOverrides, selected, onSelect
         );
       })}
       </div>
+      <CameraLane plan={plan} camera={camera} pct={pct} trackRef={track} onIntroDuration={onIntroDuration} />
       <div ref={playheadRef} className="pointer-events-none absolute inset-y-0 hidden w-0.5 -translate-x-1/2 bg-destructive" />
     </div>
   );

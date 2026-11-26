@@ -25,6 +25,8 @@ Formato: idea, tamaño (S/M/L), estado. Estados: pendiente, en curso, hecha, des
 - **Línea de tiempo con easing y duraciones** — L — hecha. Valores generales en el panel; en la línea de tiempo, preview, scrub, bloques a escala con su curva, estirar arrastrando, duración y easing por giro, persistido.
 - **Texturas intercambiables** — M — hecha. Siete papeles (incluida una textura subida) para páginas y fondo por separado, con intensidad.
 - **Editor de features (revista a medida)** — L — hecha. Cualquier post del Substack como feature de 4 páginas; agregar, sacar, reordenar con drag and drop; por feature: post, nombre, frase verbatim, imágenes y colores. Datos por API del servidor con caché; imágenes por un proxy del mismo origen.
+- **Cámara en el Record** — M — hecha. Ángulo base (tilt, giro, zoom), entrada (Zoom in/out, Swing, Rise, Top-down) con duración, deriva (Slow push, Orbit, Float); carril de cámara en la línea de tiempo.
+- **Export 9:16** — S — hecha. 1080×1920.
 - **Varias revistas guardadas** (con nombre, para ir y volver) — M — después. Hoy hay una revista por browser.
 - **Saltear imágenes de sponsors** al elegir la imagen automática — S — después.
 - **Tapa Human + Motion** — S — hecha. La imagen original tal cual, sobre su mismo color de fondo, con los cuatro invitados debajo. Es el default.

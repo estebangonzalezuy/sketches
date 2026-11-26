@@ -55,5 +55,6 @@ export const SPREADS: Record<1 | 2 | 3 | 4, SpreadTheme> = {
 export const RECORD_FORMATS: Record<RecordFormat, { w: number; h: number; label: string }> = {
   square: { w: 1080, h: 1080, label: "1:1" },
   portrait: { w: 1080, h: 1350, label: "4:5" },
+  story: { w: 1080, h: 1920, label: "9:16" },
 };
 export const RECORD_FPS = 60;

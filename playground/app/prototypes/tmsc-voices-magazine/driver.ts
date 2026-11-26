@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import type { RootState } from "@react-three/fiber";
 import type { Book } from "./faces";
+import { DEFAULT_CAMERA, viewAt, type CameraSetup, type View } from "./camera";
 import { FlipController } from "./flip-controller";
 import { recordPlan, type RecordPlan } from "./timeline";
 import { DEFAULT_TIMING, type Timing } from "./timing";
@@ -24,6 +25,7 @@ export class Driver {
   /** Reads the live three.js state (renderer, scene, camera); set from inside the Canvas. */
   three: (() => RootState) | null = null;
   timing: Timing = DEFAULT_TIMING;
+  camera: CameraSetup = DEFAULT_CAMERA;
   /** The Record sequence for the current pages and timing. */
   plan: RecordPlan | null = null;
   /** While set, the scene shows the Record sequence at `t` (the timeline's scrub / play). */
@@ -34,6 +36,12 @@ export class Driver {
     this.timing = timing;
     this.controller.timing = timing;
     this.plan = this.book ? recordPlan(this.book, timing) : null;
+  }
+
+  /** The camera at time t of the Record sequence, or the base view when t is null (live). */
+  view(t: number | null): View {
+    const c = this.camera;
+    return t === null || !this.plan ? { tilt: c.tilt, yaw: c.yaw, zoom: c.zoom } : viewAt(c, t, this.plan.duration);
   }
 
   /** Back to live: the magazine stays open on the spread the preview was showing. */

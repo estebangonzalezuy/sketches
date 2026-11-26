@@ -1,5 +1,6 @@
 import { defineControls, type ControlValues } from "@/components/controls";
 import { BACK_COVER, COVER } from "./data";
+import { DEFAULT_CAMERA, DRIFTS, INTROS } from "./camera";
 import { EASE_NAMES } from "./easing";
 import { DEFAULT_PAPER, PAPER_FINISHES, PAPER_WEIGHTS } from "./paper";
 import { TEXTURES } from "./textures";
@@ -43,7 +44,14 @@ export const controls = defineControls({
   stageTexture: { type: "select", label: "Background texture", options: ["None", ...TEXTURES], default: "Newsprint" },
   stageTextureStrength: { type: "number", label: "Background texture %", min: 0, max: 200, step: 5, default: 100 },
   stageGrid: { type: "boolean", label: "Grid", default: false },
-  format: { type: "select", label: "Export", options: ["1:1", "4:5"], default: "1:1", randomize: false },
+  cameraTilt: { type: "number", label: "Camera tilt °", min: 0, max: 70, step: 1, default: DEFAULT_CAMERA.tilt },
+  cameraYaw: { type: "number", label: "Camera turn °", min: -60, max: 60, step: 1, default: DEFAULT_CAMERA.yaw },
+  cameraZoom: { type: "number", label: "Camera zoom %", min: 50, max: 250, step: 5, default: DEFAULT_CAMERA.zoom * 100 },
+  cameraIntro: { type: "select", label: "Record opening", options: INTROS, default: DEFAULT_CAMERA.intro },
+  cameraIntroDuration: { type: "number", label: "Opening s", min: 0.3, max: 10, step: 0.1, default: DEFAULT_CAMERA.introDur },
+  cameraDrift: { type: "select", label: "Record drift", options: DRIFTS, default: DEFAULT_CAMERA.drift },
+  cameraDriftAmount: { type: "number", label: "Drift %", min: 0, max: 200, step: 5, default: DEFAULT_CAMERA.driftAmount * 100 },
+  format: { type: "select", label: "Export", options: ["1:1", "4:5", "9:16"], default: "1:1", randomize: false },
 });
 
 export type Values = ControlValues<typeof controls>;

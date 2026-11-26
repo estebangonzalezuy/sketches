@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
+import { DEFAULT_VIEW, type View } from "./camera";
 import { PAGE_H, PAGE_W } from "./data";
 import type { StageSetup } from "./setup";
 import { applyTexture } from "./textures";
@@ -108,21 +109,25 @@ export function Stage({ stage, textureImage }: { stage: StageSetup; textureImage
 }
 
 /** Frames the open spread with a margin at any aspect: near-frontal, a little above. */
-export function fitCamera(camera: THREE.PerspectiveCamera, aspect: number) {
-  const tilt = THREE.MathUtils.degToRad(17);
+export function fitCamera(camera: THREE.PerspectiveCamera, aspect: number, view: View = DEFAULT_VIEW, uiLift = false) {
+  const tilt = THREE.MathUtils.degToRad(view.tilt);
+  const yaw = THREE.MathUtils.degToRad(view.yaw);
   const fov = 26;
   // narrow frames (phones, the 4:5 export) crop closer at the sides
   const halfW = PAGE_W + (aspect < 1 ? 0.07 : 0.24);
   const halfH = PAGE_H / 2 + 0.32;
   const t = Math.tan(THREE.MathUtils.degToRad(fov / 2));
-  const dist = Math.max(halfW / (t * aspect), halfH / t);
+  const dist = Math.max(halfW / (t * aspect), halfH / t) / view.zoom;
   camera.fov = fov;
   camera.aspect = aspect;
   camera.near = 0.1;
   camera.far = 60;
-  camera.position.set(0, dist * Math.cos(tilt), dist * Math.sin(tilt));
-  // tall phone frames: keep the magazine in the upper half, clear of the controls sheet
-  const lift = aspect < 0.75 ? halfH * 0.9 : 0;
+  // tilt leans the camera off vertical toward the reader; yaw walks it around the magazine
+  camera.position.set(dist * Math.sin(tilt) * Math.sin(yaw), dist * Math.cos(tilt), dist * Math.sin(tilt) * Math.cos(yaw));
+  // live on tall phone screens: keep the magazine in the upper half, clear of the controls sheet
+  const lift = uiLift && aspect < 0.75 ? halfH * 0.9 : 0;
+  // "up" on screen is the top edge of the magazine (turned with the yaw), so straight down works
+  camera.up.set(-Math.sin(yaw), 0, -Math.cos(yaw));
   camera.lookAt(0, 0, 0.02 + lift);
   camera.updateProjectionMatrix();
 }

@@ -23,14 +23,14 @@ export function installDebugHook(driver: Driver): () => void {
       driver.recording = true;
       st.gl.setPixelRatio(1);
       st.gl.setSize(width, height, false);
-      fitCamera(cam, width / height);
+      fitCamera(cam, width / height, driver.view(t));
       const f = recordFrame(driver.plan!, t);
       driver.apply(f.sheets, f.drop, f.shadow, t);
       st.gl.render(st.scene, cam);
       const url = st.gl.domElement.toDataURL("image/png");
       st.gl.setPixelRatio(prevRatio);
       st.gl.setSize(prev.x, prev.y, false);
-      fitCamera(cam, prev.x / prev.y);
+      fitCamera(cam, prev.x / prev.y, driver.view(null), true);
       driver.recording = false;
       return url;
     },

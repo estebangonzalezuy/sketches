@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ControlsLayout, useControls } from "@/components/controls";
 import { Spinner } from "@/components/ui/spinner";
+import { cameraFrom } from "./camera";
 import { controls } from "./controls";
 import { PAGE_PX, PAGE_PX_SMALL, SLUG } from "./data";
 import { Driver } from "./driver";
@@ -48,6 +49,7 @@ export function TmscMagazine() {
   const stageKey = JSON.stringify(stageSetup(c.values));
   const paperKey = JSON.stringify(paperFrom(c.values));
   const timingKey = JSON.stringify(timingFrom(c.values, overrides));
+  const cameraKey = JSON.stringify(cameraFrom(c.values));
   const setup = useMemo(() => JSON.parse(setupKey) as ReturnType<typeof pageSetup>, [setupKey]);
   const stage = useMemo(() => JSON.parse(stageKey) as ReturnType<typeof stageSetup>, [stageKey]);
   const paper = useMemo(() => JSON.parse(paperKey) as ReturnType<typeof paperFrom>, [paperKey]);
@@ -84,6 +86,10 @@ export function TmscMagazine() {
   }, [featuresKey, setup, uploadedCover, textureImage]);
 
   useEffect(() => driverRef.current.setTiming(timing), [timing]);
+  const camera = useMemo(() => JSON.parse(cameraKey) as ReturnType<typeof cameraFrom>, [cameraKey]);
+  useEffect(() => {
+    driverRef.current.camera = camera;
+  }, [camera]);
 
   useEffect(() => {
     const d = driverRef.current;
@@ -178,6 +184,8 @@ export function TmscMagazine() {
               driverRef={driverRef}
               overrides={overrides}
               onOverrides={setOverrides}
+              camera={camera}
+              onIntroDuration={(s) => set("cameraIntroDuration", s)}
               onClose={() => {
                 live();
                 setTimelineOpen(false);
