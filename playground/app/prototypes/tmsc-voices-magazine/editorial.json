@@ -1,0 +1,485 @@
+{
+ "note": "Verbatim questions (Esteban) and answers (the guest) from the published posts, in order. Left out: Esteban's intro, the transcript label, pull-quote repeats, the site announcement and closing links.",
+ "interviews": {
+  "1": [
+   {
+    "kind": "q",
+    "text": "Let’s start with you. Who are you, and how did your 3D journey start? Feel free to also add interests and anything about the human behind the work."
+   },
+   {
+    "kind": "a",
+    "text": "Hey, I’m Victor, I’m a 3D motion designer starting a new chapter since I recently moved from Milan to Barcelona. I’m still living out of my boxes, unpacking all my hobbies. I can see my sewing machine, my Legos, my arduinos, a press printer, and I think animation also started as a hobby."
+   },
+   {
+    "kind": "a",
+    "text": "I remember using my webcam to create stop motions, spending hours recreating things I saw on Cartoon Network or Nickelodeon. Eventually, like all my hobbies, I ended up abandoning it."
+   },
+   {
+    "kind": "a",
+    "text": "I always knew that I wanted to do something with images in the creative field, so I studied audiovisual communication. I remember a teacher telling me that I had chosen the wrong career. He was a 3D animation teacher. We had a four month very basic 3D class. I enjoyed it, but at that time 3D was focused only on doing characters, and motion design wasn’t really a thing."
+   },
+   {
+    "kind": "a",
+    "text": "I remember that I used every project, every presentation, as an opportunity to animate something, becoming the most interesting part of the process. But it never occurred to me that I could do an animation on its own, not only as a decorative part or a complement. I think MTV was a huge influence. There, I saw animations that can live in their own world and not exist only as a decoration."
+   },
+   {
+    "kind": "a",
+    "text": "It took me so long to become an animator. When I was in the television world, since I started as an editor, I could only add super basic graphics to the footage. Then I moved into the VFX, which I really hated. I hated it because the VFX work has to be invisible on the screen. Most of the time it’s about fixing shooting problems, patching, and creating things that need to blend with the background. And there is a lot of rotoscoping."
+   },
+   {
+    "kind": "a",
+    "text": "I slowly started drifting away from the audiovisual world when I realized how many resources were needed to produce a good final product. There are so many variables that can ruin a production like the weather, location problems, and of course, the budget. I’m glad that I moved over this other side where I have more control over the final piece."
+   },
+   {
+    "kind": "a",
+    "text": "Before being a 3D person, I was a 2D animator and I did my first motion piece because I wanted to change jobs. I wanted to become a full time animator, so I spent my whole summer making this motion graphic piece about coffee, and it worked. I became a full time animator."
+   },
+   {
+    "kind": "q",
+    "text": "Your personal 3D projects, like Pick your weapon, The waste we leave and Anxiety, have gotten a lot of attention. What’s the story behind them, and did they end up bringing you client projects or opportunities?"
+   },
+   {
+    "kind": "a",
+    "text": "I’m all the time questioning myself, so I’d like to feel ready when the opportunity arrives. All these pieces started as a learning method, a way of practicing. I’ve been exploring different materials and techniques to be prepared. For example, I want to work for a chocolate brand. So I created my chocolate animation just to be ready when they show up in my inbox."
+   },
+   {
+    "kind": "a",
+    "text": "Making these pieces, I realized that I keep carrying something from my audiovisual past, which is the necessity of having a story or a concept supporting what we see on screen. Having a simple effect doesn’t feel enough for me. It just feels like a postcard. Having that message makes me feel that I’m getting into the artistic area."
+   },
+   {
+    "kind": "a",
+    "text": "Another reason to create things is the client’s constraints. NDAs are very limiting, so I need to produce pieces that I’m allowed to publish whatever I want, to build my portfolio. The bigger the brand you’re working for, the fewer chances you’ll have to publish that product on your website. Also, each scene passes through so many hands that it’s hard to point out what you really did on that project. So for me, these personal projects prove what I can do."
+   },
+   {
+    "kind": "q",
+    "text": "If someone wants to start making projects like yours, what path would you recommend they follow? Where would you start, and what would you focus on first?"
+   },
+   {
+    "kind": "a",
+    "text": "Get inspired by others, study their work, figure out how and why they’ve taken or made those decisions. I spent nights watching videos frame by frame, trying to understand what’s going on on the screen and how they’ve achieved it."
+   },
+   {
+    "kind": "a",
+    "text": "I think we’re allowed to copy others’ ideas, but only if we use them as a starting point and come up with something new. There is a limited number of projects you’ll be able to do in your career, so redoing something that is already done feels like a waste of time for me."
+   },
+   {
+    "kind": "q",
+    "text": "Zooming out, how do you see the industry changing right now with all the new tools and AI in the mix? What’s your honest take on how much that’s actually going to reshape what we do?"
+   },
+   {
+    "kind": "a",
+    "text": "A good friend says it very well. AI only takes you to ninety percent of completion and the last ten percent becomes so painful."
+   },
+   {
+    "kind": "a",
+    "text": "I think the perception of small clients has already shifted. Allocating less time to production, hiring fewer people. But big brands, those that have always shaped the industry, keep working in the usual way, using AI only as a reference generator."
+   },
+   {
+    "kind": "a",
+    "text": "For now, I’m not worried about the short term changes, but I know that I’ll need to include AI in some capacity. There will be a point where I won’t be able to avoid it, but I would like to think that if we like animation for the good reasons, we will be fine."
+   }
+  ],
+  "2": [
+   {
+    "kind": "q",
+    "text": "I’d love to start with your story. As I’ve seen in your web, you studied dentistry, then ended up working as a receptionist at an animation studio, and years later moved to Barcelona to study motion design at BAU. What was that path actually like, and what made you finally commit to this?"
+   },
+   {
+    "kind": "a",
+    "text": "Hey Esteban! First of all, thanks so much for the invite and for giving me the space to talk a little bit about my journey. It wasn’t exactly a straight line, but that’s kinda the fun part."
+   },
+   {
+    "kind": "a",
+    "text": "So, how I ended up here is kind of a long story, but I’ll keep it short. I promise."
+   },
+   {
+    "kind": "a",
+    "text": "Okay, basically, I was that kid who loved drawing and was obsessed with Disney. Which is not exactly a surprise, right? Super original. Haha."
+   },
+   {
+    "kind": "a",
+    "text": "I also used to take drawing classes with my aunt, and she was a big inspiration for me. I mean, I really loved those classes, but like a lot of things from childhood, I kinda sadly left them behind as I got older."
+   },
+   {
+    "kind": "a",
+    "text": "And then I hit my teens, and like most teenagers, I had no clue what I wanted to do with my life. So I was like, “Okay, what pays the bills and makes my family proud?” And somehow, the answer was… dentistry."
+   },
+   {
+    "kind": "a",
+    "text": "Which is funny, because there are no dentists in my family. Like, none. I still have no idea where that came from."
+   },
+   {
+    "kind": "a",
+    "text": "Anyway, I needed a job to pay for college, so I ended up working as a receptionist at an animation studio here in São Paulo. And yeah, I think that’s where things started to shift."
+   },
+   {
+    "kind": "a",
+    "text": "So the job wasn’t that busy. When I had some free time, I’d just go upstairs to post-production and see what everyone was working on. I mean, I didn’t really understand what I was seeing, but I felt like I could learn something there. And… turns out I did!"
+   },
+   {
+    "kind": "a",
+    "text": "That’s when I first saw Photoshop and After Effects, and honestly, they kinda blew my mind. I was like, “Wait… this is actually so fun. I wanna do this!” But at the same time, it all looked so complicated. All those layers, the buttons, the panels everywhere… and I remember going, “Yeah, there’s no way I’m ever gonna figure this out.”"
+   },
+   {
+    "kind": "a",
+    "text": "And I have to make a quick side note here, ‘cause this made a huge difference in my journey: a big shout-out to Daniel Rodrigues, who’s now an amazing Creative Director at BUCK. I was really lucky to work with him early on, back when I was still the receptionist at that studio. Watching him work and create all these incredible things was such an inspiration to me. And honestly, it still is."
+   },
+   {
+    "kind": "a",
+    "text": "So little by little, watching everyone work and being around that process every day made me want to learn more. And I guess, in a way, it made me realize that maybe I was on the wrong path. I wasn’t even sure I wanted to be a dentist, so I figured, why not try something I was actually excited about?"
+   },
+   {
+    "kind": "a",
+    "text": "So I did the obvious thing… I Googled— I Googled, “What does a graphic designer do?” For real. And yeah, that one search pretty much changed everything."
+   },
+   {
+    "kind": "a",
+    "text": "I ended up going to design school and totally fell in love with it, even though the actual job was a little different from what Google promised me."
+   },
+   {
+    "kind": "a",
+    "text": "And after a few years as a graphic designer, I started feeling like, somehow, everything I made needed to move."
+   },
+   {
+    "kind": "a",
+    "text": "And then BAU in Barcelona happened. I spent a year there, which was honestly one of the most important years of my life. I met some amazing people, discovered studios I’m still obsessed with, and when I came back to Brazil, I had to start from scratch, this time as a motion designer. And it was the best thing that ever happened to me."
+   },
+   {
+    "kind": "a",
+    "text": "And now, like… thirteen years later, I’m still learning, still figuring things out, and somehow, I ended up here. Which is pretty funny, because all of this came from one Google search. Haha."
+   },
+   {
+    "kind": "q",
+    "text": "I really liked how the project about OFFF Barcelona started as a personal thing, just a social media post, and ended up projected on the façade of Disseny Hub Barcelona. What was that process like, and did you expect it to go anywhere beyond the post?"
+   },
+   {
+    "kind": "a",
+    "text": "I love that project! Honestly, I was really happy that I finally got over my imposter syndrome enough to put this project out into the world. Especially because I finished it pretty much right before the deadline. Haha."
+   },
+   {
+    "kind": "a",
+    "text": "So, about the process, I think it helps to know that I love illustrating and animating silly little things from my everyday life. My routine, my dogs, my trips… It kinda reminds me who I am outside of that constant, “Okay, but is this good enough commercially?”"
+   },
+   {
+    "kind": "a",
+    "text": "And whenever I travel, I make a little animation to let people know I'm out of office. It's basically my excuse to do more and more personal projects."
+   },
+   {
+    "kind": "a",
+    "text": "And the OFFF piece came from exactly that. I was about to travel for almost two months, and I wanted to tell people I'd be at the festival. Also, it was a sneaky way to start networking before I even got there."
+   },
+   {
+    "kind": "a",
+    "text": "So I came up with this idea of a suitcase getting covered in stickers, like I was packing up to go find inspiration outside my screen. Because after six years of working from home, I really needed that. Like, real world, real people, touching grass."
+   },
+   {
+    "kind": "a",
+    "text": "And then, while I was working on it, I saw that OFFF had opened a call for the projection at Disseny Hub. I had, like, three days left, and the projection had a super specific format and timing, so I basically had to rework a lot of the animation. And the whole time, my brain was like, “Nah, they’re never gonna pick this.” But I sent it anyway… and they picked it!"
+   },
+   {
+    "kind": "a",
+    "text": "And honestly? I did not see that coming. I thought it was just gonna be an Instagram post. So seeing it on this giant building, together with all these amazing studios and artists, was completely surreal."
+   },
+   {
+    "kind": "a",
+    "text": "And once I got selected, it made me wanna do more. Like, okay, how do I get this thing off the screen? That's pretty much where the sticker sheets came in. Something people could actually hold and take home."
+   },
+   {
+    "kind": "a",
+    "text": "And it turns out, they were the best icebreaker. I’d hand someone a sticker, they’d ask about it, and boom, we’re talking. Way easier, haha."
+   },
+   {
+    "kind": "a",
+    "text": "So yeah, if I had any advice, it'd be: make your little things, put them out there, and trust your gut. You never know… so why not?"
+   },
+   {
+    "kind": "q",
+    "text": "What would you tell someone considering a jump like yours, coming into motion design later or from a completely different field?"
+   },
+   {
+    "kind": "a",
+    "text": "Honestly, I think when things start feeling a little too easy, that's a good time to ask yourself, “Okay, what's next?”"
+   },
+   {
+    "kind": "a",
+    "text": "Especially in a creative field, we're always learning. I mean, trying new things, exploring different stuff, and, you know, following whatever gets you excited."
+   },
+   {
+    "kind": "a",
+    "text": "Sometimes, your career changes before you even notice. And that's kinda what happened to me at first. I started feeling like all my design work needed to move, and that's how I ended up in motion."
+   },
+   {
+    "kind": "a",
+    "text": "And now, I feel like it's happening again, just in the other direction. Lately, I've been getting hired more as a visual designer, so I'm doing a lot more design and illustration these days. And honestly, I'm loving it."
+   },
+   {
+    "kind": "a",
+    "text": "Animation is still a huge part of who I am, of course. I still love it. It's just not the whole picture anymore."
+   },
+   {
+    "kind": "a",
+    "text": "And, I don't really see that as going backwards. It feels more like everything I've learned along the way is finally coming together."
+   },
+   {
+    "kind": "a",
+    "text": "So, if you're thinking about making a jump like that, I guess I'd just say: let yourself change your mind, do more of what you enjoy, and, most importantly, think about what kind of space you wanna be in."
+   },
+   {
+    "kind": "a",
+    "text": "But at the same time, don't stress too much about having your whole career figured out. I feel like, as long as you keep moving, you'll be fine."
+   },
+   {
+    "kind": "q",
+    "text": "Zooming out, how do you see the industry changing right now with all the new tools and AI in the mix? What’s your honest take on how much that’s actually going to reshape what we do?"
+   },
+   {
+    "kind": "a",
+    "text": "Oof, the big question. I’ll try not to make this too long, haha."
+   },
+   {
+    "kind": "a",
+    "text": "Okay, so I think the industry has always been changing, and I've never really felt like standing still was a good way to grow."
+   },
+   {
+    "kind": "a",
+    "text": "Thinking about motion, we've always had new software, new tools, and new ways of thinking about animation. After Effects keeps getting updates, tools like Cavalry and Rive come along, and they don't just change how we work. Sometimes, they create whole new styles and new ways of animating. And I love that."
+   },
+   {
+    "kind": "a",
+    "text": "But AI feels… different. Especially generative AI. I mean, I'm still not convinced it's something we just have to accept as the future of creative work. And beyond all the environmental and ethical issues, I think it's really important to protect your own voice as an artist."
+   },
+   {
+    "kind": "a",
+    "text": "Because now that we're surrounded by so much AI-generated stuff, being a human creative, with your own taste, your own influences, your own way of seeing things, is gonna be worth even more."
+   },
+   {
+    "kind": "a",
+    "text": "And, not gonna lie, I've definitely felt things speeding up. Timelines are getting shorter, and sometimes the creative process is treated like it should just happen… instantly."
+   },
+   {
+    "kind": "a",
+    "text": "But for me, the process is the best part. I always say: good pre-production, happy project. Haha. And AI just… kills all of that. Like, where’s the fun in that?"
+   },
+   {
+    "kind": "a",
+    "text": "The fun is watching something come together, making mistakes that turn into happy accidents, having something come out totally different from what you planned, and then going, “Oh. I actually like this better.”"
+   },
+   {
+    "kind": "a",
+    "text": "And with AI, I feel like you kinda lose some of that. The mistakes, the discoveries, the chance to surprise yourself. And honestly, I have a hard time calling it “creating” when all you did was type a prompt and generate an image."
+   },
+   {
+    "kind": "a",
+    "text": "So, my honest take? The industry's gonna keep changing, whether we like it or not. And of course, we can learn new tools and adapt to new ways of working. But I don't think we have to give up the part that makes our work ours."
+   },
+   {
+    "kind": "a",
+    "text": "And, you know, I don't think typing a prompt and getting an image should automatically be called art. For me, there's still something really important about actually making things, making mistakes, and figuring things out along the way."
+   },
+   {
+    "kind": "a",
+    "text": "So yeah, I think the industry is gonna keep moving. We just have to be a little more intentional about what we bring to the table as humans."
+   }
+  ],
+  "3": [
+   {
+    "kind": "q",
+    "text": "I’d love to start with your story, both personal and professional. Who you are, and eventually what got you into design and animation in the first place, and how did that turn into Noodle?"
+   },
+   {
+    "kind": "a",
+    "text": "My name is Doug Alberts and I run a studio called Noodle. I love design, I love animation, it’s just the coolest thing. Not a lot of people get to say they love what they do this much. We get to design, we get to animate, we get to make the world a prettier place. That feels pretty special."
+   },
+   {
+    "kind": "a",
+    "text": "Personally, I’m a twin, I grew up in the Chicago suburbs and live downtown now. Growing up there was fun, I had good friends and we’d make little films for YouTube, or I’d be in the basement with Legos practicing stop motion, trying to get a laugh out of whoever watched it. That feeling, that I could make someone feel something, a laugh or something sadder, stuck with me. It was one of the first times I realized I loved this."
+   },
+   {
+    "kind": "a",
+    "text": "I knew in my heart that the people working at Pixar or DreamWorks are the real animators, the big guns, the ones you reach out to when you need something to move amazingly. Motion design has amazing animators too, but a lot of it feels more scrappy, like we’re putting this thing together as we’re flying it."
+   },
+   {
+    "kind": "a",
+    "text": "My parents are both creative and really encouraging about me pursuing motion design, so I applied to Ringling and got in. I spent four years there studying under genuinely talented faculty, one of them being Joe Donaldson, who at the time was writing for Motionographer. Through him I got my foot in the door at studios like Gunner and Giant Ant, spent a summer with each, and sitting next to artists like that taught me a lot, not just technically but in how they think through problems."
+   },
+   {
+    "kind": "a",
+    "text": "I finished school in 2020, right when everything shut down, and moved back in with my parents feeling pretty confused about where to go next. Throughout school I’d been making a lot of personal work, stuff that felt genuinely passion-driven, and that led to staying in touch with people at Hornet. After graduating I started freelancing, and then Hornet approached me with a directing contract to join their roster. I wasn’t totally sure what that meant, but I figured I’d give it a shot."
+   },
+   {
+    "kind": "a",
+    "text": "I spent two years directing for clients like Spotify, Hulu and Apple through Hornet. Going from being on the tools to directing was a real jump, suddenly I had to figure out how to talk to a team after a client call, how to write an email, a completely different vibe. Those two years taught me a lot about both roles and how different they actually are."
+   },
+   {
+    "kind": "a",
+    "text": "After Hornet I was getting married. My wife Steph, who’s now our creative producer at Noodle, had always known how much I wanted to start a studio someday, I just never knew when the right time was. We looked at each other and figured, we’re young, no kids yet, no major finances to worry about, if not now, when. So we started Noodle. Since then it’s been a mix of directing, sometimes solo, sometimes leading a full team, and I genuinely love it. The work’s been received well, which feels like a good sign we’re doing something right."
+   },
+   {
+    "kind": "q",
+    "text": "I remember Form + Fidget as a way to experiment with Rive, great project by the way. What draws you to building personal projects like that outside of client work, and what role do they play for you?"
+   },
+   {
+    "kind": "a",
+    "text": "Personal work is where I love hanging out the most, I wish I could do it all the time, but the mortgage says otherwise. It’s the stuff that keeps me jazzed, keeps me learning, keeps me relevant. The trap is finishing a job and then doing nothing for the next few weeks. My rule since school has been: when a job wraps, learn a new tool, chase something I haven’t tried, stay inspired."
+   },
+   {
+    "kind": "a",
+    "text": "Personal work has gotten me actual jobs too, sometimes from the weirdest places, stuff I made years ago turning up in a client’s mood board out of nowhere. It’s wild where things end up on the internet. When you’re exploring something you genuinely care about, it shows, and that’s what makes someone want to hire you for that thing, you already know what they want because you’ve already explored it. I try to keep it short, make it feel like a case study if I can, and just stay excited about what I’m making in my spare time."
+   },
+   {
+    "kind": "q",
+    "text": "If someone’s just starting out in motion design today, what’s one thing you’d tell them to focus on, or one thing you’d tell them to stop worrying about?"
+   },
+   {
+    "kind": "a",
+    "text": "If I was starting over, I’d just make as much personal work that I actually care about as I can. I get why people make a 30-second spot with the Google logo slapped on the end, to show they can fit into a project, but honestly I don’t care about that, and it usually doesn’t even look like the client work they’re hoping to land. Skip the mock ads."
+   },
+   {
+    "kind": "a",
+    "text": "Focus on something you actually care about. Make it a life story, an awkward first date, a stranger you bumped into on a plane who gave you an idea. That’s what gets me excited, way more than another mock ad saying nothing. You can show your chops through storytelling just as well. That’s where I’d start if I were doing it again: keep making personal work, and learn as much as you can, as fast as you can."
+   },
+   {
+    "kind": "q",
+    "text": "Zooming out, how do you see the industry changing right now with all the new tools and AI in the mix? What’s your honest take on how much that’s actually going to reshape what we do?"
+   },
+   {
+    "kind": "a",
+    "text": "Honestly, I don’t know the future, every industry is moving fast right now. I’ve heard the grumbles, a lot of the low-budget work that used to land on someone’s desk probably won’t be there much longer, the tools are getting good enough to replace that fast."
+   },
+   {
+    "kind": "a",
+    "text": "But motion design is built on things feeling fresh, same as fashion, same as architecture. It’s hard for me to imagine a point where we stop caring about new styles and just generate everything forever, that’s never how it’s worked for any creative field. I think we’re safe for a while, don’t quote me on that though."
+   },
+   {
+    "kind": "a",
+    "text": "Where I do get excited is tools that help me do things I already do, better. I don’t know how to code and don’t want to learn, but if I can describe what I need and get a script with sliders I can actually create something from, that’s useful. What doesn’t excite me is a tool that just generates the whole shot. Of course that’s going to look like garbage."
+   },
+   {
+    "kind": "a",
+    "text": "I’m trying not to be doom and gloom about it, I get why it feels scary, I’m not exactly thrilled about it either, especially the part where you can see whose work it’s drawing from. My hope is we still have jobs in five years. I wouldn’t spend much time worrying about it, I’d spend that time making stuff you actually care about instead."
+   }
+  ],
+  "4": [
+   {
+    "kind": "q",
+    "text": "You've been watching this industry closely for a long time now. When you look at motion design today, what feels different from when you started Motionographer, and what hasn't changed at all?"
+   },
+   {
+    "kind": "a",
+    "text": "Back in the glory days of Motionographer, it felt like the entire world of motion design was on fire with innovation and exploration. While the field arguably grew out of experimental animation, title design, and broadcast graphics over the course of a hundred years, the early 2000s were special."
+   },
+   {
+    "kind": "a",
+    "text": "Desktop computers were getting more powerful, and a wave of new software was tapping into that power. Tools like After Effects, Macromedia Flash, and early 3D packages like Maya, 3D Studio Max, Softimage XSI, and Cinema 4D were democratizing a kind of storytelling that had previously been prohibitively expensive."
+   },
+   {
+    "kind": "a",
+    "text": "At the same time, the internet was coming of age as a distribution channel. It was a perfect storm of new technology and new platforms, layered on top of still-relevant traditional channels like TV and film."
+   },
+   {
+    "kind": "a",
+    "text": "The field was driven by anthemic work: 60-second spots with massive budgets that pushed the boundaries of what was possible, with every studio trying to one-up the next. It was such a fun and exciting time."
+   },
+   {
+    "kind": "a",
+    "text": "Fast forward 20 years, and a lot of that has faded."
+   },
+   {
+    "kind": "a",
+    "text": "Thanks in large part to the rise of social media and streaming platforms that are less reliant on long-form advertising, big-budget 30-second spots are hard to find. You’re lucky to get a 15-second spot with a decent budget attached."
+   },
+   {
+    "kind": "a",
+    "text": "I don’t mean to make everything about money, but to a certain degree, money is what fuels the ability to take risks and get noticed. It certainly fueled things in the early 2000s."
+   },
+   {
+    "kind": "a",
+    "text": "The other big shift is the rise of design-driven, systems-based work. As clients grow their in-house teams, they increasingly look to studios for creative frameworks and visual systems those teams can extend across product and marketing."
+   },
+   {
+    "kind": "a",
+    "text": "The whole field has become much more focused on design, which is probably why the term “motion design” has almost completely replaced its predecessor, “motion graphics.”"
+   },
+   {
+    "kind": "q",
+    "text": "You've seen how designers share and present their work shift over the years. What stands out to you in how people show their work today, for better or worse?"
+   },
+   {
+    "kind": "a",
+    "text": "The biggest change is obviously social media. From about 2010 to 2020, designers used Instagram and a handful of other platforms not just to showcase their work, but to grow followings and build community around it."
+   },
+   {
+    "kind": "a",
+    "text": "For a while, that worked quite well."
+   },
+   {
+    "kind": "a",
+    "text": "The last few years have been disruptive, though. When Instagram introduced Reels and essentially tried to become a TikTok clone, it left behind the pure presentation of work in favor of what I’d call “creative theater.”"
+   },
+   {
+    "kind": "a",
+    "text": "It’s no longer enough to simply share your work. You have to perform around it, either by creating process content or by inserting yourself, the creator, into the work."
+   },
+   {
+    "kind": "a",
+    "text": "For some people, that’s fine. For most people, it’s exhausting."
+   },
+   {
+    "kind": "a",
+    "text": "It’s also become very difficult to reach even the people who already follow you, another byproduct of the platforms’ shift toward TikTok-style algorithmic feeds."
+   },
+   {
+    "kind": "a",
+    "text": "All of this has put designers in a tough spot. Even people with large followings are finding that work opportunities from those followings are harder and harder to come by."
+   },
+   {
+    "kind": "q",
+    "text": "FrameRate feels like it's filling a space Vimeo used to hold before it got harder to browse and discover work there. Where do you see FrameRate heading, and what are you building toward with it?"
+   },
+   {
+    "kind": "a",
+    "text": "Yeah, we’re definitely trying to create a more intentional space for discovering work and celebrating the people who make it."
+   },
+   {
+    "kind": "a",
+    "text": "But it’s worth asking: what do we mean by “intentional”? (That word gets thrown around a lot. 😅)"
+   },
+   {
+    "kind": "a",
+    "text": "When you go to Instagram, TikTok, or YouTube now, the algorithm force-feeds you content. Those algorithms are incredibly powerful, and I love spending time on those platforms myself, but it’s a reactive process."
+   },
+   {
+    "kind": "a",
+    "text": "I scroll endlessly, hoping to be entertained by a parade of dads getting hit in the nuts by their toddlers or a 22-year-old confidently explaining the fall of Rome over Minecraft parkour footage."
+   },
+   {
+    "kind": "a",
+    "text": "It’s become increasingly hard to fill my feed with inspiring work because I made the mistake of clicking on a 45-year-old dude doing squats. Now my feed is full of people selling protein shakes and creatine."
+   },
+   {
+    "kind": "a",
+    "text": "Every day, I see less and less inspiring art and design, and even when I do see it, it slips right by, poorly presented, crowded out by an intrusive UI and surrounded by ads."
+   },
+   {
+    "kind": "a",
+    "text": "An intentional space is like a museum. You go there to be inspired or challenged, or simply to see familiar things in a new way. And I think we’re all craving that."
+   },
+   {
+    "kind": "a",
+    "text": "That’s essentially what FrameRate is about: a place where you can go to be inspired, connect with other people, and create opportunities for yourself by collaborating or being discovered."
+   },
+   {
+    "kind": "a",
+    "text": "It feels like the right time to be building this, and our vision goes way beyond video hosting. I believe FrameRate will become an essential hub for creatives of all stripes to share their work, celebrate each other, and simply revel in their craft."
+   },
+   {
+    "kind": "a",
+    "text": "If it sounds like I’m writing a manifesto, there’s some truth to that. FrameRate feels like part of a bigger cultural shift in the creative space."
+   },
+   {
+    "kind": "a",
+    "text": "So many people are burned out and tired of the way things are, and they’re ready for something new. We hope to be part of that something new."
+   }
+  ]
+ }
+}
