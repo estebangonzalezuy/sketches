@@ -24,7 +24,7 @@ Formato: idea, tamaño (S/M/L), estado. Estados: pendiente, en curso, hecha, des
 - **Fondo del canvas** — S — hecha. Color a elegir, textura de papel y grilla opcional (apagada por defecto).
 - **Línea de tiempo con easing y duraciones** — L — hecha. Valores generales en el panel; en la línea de tiempo, preview, scrub, bloques a escala con su curva, estirar arrastrando, duración y easing por giro, persistido.
 - **Texturas intercambiables** — M — hecha. Siete papeles (incluida una textura subida) para páginas y fondo por separado, con intensidad.
-- **Tapa con título de puntos y órbita** — M — hecha. Estética de las referencias de Human + Motion: título en puntos con sombra de anillos, espiral con letras en círculos; mismo texto que antes. La tapa anterior queda como "Plain".
+- **Tapa con título de puntos y órbita** — M — hecha. Estética de las referencias de Human + Motion: título sólido en Archivo Narrow con un "Voices" en puntos claros detrás, espiral con letras en círculos; mismo texto que antes. La tapa anterior queda como "Plain".
 - **Papel como material 3D** — M — hecha. Acabado (mate a brillante), relieve con bump desde la textura, peso (curvatura y grosor) y ondulación.
 - **Curva bézier editable a mano** (arrastrar los handles) — M — después. Hoy son presets.
 - **Record más corto con Q&A** (por ejemplo, saltear los spreads Q&A en el video) — S — después. Hoy el video con Q&A dura unos 29 s.

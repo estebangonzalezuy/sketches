@@ -2,11 +2,10 @@ import type { Ctx } from "./canvas-type";
 
 /**
  * Type built from dots: the word is rasterised to a mask and a grid of overlapping filled
- * circles covers the inside. The same dots, drawn as thin outlines and dropped a little down
- * and to the left, sit behind it like a printed shadow.
+ * circles covers the inside. Flat: no shadow, no outline.
  * Deterministic. Returns the word's box on the page.
  */
-export function dotType(ctx: Ctx, text: string, fontCss: string, cx: number, baseline: number, o: { step: number; ink: string }) {
+export function dotType(ctx: Ctx, text: string, fontCss: string, cx: number, baseline: number, o: { step: number; ink: string; alpha?: number }) {
   const W = ctx.canvas.width;
   const H = ctx.canvas.height;
   const m = document.createElement("canvas");
@@ -35,17 +34,9 @@ export function dotType(ctx: Ctx, text: string, fontCss: string, cx: number, bas
   const y1 = baseline + box.actualBoundingBoxDescent + s * 2;
   const fills: [number, number][] = [];
   for (let y = y0; y <= y1; y += s) for (let x = x0; x <= x1; x += s) if (inside(x, y)) fills.push([x, y]);
-  const rings = fills.map(([x, y]) => [x - s * 0.8, y + s * 1.7] as [number, number]);
   ctx.save();
-  ctx.lineWidth = Math.max(1, s * 0.09);
-  ctx.strokeStyle = o.ink;
-  // the halo: outlines only, so neighbouring rings cross like in a print proof
-  for (const [x, y] of rings) {
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.stroke();
-  }
   ctx.fillStyle = o.ink;
+  ctx.globalAlpha = o.alpha ?? 1;
   for (const [x, y] of fills) {
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);

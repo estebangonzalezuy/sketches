@@ -97,7 +97,7 @@ Además de la textura impresa, el papel tiene su tratamiento como material:
 
 En el panel, **Cover** elige el estilo:
 
-- **Type** (el default): blanco con tipo negro. "the Motion Social Club" va como pretítulo y "Voices" armado con puntos en una slab serif (Bitter), con una sombra de círculos huecos y una órbita en espiral con las letras del club. Debajo van "Four conversations" y los cuatro invitados con su fecha, el mismo texto de siempre.
+- **Type** (el default): blanco con tipo negro. "the Motion Social Club" va como pretítulo y "Voices" en Archivo Narrow bold negro, con un "Voices" en puntos gris claro por detrás (slab serif Bitter) y una órbita en espiral con las letras del club. Debajo van "Four conversations" y los cuatro invitados con su fecha, el mismo texto de siempre.
 - **Plain:** la tapa tipográfica anterior, sin puntos ni órbita.
 - **Full image:** la imagen a sangre, con el tipo encima.
 - **Image on color:** la imagen dentro de un fondo del color que elijas en **Cover color** (que también colorea la tapa Type).

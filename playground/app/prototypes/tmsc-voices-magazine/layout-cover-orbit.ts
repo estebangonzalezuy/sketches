@@ -1,13 +1,14 @@
-import { font, right, type Ctx } from "./canvas-type";
+import { fit, font, right, type Ctx } from "./canvas-type";
 import { displayDate, INTERVIEWS } from "./content";
 import { PAGE_PX } from "./data";
 import { dotType } from "./dot-type";
 import type { CoverSetup } from "./setup";
 
 /**
- * The typographic cover: "the Motion Social Club" as a pre-title, "Voices" built from dots in
- * a heavy slab serif, an orbit line spiralling around it with the club's letters in rings,
- * then the four guests and their dates. Same copy as the plain cover.
+ * The typographic cover: "the Motion Social Club" as a pre-title, "Voices" in solid Archivo
+ * Narrow bold over a dotted slab-serif "Voices" behind it, an orbit line spiralling around
+ * with the club's letters in rings, then the four guests and their dates. Same copy as the
+ * plain cover.
  */
 
 export const SLAB_FAMILY = "tMSC Voices Slab";
@@ -58,7 +59,14 @@ export function drawOrbitCover(ctx: Ctx, cover: CoverSetup) {
   ctx.fillText("the Motion Social Club", cx, cy - ry - 90);
   ctx.textAlign = "left";
   const size = 360;
-  dotType(ctx, "Voices", `800 ${size}px "${SLAB_FAMILY}"`, cx, cy + size * 0.33, { step: 14, ink });
+  // the dots sit behind, light, as texture; the title itself is solid Archivo Narrow
+  dotType(ctx, "Voices", `800 ${size}px "${SLAB_FAMILY}"`, cx, cy + size * 0.33, { step: 14, ink, alpha: 0.16 });
+  const title = fit(ctx, "Voices", { weight: 700, maxWidth: 1060, maxHeight: 600, leading: 1, max: 560, min: 200, tracking: -0.045 });
+  font(ctx, 700, title.size, -0.045);
+  ctx.fillStyle = ink;
+  ctx.textAlign = "center";
+  ctx.fillText("Voices", cx, cy + title.size * 0.36);
+  ctx.textAlign = "left";
 
   // the club's letters in rings along the outer turns
   const n = ORBIT_LETTERS.length;

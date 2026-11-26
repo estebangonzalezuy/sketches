@@ -47,9 +47,8 @@ the conversation set in columns, as in a printed magazine.
 ## Cover
 
 **Type** (default) is the dotted orbit cover (`layout-cover-orbit.ts`): "the Motion Social
-Club" as a pre-title, "Voices" in Bitter 800 (OFL, `public/prototype-assets/<slug>/fonts/`)
-built from overlapping dots with an outlined, offset copy behind it as a printed shadow
-(`dot-type.ts`), a thin spiral orbit with the letters of MOTION SOCIAL CLUB in rings, then
+Club" as a pre-title, "Voices" in solid Archivo Narrow bold, over a light dotted "Voices" in
+Bitter 800 (OFL, `public/prototype-assets/<slug>/fonts/`, built from dots by `dot-type.ts`), a thin spiral orbit with the letters of MOTION SOCIAL CLUB in rings, then
 "tMSC", "Four conversations" and the four guests with their dates: the same copy as before.
 **Plain** keeps the first typographic cover; **Full image** and **Image on color** as before.
 
