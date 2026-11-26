@@ -14,7 +14,7 @@ const texture = (kind: unknown, strength: unknown, fallback: TextureKind | "None
 
 
 export type CoverSetup = {
-  style: "type" | "full" | "on-color";
+  style: "orbit" | "type" | "full" | "on-color";
   /** "upload" or the interview whose picked image goes on the cover */
   source: "upload" | 1 | 2 | 3 | 4;
   color: string;
@@ -46,7 +46,8 @@ export type PageSetup = {
 export type TextureChoice = { kind: TextureKind | "None"; strength: number };
 export type StageSetup = { color: string; texture: TextureChoice; grid: boolean };
 
-const COVER_STYLE = { Type: "type", "Full image": "full", "Image on color": "on-color" } as const;
+// "Type" is the dotted orbit cover; "Plain" keeps the first typographic cover
+const COVER_STYLE = { Type: "orbit", Plain: "type", "Full image": "full", "Image on color": "on-color" } as const;
 const COVER_SOURCE = { Uploaded: "upload", Victor: 1, Thais: 2, Doug: 3, Justin: 4 } as const;
 
 /** A percent control → 0.3…1, tolerant of stale stored values. */
@@ -58,7 +59,7 @@ export function pageSetup(v: Record<string, unknown>): PageSetup {
   const pick = (order: 1 | 2 | 3 | 4) =>
     resolveMedia(order, String(v[`${NAMES[order]}Image`]), Number(v[`${NAMES[order]}Frame`]));
   const cover: CoverSetup = {
-    style: COVER_STYLE[v.coverStyle as keyof typeof COVER_STYLE] ?? "type",
+    style: COVER_STYLE[v.coverStyle as keyof typeof COVER_STYLE] ?? "orbit",
     source: COVER_SOURCE[v.coverImage as keyof typeof COVER_SOURCE] ?? "upload",
     color: /^#[0-9a-f]{6}$/i.test(String(v.coverBg)) ? String(v.coverBg) : COVER.bg,
     // the cover ink is printed black or white, never a UI color

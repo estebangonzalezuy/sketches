@@ -175,7 +175,8 @@ describe("cover setup", () => {
     const { defaultValues } = await import("@/components/controls");
     const { COVER, BACK_COVER } = await import("./data");
     const v = defaultValues(controls);
-    expect(pageSetup(v).cover.style).toBe("type");
+    expect(pageSetup(v).cover.style).toBe("orbit");
+    expect(pageSetup({ ...v, coverStyle: "Plain" }).cover.style).toBe("type");
     expect([COVER.bg, BACK_COVER.bg]).toEqual(["#FFFFFF", "#FFFFFF"]);
     expect([COVER.ink, BACK_COVER.ink]).toEqual(["#0C0C0C", "#0C0C0C"]);
     const c = pageSetup({ ...v, coverStyle: "Image on color", coverImage: "Doug", coverBg: "#cc84fc", coverInk: "White" }).cover;

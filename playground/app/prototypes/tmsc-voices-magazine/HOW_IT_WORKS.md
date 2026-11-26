@@ -44,6 +44,15 @@ the conversation set in columns, as in a printed magazine.
   clears them all. Edits persist in this browser (`timing-store.ts`). Touching the magazine,
   a key, prev / next or Record leaves the preview on the spread it was showing.
 
+## Cover
+
+**Type** (default) is the dotted orbit cover (`layout-cover-orbit.ts`): "the Motion Social
+Club" as a pre-title, "Voices" in Bitter 800 (OFL, `public/prototype-assets/<slug>/fonts/`)
+built from overlapping dots with an outlined, offset copy behind it as a printed shadow
+(`dot-type.ts`), a thin spiral orbit with the letters of MOTION SOCIAL CLUB in rings, then
+"tMSC", "Four conversations" and the four guests with their dates: the same copy as before.
+**Plain** keeps the first typographic cover; **Full image** and **Image on color** as before.
+
 ## Paper (3D material)
 
 `paper.ts` (pure) + `magazine.tsx` / `curl-material.ts`:

@@ -3,6 +3,7 @@ import { displayDate, INTERVIEWS, PUBLICATION_URL } from "./content";
 import type { CoverSetup } from "./setup";
 import { PAGE_PX } from "./data";
 import type { PageInk } from "./types";
+import { drawOrbitCover } from "./layout-cover-orbit";
 
 /** Cover and back cover, drawn at the design size (PAGE_PX). */
 
@@ -16,6 +17,7 @@ const ROW_H = 150;
  * into a color field. The type layout is the same in all three, so the masthead never moves.
  */
 export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | null) {
+  if (cover.style === "orbit") return drawOrbitCover(ctx, cover);
   const style = img ? cover.style : cover.style === "full" ? "on-color" : cover.style;
   ctx.fillStyle = cover.color;
   ctx.fillRect(0, 0, W, H);

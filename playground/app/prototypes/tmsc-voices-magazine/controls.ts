@@ -48,7 +48,7 @@ export const controls = defineControls({
   textSize: { type: "select", label: "Q&A text", options: ["Small", "Medium", "Large"], default: "Medium" },
   textImageSize: { type: "number", label: "Q&A image size %", min: 30, max: 100, step: 5, default: 100 },
   textPage: { type: "color", label: "Q&A page color", default: "#FFFFFF" },
-  coverStyle: { type: "select", label: "Cover", options: ["Type", "Full image", "Image on color"], default: "Type" },
+  coverStyle: { type: "select", label: "Cover", options: ["Type", "Plain", "Full image", "Image on color"], default: "Type" },
   coverImage: { type: "select", label: "Cover image", options: ["Uploaded", "Victor", "Thais", "Doug", "Justin"], default: "Uploaded" },
   coverBg: { type: "color", label: "Cover color", default: COVER.bg },
   coverImageSize: { type: "number", label: "Cover image size %", min: 30, max: 100, step: 5, default: 100 },

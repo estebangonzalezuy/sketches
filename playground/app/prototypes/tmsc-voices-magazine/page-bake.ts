@@ -1,5 +1,6 @@
 import type { PageSetup } from "./setup";
-import { FONT_FAMILY, FONT_URL, PAGE_PX } from "./data";
+import { ASSET_BASE, FONT_FAMILY, FONT_URL, PAGE_PX } from "./data";
+import { SLAB_FAMILY } from "./layout-cover-orbit";
 import type { Book } from "./faces";
 import { drawBackCover, drawCover } from "./layout-covers";
 import { drawEditorialLeft, drawEditorialRight, layoutEditorial, type EditorialImage, type EditorialLayout } from "./layout-editorial";
@@ -15,9 +16,11 @@ import { applyTexture } from "./textures";
 
 let fontReady: Promise<void> | null = null;
 function loadFont(): Promise<void> {
-  fontReady ??= new FontFace(FONT_FAMILY, `url(${FONT_URL})`, { weight: "400 700" })
-    .load()
-    .then((f) => void document.fonts.add(f));
+  fontReady ??= Promise.all([
+    new FontFace(FONT_FAMILY, `url(${FONT_URL})`, { weight: "400 700" }).load(),
+    // Bitter (OFL), the slab serif of the dotted cover title
+    new FontFace(SLAB_FAMILY, `url(${ASSET_BASE}/fonts/bitter-latin-800-normal.woff2)`, { weight: "800" }).load(),
+  ]).then((faces) => faces.forEach((f) => document.fonts.add(f)));
   return fontReady;
 }
 
@@ -53,7 +56,7 @@ export async function bakePages(
   textureImage: HTMLImageElement | null,
 ): Promise<Map<string, HTMLCanvasElement>> {
   const { cover, editorial } = setup;
-  const coverUrl = cover.style === "type" ? null : cover.source === "upload" ? uploaded : setup.media[cover.source]?.url;
+  const coverUrl = cover.style === "type" || cover.style === "orbit" ? null : cover.source === "upload" ? uploaded : setup.media[cover.source]?.url;
   const [, coverImg, intro, textImages] = await Promise.all([
     loadFont(),
     loadImage(coverUrl),
