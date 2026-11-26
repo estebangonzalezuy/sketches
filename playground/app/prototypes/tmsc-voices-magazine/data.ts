@@ -41,6 +41,21 @@ export const INK = {
   tomato: "#EE4B2B",
 } as const;
 
+/** The tMSC palette as the colour pickers offer it (names as in the brand sheet). */
+export const TMSC_PALETTE = [
+  { name: "Periwinkle", hex: "#ADB4F5" },
+  { name: "Verde", hex: "#2E7D46" },
+  { name: "Marrón", hex: "#3C240C" },
+  { name: "Ink", hex: "#0C0C0C" },
+  { name: "Amarillo", hex: "#F4C500" },
+  { name: "Acid", hex: "#E4FC24" },
+  { name: "Magenta", hex: "#F06CCC" },
+  { name: "Blanco", hex: "#FFFFFF" },
+  { name: "Naranja", hex: "#EE4B2B" },
+  { name: "Lila", hex: "#CC84FC" },
+  { name: "Verde osc.", hex: "#0C540C" },
+] as const;
+
 export const COVER = { bg: INK.white, ink: INK.black };
 export const BACK_COVER = { bg: INK.white, ink: INK.black };
 

@@ -1,9 +1,11 @@
 "use client";
 
 import { cn } from "cn";
+import { ColorSwatches } from "@/components/controls";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { displayDate } from "./content";
+import { TMSC_PALETTE } from "./data";
 import type { Feature, FeatureImage } from "./feature";
 import { imageUrl, postImages, type FeatureData } from "./feature-data";
 import type { PostData, PostSummary } from "./substack-parse";
@@ -119,14 +121,22 @@ export function FeatureFields({ feature, data, post, posts, onChange }: Props) {
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        {(["left", "right"] as const).map((side) => (
-          <label key={side} className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-            {side === "left" ? "Left page" : "Quote page"}
-            <input type="color" className="h-8 w-12 cursor-pointer rounded border border-border bg-transparent" value={data[side].bg} onChange={(e) => onChange({ [side]: e.target.value })} />
-          </label>
-        ))}
-      </div>
+      {(["left", "right"] as const).map((side) => (
+        <div key={side} className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className={label}>{side === "left" ? "Left page" : "Quote page"}</span>
+            {/* any other colour, beyond the palette */}
+            <input
+              type="color"
+              aria-label={`${side === "left" ? "Left page" : "Quote page"} custom colour`}
+              className="size-11 cursor-pointer rounded-md border border-border bg-transparent p-1 sm:size-8"
+              value={data[side].bg.toLowerCase()}
+              onChange={(e) => onChange({ [side]: e.target.value })}
+            />
+          </div>
+          <ColorSwatches swatches={TMSC_PALETTE} value={data[side].bg} onChange={(hex) => onChange({ [side]: hex })} />
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { defineControls, type ControlValues } from "@/components/controls";
-import { BACK_COVER, COVER } from "./data";
+import { BACK_COVER, COVER, TMSC_PALETTE } from "./data";
 import { DEFAULT_CAMERA, DRIFTS, INTROS } from "./camera";
 import { EASE_NAMES } from "./easing";
 import { DEFAULT_PAPER, PAPER_FINISHES, PAPER_WEIGHTS } from "./paper";
@@ -33,14 +33,14 @@ export const controls = defineControls({
   textColumns: { type: "select", label: "Q&A columns", options: ["1", "2", "3"], default: "2" },
   textSize: { type: "select", label: "Q&A text", options: ["Small", "Medium", "Large"], default: "Medium" },
   textImageSize: { type: "number", label: "Q&A image size %", min: 30, max: 100, step: 5, default: 100 },
-  textPage: { type: "color", label: "Q&A page color", default: "#FFFFFF" },
+  textPage: { type: "color", label: "Q&A page color", default: "#FFFFFF", swatches: TMSC_PALETTE },
   coverLayout: { type: "select", label: "Cover layout", options: ["Human + Motion", "Orbit", "Plain", "Full image", "Image on color"], default: "Human + Motion" },
   coverImage: { type: "select", label: "Cover image", options: COVER_SOURCES, default: "Uploaded" },
-  coverBg: { type: "color", label: "Cover color", default: COVER.bg },
+  coverBg: { type: "color", label: "Cover color", default: COVER.bg, swatches: TMSC_PALETTE },
   coverImageSize: { type: "number", label: "Cover image size %", min: 30, max: 100, step: 5, default: 100 },
   coverInk: { type: "select", label: "Cover type", options: ["Black", "White"], default: "Black" },
-  backColor: { type: "color", label: "Back cover color", default: BACK_COVER.bg },
-  stageColor: { type: "color", label: "Background", default: "#EAEAEA" },
+  backColor: { type: "color", label: "Back cover color", default: BACK_COVER.bg, swatches: TMSC_PALETTE },
+  stageColor: { type: "color", label: "Background", default: "#EAEAEA", swatches: TMSC_PALETTE },
   stageTexture: { type: "select", label: "Background texture", options: ["None", ...TEXTURES], default: "Newsprint" },
   stageTextureStrength: { type: "number", label: "Background texture %", min: 0, max: 200, step: 5, default: 100 },
   stageGrid: { type: "boolean", label: "Grid", default: false },

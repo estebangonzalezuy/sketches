@@ -88,6 +88,12 @@ El botón **Timeline** abre la secuencia del Record como una línea de tiempo:
 - Los bloques editados aparecen resaltados y las ediciones se guardan en el browser.
 - Tocar la revista, una flecha o Record sale del preview y deja la revista en el spread que se estaba viendo.
 
+## Paleta
+
+Todos los selectores de color muestran la paleta tMSC como swatches: Periwinkle, Verde, Marrón, Ink, Amarillo, Acid, Magenta, Blanco, Naranja, Lila y Verde osc. El selector libre sigue al lado para cualquier otro color.
+
+Los swatches están en los dos colores de cada feature y en tapa, contratapa, páginas Q&A y fondo del panel. **Randomize** elige dentro de la paleta.
+
 ## Cámara y formatos
 
 En el panel:

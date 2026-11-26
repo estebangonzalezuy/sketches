@@ -32,7 +32,12 @@ export type SelectControl = Base & {
   default: string;
 };
 /** A user-chosen color value (data, not styling). Hex `#rrggbb`. */
-export type ColorControl = Base & { type: "color"; default: string };
+export type ColorControl = Base & {
+  type: "color";
+  default: string;
+  /** A palette to pick from (shown as swatches; Randomize picks among them). */
+  swatches?: readonly { name: string; hex: string }[];
+};
 
 export type Control = NumberControl | BooleanControl | SelectControl | ColorControl;
 export type ControlSchema = Record<string, Control>;
@@ -100,7 +105,9 @@ export function randomValues<S extends ControlSchema>(
         out[k] = c.options[Math.floor(rng() * c.options.length)] ?? c.default;
         break;
       case "color":
-        out[k] = hslToHex(rng() * 360, 0.55 + rng() * 0.35, 0.45 + rng() * 0.2);
+        out[k] = c.swatches?.length
+          ? c.swatches[Math.floor(rng() * c.swatches.length)].hex.toLowerCase()
+          : hslToHex(rng() * 360, 0.55 + rng() * 0.35, 0.45 + rng() * 0.2);
         break;
     }
   }

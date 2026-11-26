@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { ColorSwatches } from "./color-swatches";
 import type { Control } from "./schema";
 
 function format(v: number, step?: number): string {
@@ -76,20 +77,23 @@ export function ControlField({
       );
     case "color":
       return (
-        <div className="flex min-h-11 items-center justify-between gap-3">
-          <Label htmlFor={id} className="font-normal">
-            {label}
-          </Label>
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs text-muted-foreground">{value as string}</span>
-            <input
-              id={id}
-              type="color"
-              value={value as string}
-              onChange={(e) => onChange(e.target.value)}
-              className="size-11 cursor-pointer rounded-md border border-input bg-transparent p-1 sm:size-8"
-            />
+        <div className="flex flex-col gap-2">
+          <div className="flex min-h-11 items-center justify-between gap-3">
+            <Label htmlFor={id} className="font-normal">
+              {label}
+            </Label>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs text-muted-foreground">{value as string}</span>
+              <input
+                id={id}
+                type="color"
+                value={value as string}
+                onChange={(e) => onChange(e.target.value)}
+                className="size-11 cursor-pointer rounded-md border border-input bg-transparent p-1 sm:size-8"
+              />
+            </div>
           </div>
+          {control.swatches && <ColorSwatches swatches={control.swatches} value={value as string} onChange={onChange} />}
         </div>
       );
   }

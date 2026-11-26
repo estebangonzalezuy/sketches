@@ -74,6 +74,15 @@ Bitter 800 (OFL, `public/prototype-assets/<slug>/fonts/`, built from dots by `do
 
 Page textures are uploaded once per bake; changing finish or relief only rebuilds materials.
 
+## Palette
+
+Every colour picker offers the tMSC palette as swatches (`TMSC_PALETTE` in `data.ts`:
+Periwinkle, Verde, Marrón, Ink, Amarillo, Acid, Magenta, Blanco, Naranja, Lila, Verde osc.)
+next to the free picker: the two page colours in each feature card, and the panel's cover,
+back cover, Q&A page and background colours. The swatches come from the shared
+`ColorSwatches` in `components/controls` (a colour control with `swatches` shows them, and
+Randomize picks among them). Type stays readable by luminance whatever is picked.
+
 ## Camera
 
 `camera.ts` (pure): a view is tilt (° from straight down), turn / yaw (° around the

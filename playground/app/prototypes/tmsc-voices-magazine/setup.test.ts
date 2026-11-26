@@ -74,3 +74,19 @@ describe("camera", () => {
     expect(RECORD_FORMATS[recordFormat({ format: "9:16" })]).toMatchObject({ w: 1080, h: 1920 });
   });
 });
+
+describe("palette", () => {
+  it("offers the tMSC palette in the panel and Randomize stays inside it", async () => {
+    const { controls } = await import("./controls");
+    const { randomValues, defaultValues } = await import("@/components/controls");
+    const { TMSC_PALETTE } = await import("./data");
+    const hexes = TMSC_PALETTE.map((s) => s.hex.toLowerCase());
+    expect(hexes).toHaveLength(11);
+    let seed = 7;
+    const rng = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < 20; i++) {
+      const v = randomValues(controls, defaultValues(controls), rng);
+      for (const k of ["coverBg", "backColor", "textPage", "stageColor"] as const) expect(hexes).toContain(v[k]);
+    }
+  });
+});
