@@ -1,6 +1,7 @@
 import type { PageSetup } from "./setup";
 import { ASSET_BASE, FONT_FAMILY, FONT_URL, PAGE_PX } from "./data";
 import { SLAB_FAMILY } from "./layout-cover-orbit";
+import { ARTWORK_URL } from "./layout-cover-artwork";
 import type { Book } from "./faces";
 import { drawBackCover, drawCover } from "./layout-covers";
 import { drawEditorialLeft, drawEditorialRight, layoutEditorial, type EditorialImage, type EditorialLayout } from "./layout-editorial";
@@ -56,7 +57,8 @@ export async function bakePages(
   textureImage: HTMLImageElement | null,
 ): Promise<Map<string, HTMLCanvasElement>> {
   const { cover, editorial } = setup;
-  const coverUrl = cover.style === "type" || cover.style === "orbit" ? null : cover.source === "upload" ? uploaded : setup.media[cover.source]?.url;
+  const coverUrl =
+    cover.style === "artwork" ? ARTWORK_URL : cover.style === "type" || cover.style === "orbit" ? null : cover.source === "upload" ? uploaded : setup.media[cover.source]?.url;
   const [, coverImg, intro, textImages] = await Promise.all([
     loadFont(),
     loadImage(coverUrl),

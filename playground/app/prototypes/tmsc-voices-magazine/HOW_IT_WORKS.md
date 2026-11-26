@@ -46,6 +46,13 @@ the conversation set in columns, as in a printed magazine.
 
 ## Cover
 
+**Cover layout** (renamed from Cover so earlier stored choices don't hide the new default):
+**Human + Motion** (default) is the supplied artwork, used as-is from
+`public/prototype-assets/<slug>/cover/human-motion.png` (not redrawn), cropped to the drawing
+and set on its own background colour (#FCFCFC), with only the four guests' names below
+(`layout-cover-artwork.ts`). **Orbit** is the dotted cover described next.
+
+
 **Type** (default) is the dotted orbit cover (`layout-cover-orbit.ts`): "the Motion Social
 Club" as a pre-title, "Voices" in solid Archivo Narrow bold, over a light dotted "Voices" in
 Bitter 800 (OFL, `public/prototype-assets/<slug>/fonts/`, built from dots by `dot-type.ts`), a thin spiral orbit with the letters of MOTION SOCIAL CLUB in rings, then

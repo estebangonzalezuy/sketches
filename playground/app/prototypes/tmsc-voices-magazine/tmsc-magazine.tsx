@@ -88,7 +88,7 @@ export function TmscMagazine() {
   useMagazineKeys(driverRef, live);
 
   const { set } = c;
-  const coverStyle = c.values.coverStyle;
+  const coverLayout = c.values.coverLayout;
   const upload = useCallback(
     async (what: "cover" | "texture", file: File) => {
       setError(null);
@@ -96,7 +96,8 @@ export function TmscMagazine() {
         if (what === "cover") {
           await coverUpload.save(file);
           set("coverImage", "Uploaded");
-          if (coverStyle === "Type") set("coverStyle", "Full image");
+          // an upload is meant to be seen: switch away from the layouts that don't use it
+          if (coverLayout !== "Full image" && coverLayout !== "Image on color") set("coverLayout", "Full image");
           live();
           driverRef.current.controller.goTo(0);
         } else {
@@ -107,7 +108,7 @@ export function TmscMagazine() {
         setError(e instanceof Error ? e.message : "That image didn't load.");
       }
     },
-    [set, coverStyle, live],
+    [set, coverLayout, live],
   );
 
   const turn = useCallback(
