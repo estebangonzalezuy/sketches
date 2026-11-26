@@ -76,6 +76,11 @@ function fromImage(img: HTMLImageElement) {
   return c;
 }
 
+/** The paper tile itself (for the 3D relief), or null for Smooth / no upload yet. */
+export function textureTile(t: TextureSetup): HTMLCanvasElement | null {
+  return tilesFor(t)?.tile ?? null;
+}
+
 function tilesFor(t: TextureSetup) {
   const key = t.kind === "Uploaded" ? `up:${t.image?.src.length ?? 0}:${t.image?.src.slice(-64)}` : t.kind;
   if (!tiles.has(key)) {

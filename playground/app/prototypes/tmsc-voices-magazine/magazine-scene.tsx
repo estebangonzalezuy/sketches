@@ -8,6 +8,8 @@ import type { StageSetup } from "./setup";
 import type { DriverRef } from "./driver";
 import type { Book } from "./faces";
 import { Magazine } from "./magazine";
+import type { PaperSetup } from "./paper";
+import type { TextureKind } from "./textures";
 import { PointerInput } from "./pointer-input";
 import { fitCamera, Stage } from "./stage";
 
@@ -31,9 +33,17 @@ function Bridge({ driverRef }: { driverRef: DriverRef }) {
   return null;
 }
 
-type Props = { book: Book; pages: Map<string, HTMLCanvasElement>; stage: StageSetup; textureImage: HTMLImageElement | null; driverRef: DriverRef };
+type Props = {
+  book: Book;
+  pages: Map<string, HTMLCanvasElement>;
+  stage: StageSetup;
+  paper: PaperSetup;
+  pageTexture: TextureKind | "None";
+  textureImage: HTMLImageElement | null;
+  driverRef: DriverRef;
+};
 
-export function MagazineScene({ book, pages, stage, textureImage, driverRef }: Props) {
+export function MagazineScene({ book, pages, stage, paper, pageTexture, textureImage, driverRef }: Props) {
   return (
     <Canvas
       shadows="soft"
@@ -47,7 +57,7 @@ export function MagazineScene({ book, pages, stage, textureImage, driverRef }: P
     >
       <Bridge driverRef={driverRef} />
       <Stage stage={stage} textureImage={textureImage} />
-      <Magazine book={book} pages={pages} driverRef={driverRef} />
+      <Magazine book={book} pages={pages} paper={paper} texture={{ kind: pageTexture, image: textureImage }} driverRef={driverRef} />
       <PointerInput driverRef={driverRef} />
     </Canvas>
   );

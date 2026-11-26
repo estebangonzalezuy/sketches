@@ -79,6 +79,15 @@ El botón **Timeline** abre la secuencia del Record como una línea de tiempo:
 
 Para probar una textura propia: **Upload → Paper texture…**. La imagen se repite como mosaico y se normaliza para que agregue textura sin teñir. Queda guardada en el browser.
 
+## Papel en 3D
+
+Además de la textura impresa, el papel tiene su tratamiento como material:
+
+- **Paper finish:** Matte (sin brillo, el default), Uncoated, Satin o Gloss. Cuanto más satinado, más reflejos de la luz sobre el papel y la tinta.
+- **Paper relief:** usa la textura de la página como relieve real. La fibra, el grano o el tejido se iluminan y hacen sombra, sobre todo mientras la hoja gira. Con Smooth no hay relieve.
+- **Paper weight:** Light, Regular o Heavy. El papel liviano se curva más al girar; el pesado queda más rígido y el taco se ve más grueso.
+- **Paper waviness:** cuánto se ondula la hoja en reposo, como papel que no queda del todo plano.
+
 ## Fondo
 
 - **Background:** el color del fondo detrás de la revista. Por defecto #EAEAEA.

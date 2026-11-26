@@ -2,6 +2,7 @@ import { defineControls, type ControlValues } from "@/components/controls";
 import { BACK_COVER, COVER, SPREADS } from "./data";
 import { coverOption, mediaOptions } from "./media";
 import { EASE_NAMES } from "./easing";
+import { DEFAULT_PAPER, PAPER_FINISHES, PAPER_WEIGHTS } from "./paper";
 import { TEXTURES } from "./textures";
 import { DEFAULT_TIMING } from "./timing";
 
@@ -38,6 +39,10 @@ export const controls = defineControls({
   flipDuration: { type: "number", label: "Flip-through sheet s", min: 0.3, max: 3, step: 0.05, default: DEFAULT_TIMING.cascade, randomize: false },
   pageTexture: { type: "select", label: "Page texture", options: TEXTURES, default: "Newsprint" },
   pageTextureStrength: { type: "number", label: "Page texture %", min: 0, max: 200, step: 5, default: 100 },
+  paperFinish: { type: "select", label: "Paper finish", options: PAPER_FINISHES, default: DEFAULT_PAPER.finish },
+  paperRelief: { type: "number", label: "Paper relief %", min: 0, max: 200, step: 5, default: DEFAULT_PAPER.relief * 100 },
+  paperWeight: { type: "select", label: "Paper weight", options: PAPER_WEIGHTS, default: DEFAULT_PAPER.weight },
+  paperWaviness: { type: "number", label: "Paper waviness %", min: 0, max: 200, step: 5, default: DEFAULT_PAPER.waviness * 100 },
   editorial: { type: "boolean", label: "Q&A pages", default: true },
   textColumns: { type: "select", label: "Q&A columns", options: ["1", "2", "3"], default: "2" },
   textSize: { type: "select", label: "Q&A text", options: ["Small", "Medium", "Large"], default: "Medium" },

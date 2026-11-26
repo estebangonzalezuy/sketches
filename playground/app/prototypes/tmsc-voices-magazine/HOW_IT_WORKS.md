@@ -44,6 +44,21 @@ the conversation set in columns, as in a printed magazine.
   clears them all. Edits persist in this browser (`timing-store.ts`). Touching the magazine,
   a key, prev / next or Record leaves the preview on the spread it was showing.
 
+## Paper (3D material)
+
+`paper.ts` (pure) + `magazine.tsx` / `curl-material.ts`:
+
+- **Paper finish**: Matte (Lambert, no specular, the default), Uncoated, Satin, Gloss
+  (MeshStandardMaterial at roughness 0.85 / 0.5 / 0.22). The curl patch works on both.
+- **Paper relief** (0–200 %): the page texture's tile becomes a bump map, repeated at print
+  scale, so grain, fibres or weave catch the light as a sheet turns. None with Smooth.
+- **Paper weight**: Light / Regular / Heavy scales the bend of every turn (1.3 / 1 / 0.65)
+  and the sheet spacing in the stacks (thin to thick). The edge still never passes π.
+- **Paper waviness** (0–200 %): the idle lift of the outer edge plus a gentle cockle across
+  each sheet, the same shape on every sheet so stacked pages never cross.
+
+Page textures are uploaded once per bake; changing finish or relief only rebuilds materials.
+
 ## Textures
 
 `textures.ts` bakes one of seven paper finishes into every page and, separately, the table:

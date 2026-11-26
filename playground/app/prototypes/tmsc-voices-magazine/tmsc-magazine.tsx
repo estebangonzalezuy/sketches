@@ -10,6 +10,7 @@ import { buildBook, type Book } from "./faces";
 import { MagazineControls } from "./magazine-controls";
 import { MagazineScene } from "./magazine-scene";
 import { bakePages } from "./page-bake";
+import { paperFrom } from "./paper";
 import { pageSetup, recordFormat, stageSetup } from "./setup";
 import { recordPlan, spreadAt } from "./timeline";
 import { TimelinePanel } from "./timeline-panel";
@@ -36,9 +37,11 @@ export function TmscMagazine() {
   // JSON keys keep these stable while unrelated controls move
   const setupKey = JSON.stringify(pageSetup(c.values));
   const stageKey = JSON.stringify(stageSetup(c.values));
+  const paperKey = JSON.stringify(paperFrom(c.values));
   const timingKey = JSON.stringify(timingFrom(c.values, overrides));
   const setup = useMemo(() => JSON.parse(setupKey) as ReturnType<typeof pageSetup>, [setupKey]);
   const stage = useMemo(() => JSON.parse(stageKey) as ReturnType<typeof stageSetup>, [stageKey]);
+  const paper = useMemo(() => JSON.parse(paperKey) as ReturnType<typeof paperFrom>, [paperKey]);
   const timing = useMemo(() => JSON.parse(timingKey) as ReturnType<typeof timingFrom>, [timingKey]);
   const plan = useMemo(() => (baked ? recordPlan(baked.book, timing) : null), [baked, timing]);
   const format = recordFormat(c.values);
@@ -123,7 +126,15 @@ export function TmscMagazine() {
       <main className="relative flex min-h-[max(20rem,calc(100dvh-3rem-1px-env(safe-area-inset-top)))] w-full flex-1 flex-col">
         {baked ? (
           <div className="absolute inset-0">
-            <MagazineScene book={baked.book} pages={baked.pages} stage={stage} textureImage={textureImage} driverRef={driverRef} />
+            <MagazineScene
+              book={baked.book}
+              pages={baked.pages}
+              stage={stage}
+              paper={paper}
+              pageTexture={setup.texture.kind}
+              textureImage={textureImage}
+              driverRef={driverRef}
+            />
           </div>
         ) : (
           !error && (

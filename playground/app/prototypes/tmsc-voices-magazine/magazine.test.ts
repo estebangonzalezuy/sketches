@@ -294,3 +294,29 @@ describe("easing and timing", () => {
     expect(last.start + last.dur).toBeCloseTo(plan.duration, 6);
   });
 });
+
+describe("paper", () => {
+  it("reads the panel safely and orders weights from bendy to stiff", async () => {
+    const { paperFrom, weightParams, finishMaterial, DEFAULT_PAPER } = await import("./paper");
+    expect(paperFrom({})).toEqual(DEFAULT_PAPER);
+    expect(paperFrom({ paperFinish: "Velvet", paperRelief: 999, paperWaviness: -5 })).toMatchObject({ finish: "Matte", relief: 2, waviness: 0 });
+    const [l, r, h] = (["Light", "Regular", "Heavy"] as const).map(weightParams);
+    expect(l.bend).toBeGreaterThan(r.bend);
+    expect(r.bend).toBeGreaterThan(h.bend);
+    expect(h.gap).toBeGreaterThan(l.gap);
+    expect(finishMaterial("Matte")).toEqual({ model: "lambert" });
+    const gloss = finishMaterial("Gloss");
+    const satin = finishMaterial("Satin");
+    expect(gloss.model === "standard" && satin.model === "standard" && gloss.roughness < satin.roughness).toBe(true);
+  });
+
+  it("a heavier bend never pushes the edge past the stacks", () => {
+    for (const bend of [0.95 * 1.3, 0.95 * 0.65])
+      for (let p = 0; p <= 1; p += 0.02)
+        for (const sign of [1, -1] as const) {
+          const { root, bend: b } = shaderPose(p, sign, bend);
+          expect(root + sign * b).toBeGreaterThanOrEqual(-1e-9);
+          expect(root + sign * b).toBeLessThanOrEqual(Math.PI + 1e-9);
+        }
+  });
+});
