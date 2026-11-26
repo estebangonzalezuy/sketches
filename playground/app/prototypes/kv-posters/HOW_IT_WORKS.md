@@ -7,7 +7,7 @@ Generates Motion, Now posters in the style of the flower/rosette references (cre
 ## Architecture
 
 ```
-controls (layout, seed, format, palette, blocks)
+controls (layout, seed, format, background, type colour, mono, blocks)
         │
         ▼
 generate(options, measure)            pure, seeded (random.ts, mosaic.ts, layouts.ts, elements.ts)
@@ -24,6 +24,8 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
                           export-mp4.ts (WebCodecs + mp4-muxer)
 ```
 
+- **Lockup and asterisk**: each seed puts them in two different random corners (with a small random inset), never over the headline; the lockup's box is a coin flip.
+
 ## Frontend
 
 - **Layouts**: `stack` (stacked headline top-right, spiral), `cascade` (three flowers), `overlap` (one-line headline, two flowers), `vertical` (headline down the left edge, one big flower), `line` (line art: scalloped rosette, outlined type), `free` (one to three motifs anywhere). `auto` picks one per seed. Layouts are starting points: `vary.ts` moves, scales, turns and re-petals the motifs per seed, often re-splits, resizes and re-places the headline (sometimes vertical), swaps the lockup and asterisk corners, and flips a coin for each box's outline.
@@ -33,16 +35,16 @@ store.ts ── saved edits keyed by the generator settings (+ undo / redo) ─�
 - **Timeline** (Animate tab): a seconds ruler and one row per element, front-most first. Each row's bar is when that element animates: drag the middle to move it, drag near an end to stretch it (snaps to frames), tap empty lane space to scrub. Muted bars are the automatic timing; a bar becomes hand-set (solid) once touched and is stored on the element as `anim: { start, end, effect, ease? }` (fractions of the length), so it saves and undoes with the poster. Selecting a row (or tapping the element on the canvas) opens its clip: **Effect** (KV build, fade, rise, drop, slide in, scale, spin in; `effects.ts` applies the generic ones around the finished element), **Own easing** (the Studio curve editor, else the global curve) and **Auto** to drop the hand-set timing. In `in + out`, each clip plays in and mirrors out (`min(clip(u), clip(1 − u))`), so loops still close.
 - **Construct** (animation style): a brand-reveal build for every element. `outlines.ts` turns each element into its outlines (polylines) plus bezier anchors and handles (ellipses get the four kappa handles a vector app shows; type contours get a few node anchors); `construct.ts` draws, per element progress: a dashed bounding box with corner ticks, centre cross and size label, then the outlines drawing on with anchors, handles and a pen tip riding along, then the finished element snaps in (a 3.5% fade, almost no opacity ramp) while the technical marks fade out. Timing still comes from the timeline bars. It is also available per element as the **Construct** effect. **Construct notes** (settings): before an outline draws, its box is typed in with a caret, word-wrapped to the box, then cleared as the outline arrives. `questions` (default): the survey's questions (`questions.ts`): the headline types the lead question ("What does motion mean now?") and then constructs into the title; the other elements type "Qnn / total" and a question, biggest boxes first, wrapping round the list. The questions are edited in the Animate tab (**Survey questions**, one per line, plus the headline question) and stored as `playground:kv-posters:questions`; the defaults are placeholders. `specs`: technical notes (`notes.ts`: name, font and size, petals and diameter, colour and hex). `off`: straight to the outlines.
 - **Animate**: styles `build` (everything builds in, then holds), `loop` (finished poster, motifs spin), `build + loop`, `in + out` (builds in and back out, so it loops). Kinds start in order (blocks → frames → spirals/flowers → headline → lockup → asterisk), staggered top to bottom. Spin advances by whole rotational-symmetry periods, so loops are seamless. Scrub with the time slider; Space plays and pauses. **Easing**: the Studio's curve editor (`lib/studio/ui/curve-editor.tsx`) shapes each element's build (drag the two bezier handles or start from a preset; stored as `playground:kv-posters:ease`); spins stay linear so loops close.
-- **Paper texture**: a checkbox turns the grain on or off; Grain sets its strength. It is a seeded noise tile laid in device pixels over the whole print (paper, colour and ink), so it reads the same in the preview, the PNG and the MP4.
+- **Paper texture**: a checkbox turns the grain on or off; Grain sets its strength. It is a seeded noise tile laid in device pixels over the whole print (paper, colour and ink) except the headline, which is painted after it and stays sharp, so it reads the same in the preview, the PNG and the MP4.
 - **Formats**: motif and mark sizes use a unit `U = min(width, height × 0.75)` (the width on 3:4 and taller), so 1:1 and 4:5 don't overflow; the canvas resizes both sides on a format change.
 - **Export**: PNG at the format's size; MP4 H.264 (VP9 fallback) at the chosen frame rate (12, 24, 30 or 60 fps).
 - **Responsive**: the poster sits on top, capped at `max-w-md`; panels below; settings in the side panel (desktop) or bottom sheet (mobile). Every button is a 44px target.
 - **Reduced motion**: no autoplay; the playhead rests on the finished poster.
-- **Theme**: chrome uses tokens; the poster uses its own palette (data). Palettes: Pastel, KV yellow, and the tMSC background / figure pairs (`palettes.ts`) that have a light background (luminance ≥ 0.3) and readable type (WCAG contrast ≥ 4.5); motif colours too close to the background (contrast < 1.3) are swapped for another tMSC colour: paper = background, ink = figure (type and lines), boxes take the background, motifs take the rest of the tMSC set, never the pair's own colours.
+- **Theme**: chrome uses tokens; the poster uses its own palette (data). Palettes (`palettes.ts`): **Background** (Blanco #FFFFFF, Celeste #C9E6F7, Beige #F7F0DA) × **Type colour** (tMSC colours that read on every background at WCAG ≥ 4.5:1 and leave at least two block colours: Marrón, Ink, Verde osc.). Blocks use the other tMSC colours, each ≥ 1.3:1 against the background and ≥ 3:1 against the type laid over them (AA for large text; this lets Verde in); boxes take the background; the asterisk takes the type colour. **Mono** (off or any tMSC colour) overrides the type colour: type in a deep shade of the colour (≥ 9:1 on white), blocks in three tints/shades of it, each ≥ 4.5:1 against the type and ≥ 1.3:1 against the background.
 
 ## Key Dependencies
 
-- `lib/kv/fonts.ts` and `lib/kv/render/type.ts`: headlines are Archivo Narrow Bold with the KV type treatment (facets, keyhole notches, round dots, printed-ink edge), the same pipeline as the Studio's Letters cell; in line art they are outlined. The lockup is Inter SemiBold.
+- `lib/kv/fonts.ts` and `lib/kv/render/type.ts`: headlines are Archivo Narrow Bold with the KV type treatment (facets, keyhole notches, round dots), the same geometry as the Studio's Letters cell, filled as sharp vectors (no printed-ink edge); in line art they are outlined. The lockup is Inter SemiBold.
 - `mp4-muxer` + WebCodecs `VideoEncoder`.
 
 ## Component Tree
