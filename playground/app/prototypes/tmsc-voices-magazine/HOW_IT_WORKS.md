@@ -59,6 +59,12 @@ Bitter 800 (OFL, `public/prototype-assets/<slug>/fonts/`, built from dots by `do
 "tMSC", "Four conversations" and the four guests with their dates: the same copy as before.
 **Plain** keeps the first typographic cover; **Full image** and **Image on color** as before.
 
+**Cover dots** (`cover-dots.ts`, on by default, switch in the panel): a dot pattern printed
+under everything on every cover layout. Grid, Halftone (offset rows, largest at the head of
+the page, gone before the names) or Scatter (seeded, so exports repeat), with size, spacing
+and colour (palette swatches). On the Human + Motion cover the artwork is drawn with
+multiply, so its near-white ground lets the dots through and its black stays black.
+
 ## Paper (3D material)
 
 `paper.ts` (pure) + `magazine.tsx` / `curl-material.ts`:

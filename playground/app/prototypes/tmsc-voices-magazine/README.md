@@ -88,6 +88,15 @@ El botón **Timeline** abre la secuencia del Record como una línea de tiempo:
 - Los bloques editados aparecen resaltados y las ediciones se guardan en el browser.
 - Tocar la revista, una flecha o Record sale del preview y deja la revista en el spread que se estaba viendo.
 
+## Puntos en la tapa
+
+**Cover dots** prende o apaga un patrón de puntos detrás de la tapa. Viene prendido.
+
+- **Dot pattern:** Grid, Halftone (puntos grandes arriba que se desvanecen antes de los nombres) o Scatter (puntos sueltos, siempre iguales en cada export).
+- **Dot size**, **Dot spacing** y **Dot color**, con los swatches de la paleta.
+
+En la tapa Human + Motion, los puntos se ven a través del fondo del arte y el negro del dibujo queda intacto.
+
 ## Paleta
 
 Todos los selectores de color muestran la paleta tMSC como swatches: Periwinkle, Verde, Marrón, Ink, Amarillo, Acid, Magenta, Blanco, Naranja, Lila y Verde osc. El selector libre sigue al lado para cualquier otro color.

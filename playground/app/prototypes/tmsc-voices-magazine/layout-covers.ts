@@ -4,6 +4,7 @@ import { countLabel, drawGuestRows, rowHeight, type CoverGuest } from "./cover-g
 import type { CoverSetup } from "./setup";
 import { PAGE_PX } from "./data";
 import type { PageInk } from "./types";
+import { drawCoverDots } from "./cover-dots";
 import { drawOrbitCover } from "./layout-cover-orbit";
 import { drawArtworkCover } from "./layout-cover-artwork";
 
@@ -18,11 +19,12 @@ const M = 92;
  * into a color field. The type layout is the same in all three, so the masthead never moves.
  */
 export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | null, guests: CoverGuest[]) {
-  if (cover.style === "artwork") return drawArtworkCover(ctx, img, guests);
+  if (cover.style === "artwork") return drawArtworkCover(ctx, img, guests, cover.dots);
   if (cover.style === "orbit") return drawOrbitCover(ctx, cover, guests);
   const style = img ? cover.style : cover.style === "full" ? "on-color" : cover.style;
   ctx.fillStyle = cover.color;
   ctx.fillRect(0, 0, W, H);
+  drawCoverDots(ctx, W, H, cover.dots);
   if (img && style === "full") imageFill(ctx, img, 0, 0, W, H);
   ctx.fillStyle = cover.ink;
 

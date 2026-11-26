@@ -1,6 +1,7 @@
 import { fit, font, right, type Ctx } from "./canvas-type";
 import { countLabel, drawGuestRows, type CoverGuest } from "./cover-guests";
 import { PAGE_PX } from "./data";
+import { drawCoverDots } from "./cover-dots";
 import { dotType } from "./dot-type";
 import type { CoverSetup } from "./setup";
 
@@ -27,6 +28,7 @@ function orbitPoint(cx: number, cy: number, rx: number, ry: number, u: number): 
 export function drawOrbitCover(ctx: Ctx, cover: CoverSetup, guests: CoverGuest[]) {
   ctx.fillStyle = cover.color;
   ctx.fillRect(0, 0, W, H);
+  drawCoverDots(ctx, W, H, cover.dots);
   const ink = cover.ink;
   ctx.fillStyle = ink;
 

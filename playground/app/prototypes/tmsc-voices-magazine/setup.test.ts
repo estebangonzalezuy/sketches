@@ -20,7 +20,9 @@ describe("cover setup", () => {
     expect([COVER.bg, BACK_COVER.bg]).toEqual(["#FFFFFF", "#FFFFFF"]);
     expect([COVER.ink, BACK_COVER.ink]).toEqual(["#0C0C0C", "#0C0C0C"]);
     const c = pageSetup({ ...v, coverLayout: "Image on color", coverImage: "Feature 4", coverBg: "#cc84fc", coverInk: "White" }).cover;
-    expect(c).toEqual({ style: "on-color", source: 3, color: "#cc84fc", ink: "#FFFFFF", scale: 1 });
+    expect(c).toMatchObject({ style: "on-color", source: 3, color: "#cc84fc", ink: "#FFFFFF", scale: 1 });
+    expect(c.dots).toMatchObject({ on: true, pattern: "Grid" });
+    expect(pageSetup({ ...v, coverDots: false }).cover.dots.on).toBe(false);
   });
 });
 

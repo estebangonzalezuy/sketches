@@ -1,6 +1,7 @@
 import { defineControls, type ControlValues } from "@/components/controls";
 import { BACK_COVER, COVER, TMSC_PALETTE } from "./data";
 import { DEFAULT_CAMERA, DRIFTS, INTROS } from "./camera";
+import { DOT_PATTERNS } from "./cover-dots";
 import { EASE_NAMES } from "./easing";
 import { DEFAULT_PAPER, PAPER_FINISHES, PAPER_WEIGHTS } from "./paper";
 import { TEXTURES } from "./textures";
@@ -39,6 +40,11 @@ export const controls = defineControls({
   coverBg: { type: "color", label: "Cover color", default: COVER.bg, swatches: TMSC_PALETTE },
   coverImageSize: { type: "number", label: "Cover image size %", min: 30, max: 100, step: 5, default: 100 },
   coverInk: { type: "select", label: "Cover type", options: ["Black", "White"], default: "Black" },
+  coverDots: { type: "boolean", label: "Cover dots", default: true },
+  coverDotPattern: { type: "select", label: "Dot pattern", options: DOT_PATTERNS, default: "Grid" },
+  coverDotSize: { type: "number", label: "Dot size", min: 1, max: 40, step: 1, default: 5 },
+  coverDotSpacing: { type: "number", label: "Dot spacing", min: 10, max: 120, step: 1, default: 30 },
+  coverDotColor: { type: "color", label: "Dot color", default: "#CC84FC", swatches: TMSC_PALETTE },
   backColor: { type: "color", label: "Back cover color", default: BACK_COVER.bg, swatches: TMSC_PALETTE },
   stageColor: { type: "color", label: "Background", default: "#EAEAEA", swatches: TMSC_PALETTE },
   stageTexture: { type: "select", label: "Background texture", options: ["None", ...TEXTURES], default: "Newsprint" },

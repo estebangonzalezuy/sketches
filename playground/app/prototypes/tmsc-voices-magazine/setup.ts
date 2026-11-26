@@ -1,3 +1,4 @@
+import { DOT_PATTERNS, type CoverDots, type DotPattern } from "./cover-dots";
 import { COVER } from "./data";
 import { backInk, pageInk } from "./page-inks";
 import { TEXTURES, type TextureKind } from "./textures";
@@ -20,6 +21,7 @@ export type CoverSetup = {
   ink: string;
   /** 0.3–1 of the space the image may take (Image on color) */
   scale: number;
+  dots: CoverDots;
 };
 
 export type EditorialSetup = {
@@ -58,6 +60,13 @@ export function pageSetup(v: Record<string, unknown>): PageSetup {
     // the cover ink is printed black or white, never a UI color
     ink: v.coverInk === "White" ? "#FFFFFF" : "#0C0C0C",
     scale: toScale(v.coverImageSize),
+    dots: {
+      on: v.coverDots !== false,
+      pattern: DOT_PATTERNS.includes(v.coverDotPattern as DotPattern) ? (v.coverDotPattern as DotPattern) : "Grid",
+      size: Math.min(40, Math.max(1, Number(v.coverDotSize) || 5)),
+      spacing: Math.min(120, Math.max(10, Number(v.coverDotSpacing) || 30)),
+      color: HEX.test(String(v.coverDotColor)) ? String(v.coverDotColor) : "#CC84FC",
+    },
   };
   const editorial: EditorialSetup = {
     on: v.editorial !== false,
