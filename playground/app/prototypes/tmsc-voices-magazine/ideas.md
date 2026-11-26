@@ -27,7 +27,7 @@ Formato: idea, tamaño (S/M/L), estado. Estados: pendiente, en curso, hecha, des
 - **Editor de features (revista a medida)** — L — hecha. Cualquier post del Substack como feature de 4 páginas; agregar, sacar, reordenar con drag and drop; por feature: post, nombre, frase verbatim, imágenes y colores. Datos por API del servidor con caché; imágenes por un proxy del mismo origen.
 - **Cámara en el Record** — M — hecha. Ángulo base (tilt, giro, zoom), entrada (Zoom in/out, Swing, Rise, Top-down) con duración, deriva (Slow push, Orbit, Float); carril de cámara en la línea de tiempo.
 - **Export 9:16** — S — hecha. 1080×1920.
-- **Puntos en la tapa** — S — hecha. Grid, Halftone o Scatter, con interruptor, tamaño, separación y color.
+- **Puntos en la tapa** — S — hecha. Círculos con contorno, sin relleno. Grid, Halftone o Scatter, con interruptor, tamaño, separación y color.
 - **Paleta tMSC en los selectores** — S — hecha. Swatches en features y panel; Randomize elige dentro de la paleta.
 - **Pares fondo/figura** de la hoja de prueba como combinaciones listas — S — después, cuando estén aprobados.
 - **Varias revistas guardadas** (con nombre, para ir y volver) — M — después. Hoy hay una revista por browser.

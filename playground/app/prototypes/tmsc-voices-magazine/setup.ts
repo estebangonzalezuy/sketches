@@ -63,8 +63,8 @@ export function pageSetup(v: Record<string, unknown>): PageSetup {
     dots: {
       on: v.coverDots !== false,
       pattern: DOT_PATTERNS.includes(v.coverDotPattern as DotPattern) ? (v.coverDotPattern as DotPattern) : "Grid",
-      size: Math.min(40, Math.max(1, Number(v.coverDotSize) || 5)),
-      spacing: Math.min(120, Math.max(10, Number(v.coverDotSpacing) || 30)),
+      size: Math.min(60, Math.max(3, Number(v.coverDotSize) || 12)),
+      spacing: Math.min(160, Math.max(10, Number(v.coverDotSpacing) || 32)),
       color: HEX.test(String(v.coverDotColor)) ? String(v.coverDotColor) : "#CC84FC",
     },
   };

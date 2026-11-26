@@ -90,7 +90,7 @@ El botón **Timeline** abre la secuencia del Record como una línea de tiempo:
 
 ## Puntos en la tapa
 
-**Cover dots** prende o apaga un patrón de puntos detrás de la tapa. Viene prendido.
+**Cover dots** prende o apaga un patrón de puntos con contorno, sin relleno, detrás de la tapa. Viene prendido.
 
 - **Dot pattern:** Grid, Halftone (puntos grandes arriba que se desvanecen antes de los nombres) o Scatter (puntos sueltos, siempre iguales en cada export).
 - **Dot size**, **Dot spacing** y **Dot color**, con los swatches de la paleta.

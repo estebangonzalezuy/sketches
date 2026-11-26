@@ -1,8 +1,9 @@
 import type { Ctx } from "./canvas-type";
 
 /**
- * A dot pattern printed under everything on the cover. Deterministic (the scatter uses a
- * seeded random), so exports repeat exactly. Sizes are in page pixels (1440 wide).
+ * A pattern of outlined dots (rings, no fill) printed under everything on the cover.
+ * Deterministic (the scatter uses a seeded random), so exports repeat exactly. Sizes are in
+ * page pixels (1440 wide); the line weight follows the dot size.
  */
 
 export const DOT_PATTERNS = ["Grid", "Halftone", "Scatter"] as const;
@@ -12,12 +13,13 @@ export type CoverDots = { on: boolean; pattern: DotPattern; size: number; spacin
 export function drawCoverDots(ctx: Ctx, w: number, h: number, d: CoverDots) {
   if (!d.on) return;
   ctx.save();
-  ctx.fillStyle = d.color;
+  ctx.strokeStyle = d.color;
+  ctx.lineWidth = Math.max(1.2, d.size * 0.1);
   const dot = (x: number, y: number, r: number) => {
-    if (r <= 0.2) return;
+    if (r <= ctx.lineWidth) return;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.stroke();
   };
   const s = d.spacing;
   const r = d.size / 2;
