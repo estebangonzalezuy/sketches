@@ -20,7 +20,8 @@ export type PageFace = {
   sheet: number;
   side: "front" | "back";
   layout: FaceLayout;
-  interviewOrder?: 1 | 2 | 3 | 4;
+  /** Index of the feature this page belongs to. */
+  feature?: number;
   /** Printed page number (cover = 1). */
   folio: number;
 };
@@ -31,8 +32,6 @@ export type PageInk = { bg: string; ink: string };
 export type SpreadTheme = {
   left: PageInk;
   right: PageInk;
-  /** Which of the guest's quotes is the hero (index into content.json quotes). */
-  heroQuote: number;
 };
 
 /** Everything the shader needs to place one sheet. */

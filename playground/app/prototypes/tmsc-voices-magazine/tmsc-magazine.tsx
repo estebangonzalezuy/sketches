@@ -7,6 +7,10 @@ import { controls } from "./controls";
 import { PAGE_PX, PAGE_PX_SMALL, SLUG } from "./data";
 import { Driver } from "./driver";
 import { buildBook, type Book } from "./faces";
+import type { FeatureData } from "./feature-data";
+import { FeaturesPanel } from "./features-panel";
+import { setMagazine, useMagazine } from "./magazine-store";
+import { useFeatures } from "./use-features";
 import { MagazineControls } from "./magazine-controls";
 import { MagazineScene } from "./magazine-scene";
 import { bakePages } from "./page-bake";
@@ -27,12 +31,17 @@ export function TmscMagazine() {
   const [spread, setSpread] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [featuresOpen, setFeaturesOpen] = useState(false);
   const [textureImage, setTextureImage] = useState<HTMLImageElement | null>(null);
   const reduced = useReducedMotion();
   const c = useControls(SLUG, controls);
   const uploadedCover = coverUpload.use();
   const uploadedTexture = textureUpload.use();
   const overrides = useOverrides();
+  const magazine = useMagazine();
+  const resolved = useFeatures(magazine);
+  // the pages depend on what the features print, not on object identity
+  const featuresKey = resolved.features ? JSON.stringify(resolved.features) : null;
 
   // JSON keys keep these stable while unrelated controls move
   const setupKey = JSON.stringify(pageSetup(c.values));
@@ -57,10 +66,12 @@ export function TmscMagazine() {
   // re-bake whenever the setup changes; the old pages stay up until the new ones are ready.
   // Toggling the Q&A pages changes the sheet count, so the controller starts again at the cover.
   useEffect(() => {
+    if (!featuresKey) return;
     let alive = true;
+    const features = JSON.parse(featuresKey) as FeatureData[];
     const small = Math.min(window.innerWidth, window.innerHeight) < 600;
-    const book = buildBook(setup.editorial.on);
-    bakePages(small ? PAGE_PX_SMALL : PAGE_PX, book, setup, uploadedCover, textureImage)
+    const book = buildBook(features, setup.editorial.on);
+    bakePages(small ? PAGE_PX_SMALL : PAGE_PX, book, features, setup, uploadedCover, textureImage)
       .then((pages) => {
         if (!alive) return;
         driverRef.current.useBook(book);
@@ -70,7 +81,7 @@ export function TmscMagazine() {
     return () => {
       alive = false;
     };
-  }, [setup, uploadedCover, textureImage]);
+  }, [featuresKey, setup, uploadedCover, textureImage]);
 
   useEffect(() => driverRef.current.setTiming(timing), [timing]);
 
@@ -124,9 +135,10 @@ export function TmscMagazine() {
   return (
     <ControlsLayout controls={c}>
       {/* fills the viewport under the bar (and all of it when the bar is hidden, as in thumbnails) */}
-      <main className="relative flex min-h-[max(20rem,calc(100dvh-3rem-1px-env(safe-area-inset-top)))] w-full flex-1 flex-col">
+      <main className={`relative flex min-h-[max(20rem,calc(100dvh-3rem-1px-env(safe-area-inset-top)))] w-full flex-1 flex-col ${featuresOpen ? "lg:pl-80" : ""}`}>
+        {featuresOpen && <FeaturesPanel magazine={magazine} onChange={setMagazine} data={resolved.byId} onClose={() => setFeaturesOpen(false)} />}
         {baked ? (
-          <div className="absolute inset-0">
+          <div className={`absolute inset-0 ${featuresOpen ? "lg:left-80" : ""}`}>
             <MagazineScene
               book={baked.book}
               pages={baked.pages}
@@ -150,8 +162,10 @@ export function TmscMagazine() {
           onTurn={turn}
           recording={recording}
           onRecord={record}
-          error={error}
+          error={error ?? (resolved.errors.length ? `Some posts didn't load (${resolved.errors.length}).` : null)}
           onUpload={upload}
+          featuresOpen={featuresOpen}
+          onFeatures={() => setFeaturesOpen(!featuresOpen)}
           timelineOpen={timelineOpen}
           onTimeline={() => {
             if (timelineOpen) live();

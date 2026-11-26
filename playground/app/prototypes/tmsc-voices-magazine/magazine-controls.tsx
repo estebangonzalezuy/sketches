@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { ChartNoAxesGanttIcon, ChevronLeftIcon, ChevronRightIcon, CircleIcon, ImageUpIcon, XIcon } from "lucide-react";
+import { ChartNoAxesGanttIcon, ChevronLeftIcon, ChevronRightIcon, CircleIcon, ImageUpIcon, LayoutListIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -14,14 +14,16 @@ type Props = {
   onRecord: () => void;
   error: string | null;
   onUpload: (what: "cover" | "texture", file: File) => void;
+  featuresOpen: boolean;
+  onFeatures: () => void;
   timelineOpen: boolean;
   onTimeline: () => void;
   /** The timeline panel, shown above the row when open. */
   children?: React.ReactNode;
 };
 
-/** The row under the piece: previous / next, where you are, uploads, the timeline, Record. */
-export function MagazineControls({ spread, names, onTurn, recording, onRecord, error, onUpload, timelineOpen, onTimeline, children }: Props) {
+/** The row under the piece: previous / next, where you are, uploads, features, the timeline, Record. */
+export function MagazineControls({ spread, names, onTurn, recording, onRecord, error, onUpload, featuresOpen, onFeatures, timelineOpen, onTimeline, children }: Props) {
   const busy = recording !== null;
   const file = useRef<HTMLInputElement>(null);
   const target = useRef<"cover" | "texture">("cover");
@@ -37,7 +39,7 @@ export function MagazineControls({ spread, names, onTurn, recording, onRecord, e
       {children}
       {error && <p className="pointer-events-auto text-sm text-destructive">{error}</p>}
       {/* its own backdrop: the table color is picked freely, so the row can't rely on the page theme */}
-      <div className="pointer-events-auto flex items-center gap-1 rounded-xl border border-border bg-background/85 p-1 backdrop-blur">
+      <div className="pointer-events-auto flex items-center gap-0 rounded-xl border border-border bg-background/85 p-1 backdrop-blur sm:gap-1">
         <Button variant="ghost" size="icon" aria-label="Previous page" disabled={busy || spread === 0} onClick={() => onTurn(-1)}>
           <ChevronLeftIcon />
         </Button>
@@ -71,6 +73,10 @@ export function MagazineControls({ spread, names, onTurn, recording, onRecord, e
             <DropdownMenuItem onSelect={() => pick("texture")}>Paper texture…</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button variant={featuresOpen ? "secondary" : "outline"} size="icon" className="sm:w-auto sm:px-2.5" disabled={busy} onClick={onFeatures} aria-label="Features" aria-pressed={featuresOpen}>
+          <LayoutListIcon />
+          <span className="hidden sm:inline">Features</span>
+        </Button>
         <Button variant={timelineOpen ? "secondary" : "outline"} size="icon" className="sm:w-auto sm:px-2.5" disabled={busy} onClick={onTimeline} aria-label="Timeline" aria-pressed={timelineOpen}>
           <ChartNoAxesGanttIcon />
           <span className="hidden sm:inline">Timeline</span>

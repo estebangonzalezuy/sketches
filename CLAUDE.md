@@ -378,3 +378,6 @@ Add to this list whenever something breaks and gets fixed. Newest last.
   double-sided sheet, so the surface sinks into its own shadow (pages go grey). Use `bias` only there.
 - Design tokens can carry alpha (`--border: oklch(1 0 0 / 10%)`). Before handing one to three.js,
   composite it over `--background` on a 1×1 canvas, or it reads as opaque white.
+- In cloud sessions outbound traffic goes through a proxy that Node's built-in `fetch` ignores, so
+  server routes that call external APIs fail locally with "fetch failed". Run the dev server (and
+  `npm run thumbnails`) with `NODE_USE_ENV_PROXY=1`. Deployed builds don't need it.

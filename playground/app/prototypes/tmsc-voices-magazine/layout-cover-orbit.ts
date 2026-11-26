@@ -1,5 +1,5 @@
 import { fit, font, right, type Ctx } from "./canvas-type";
-import { displayDate, INTERVIEWS } from "./content";
+import { countLabel, drawGuestRows, type CoverGuest } from "./cover-guests";
 import { PAGE_PX } from "./data";
 import { dotType } from "./dot-type";
 import type { CoverSetup } from "./setup";
@@ -15,7 +15,6 @@ export const SLAB_FAMILY = "tMSC Voices Slab";
 const W = PAGE_PX.w;
 const H = PAGE_PX.h;
 const M = 92;
-const ROW_H = 150;
 const ORBIT_LETTERS = "MOTIONSOCIALCLUB";
 
 /** A point on the orbit: an ellipse-ish spiral opening outwards from the title's middle. */
@@ -25,7 +24,7 @@ function orbitPoint(cx: number, cy: number, rx: number, ry: number, u: number): 
   return [cx + Math.cos(a) * rx * grow, cy + Math.sin(a) * ry * grow];
 }
 
-export function drawOrbitCover(ctx: Ctx, cover: CoverSetup) {
+export function drawOrbitCover(ctx: Ctx, cover: CoverSetup, guests: CoverGuest[]) {
   ctx.fillStyle = cover.color;
   ctx.fillRect(0, 0, W, H);
   const ink = cover.ink;
@@ -93,15 +92,8 @@ export function drawOrbitCover(ctx: Ctx, cover: CoverSetup) {
   ctx.fillStyle = ink;
   font(ctx, 500, 60, -0.01);
   ctx.textAlign = "center";
-  ctx.fillText("Four conversations", cx, cy + ry + 140);
+  ctx.fillText(countLabel(guests.length), cx, cy + ry + 140);
   ctx.textAlign = "left";
 
-  const top = H - M - ROW_H * (INTERVIEWS.length - 1);
-  INTERVIEWS.forEach((it, i) => {
-    const y = top + i * ROW_H;
-    font(ctx, 700, 118, -0.02);
-    ctx.fillText(it.guest, M, y);
-    font(ctx, 500, 54);
-    right(ctx, displayDate(it.post_date), W - M, y);
-  });
+  drawGuestRows(ctx, guests, M, W - M, H - M);
 }

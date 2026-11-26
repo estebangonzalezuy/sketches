@@ -2,6 +2,23 @@
 
 Un zine 3D con las últimas cuatro entrevistas de the Motion Social Club. Se hojea con un page-curl de papel y graba un MP4 de la secuencia demo.
 
+## Armar la revista con features
+
+El botón **Features** abre el editor de la revista. Cada feature es un post de tu Substack convertido en cuatro páginas: la presentación (nombre, título, imagen y la frase) y el artículo en columnas.
+
+- **Add feature** agrega el post más nuevo que todavía no esté en la revista.
+- Para cambiar el orden, arrastrá cada tarjeta desde el ícono de agarre. En el teléfono también podés usar las flechas.
+- Abrí una tarjeta para elegir:
+  - **Post:** cualquiera del archivo, del más nuevo al más viejo.
+  - **Name:** el nombre que se imprime, editable.
+  - **Quote:** frases verbatim del post. Primero aparecen tus pull quotes y después oraciones de las respuestas.
+  - **Image:** miniaturas de las imágenes del post. En los GIFs podés elegir uno de 6 cuadros.
+  - **Q&A image 1 / 2:** las imágenes del artículo.
+  - **Colores:** el de la página izquierda y el de la página de la frase.
+- La revista se guarda en tu browser. El botón de reset vuelve a las cuatro entrevistas.
+
+Puede tener 1, 3, 6 o los features que quieras. La tapa, el Record y la línea de tiempo se ajustan solos.
+
 ## Cómo correr
 
 Desde `playground/`:
@@ -12,6 +29,12 @@ npm install
 
 ```bash
 npm run dev
+```
+
+En un container que sale a internet por proxy (como las sesiones de Claude Code en la nube), el `fetch` de Node necesita `NODE_USE_ENV_PROXY=1` para leer Substack:
+
+```bash
+NODE_USE_ENV_PROXY=1 npm run dev
 ```
 
 Abrí http://localhost:3000/prototypes/tmsc-voices-magazine

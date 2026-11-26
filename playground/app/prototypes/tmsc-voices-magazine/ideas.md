@@ -24,6 +24,9 @@ Formato: idea, tamaño (S/M/L), estado. Estados: pendiente, en curso, hecha, des
 - **Fondo del canvas** — S — hecha. Color a elegir, textura de papel y grilla opcional (apagada por defecto).
 - **Línea de tiempo con easing y duraciones** — L — hecha. Valores generales en el panel; en la línea de tiempo, preview, scrub, bloques a escala con su curva, estirar arrastrando, duración y easing por giro, persistido.
 - **Texturas intercambiables** — M — hecha. Siete papeles (incluida una textura subida) para páginas y fondo por separado, con intensidad.
+- **Editor de features (revista a medida)** — L — hecha. Cualquier post del Substack como feature de 4 páginas; agregar, sacar, reordenar con drag and drop; por feature: post, nombre, frase verbatim, imágenes y colores. Datos por API del servidor con caché; imágenes por un proxy del mismo origen.
+- **Varias revistas guardadas** (con nombre, para ir y volver) — M — después. Hoy hay una revista por browser.
+- **Saltear imágenes de sponsors** al elegir la imagen automática — S — después.
 - **Tapa Human + Motion** — S — hecha. La imagen original tal cual, sobre su mismo color de fondo, con los cuatro invitados debajo. Es el default.
 - **Tapa con título de puntos y órbita** — M — hecha. Estética de las referencias de Human + Motion: título sólido en Archivo Narrow con un "Voices" en puntos claros detrás, espiral con letras en círculos; mismo texto que antes. La tapa anterior queda como "Plain".
 - **Papel como material 3D** — M — hecha. Acabado (mate a brillante), relieve con bump desde la textura, peso (curvatura y grosor) y ondulación.

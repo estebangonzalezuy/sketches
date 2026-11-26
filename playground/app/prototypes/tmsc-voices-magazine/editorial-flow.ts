@@ -1,5 +1,3 @@
-import raw from "./editorial.json";
-
 /**
  * Flows an interview's questions and answers through column frames on two pages. Text is
  * never cut mid-sentence: whole paragraphs go in, and the last answer may stop at the end of
@@ -11,7 +9,6 @@ export type Frame = { page: 0 | 1; x: number; y: number; w: number; h: number };
 export type Line = { page: 0 | 1; x: number; y: number; text: string; bold: boolean };
 export type Measure = (text: string, bold: boolean) => number;
 
-export const EDITORIAL = raw.interviews as unknown as Record<"1" | "2" | "3" | "4", Block[]>;
 
 export function wrapWords(text: string, width: number, measure: (s: string) => number): string[] {
   const out: string[] = [];

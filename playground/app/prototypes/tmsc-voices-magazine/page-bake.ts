@@ -6,7 +6,7 @@ import type { Book } from "./faces";
 import { drawBackCover, drawCover } from "./layout-covers";
 import { drawEditorialLeft, drawEditorialRight, layoutEditorial, type EditorialImage, type EditorialLayout } from "./layout-editorial";
 import { drawInterviewLeft, drawInterviewRight } from "./layout-interview";
-import type { MediaChoice } from "./media";
+import type { FeatureData, ResolvedImage } from "./feature-data";
 import { applyTexture } from "./textures";
 
 /**
@@ -42,29 +42,33 @@ function loadImage(src: string | null | undefined): Promise<HTMLImageElement | n
   return p;
 }
 
-const ORDERS = [1, 2, 3, 4] as const;
-
-async function withImage(choice: MediaChoice): Promise<EditorialImage> {
-  const img = await loadImage(choice?.url);
-  return img && choice ? { img, choice } : null;
+/** One image, resolved and loaded, or null. */
+async function loaded(r: ResolvedImage | null): Promise<EditorialImage> {
+  const img = await loadImage(r?.url);
+  return img && r ? { img, credit: r.credit } : null;
 }
 
 export async function bakePages(
   size: { w: number; h: number },
   book: Book,
+  features: FeatureData[],
   setup: PageSetup,
   uploaded: string | null,
   textureImage: HTMLImageElement | null,
 ): Promise<Map<string, HTMLCanvasElement>> {
   const { cover, editorial } = setup;
+  const coverFeature = typeof cover.source === "number" ? features[cover.source] : undefined;
   const coverUrl =
-    cover.style === "artwork" ? ARTWORK_URL : cover.style === "type" || cover.style === "orbit" ? null : cover.source === "upload" ? uploaded : setup.media[cover.source]?.url;
-  const [, coverImg, intro, textImages] = await Promise.all([
+    cover.style === "artwork" ? ARTWORK_URL : cover.style === "type" || cover.style === "orbit" ? null : cover.source === "upload" ? uploaded : coverFeature?.image?.url;
+  const [, coverImg, intro, text] = await Promise.all([
     loadFont(),
     loadImage(coverUrl),
-    Promise.all(ORDERS.map((o) => loadImage(setup.media[o]?.url))),
-    Promise.all(ORDERS.map((o) => Promise.all(editorial.images[o].map(withImage)))),
+    Promise.all(features.map((f) => loaded(f.image))),
+    Promise.all(features.map((f) => Promise.all(f.textImages.map(loaded)))),
   ]);
+  const guests = features
+    .map((f) => ({ name: f.guest, date: f.date }))
+    .filter((g, i, all) => all.findIndex((o) => o.name === g.name) === i);
 
   const out = new Map<string, HTMLCanvasElement>();
   const layouts = new Map<number, EditorialLayout>();
@@ -75,31 +79,31 @@ export async function bakePages(
     const ctx = canvas.getContext("2d")!;
     ctx.scale(size.w / PAGE_PX.w, size.h / PAGE_PX.h);
     ctx.textBaseline = "alphabetic";
-    const o = face.interviewOrder!;
+    const i = face.feature ?? 0;
+    const f = features[i];
     switch (face.layout) {
       case "cover":
-        drawCover(ctx, cover, coverImg);
+        drawCover(ctx, cover, coverImg, guests);
         break;
       case "back-cover":
-        drawBackCover(ctx, setup.inks.back);
+        drawBackCover(ctx, setup.back);
         break;
       case "interview-left": {
-        const img = intro[o - 1];
-        const choice = setup.media[o];
-        drawInterviewLeft(ctx, o, setup.inks.spreads[o].left, img && choice ? { img, credit: choice.asset.credit, fill: setup.fill, scale: setup.imageScale } : null, face.folio);
+        const im = intro[i];
+        drawInterviewLeft(ctx, f, im ? { ...im, fill: setup.fill, scale: setup.imageScale } : null, face.folio);
         break;
       }
       case "interview-right":
-        drawInterviewRight(ctx, o, setup.inks.spreads[o].right, face.folio);
+        drawInterviewRight(ctx, f, i + 1, features.length, face.folio);
         break;
       case "editorial-left":
       case "editorial-right": {
-        const [a, b] = textImages[o - 1];
+        const [a, b] = text[i];
         // one layout for both pages, so the text runs on from left to right
-        if (!layouts.has(o)) layouts.set(o, layoutEditorial(ctx, o, editorial, a, b));
-        const L = layouts.get(o)!;
-        if (face.layout === "editorial-left") drawEditorialLeft(ctx, o, editorial, L, b, face.folio);
-        else drawEditorialRight(ctx, o, editorial, L, a, face.folio);
+        if (!layouts.has(i)) layouts.set(i, layoutEditorial(ctx, f, editorial, a, b));
+        const L = layouts.get(i)!;
+        if (face.layout === "editorial-left") drawEditorialLeft(ctx, f, editorial, L, b, face.folio);
+        else drawEditorialRight(ctx, f, editorial, L, a, face.folio);
         break;
       }
     }

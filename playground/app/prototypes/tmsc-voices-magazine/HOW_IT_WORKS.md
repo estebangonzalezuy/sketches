@@ -90,6 +90,36 @@ The table under the magazine uses the picked **Background** color (default `#EAE
 strength) and an optional **Grid** with crop marks (off by default). Grid lines are a shade off the field: darker on
 light colors, lighter on dark ones. The stage no longer follows the light / dark theme.
 
+## Features (the magazine editor)
+
+A magazine is an ordered list of **features**; a feature is one post from the Substack
+(humanandmotion.substack.com) turned into four pages: the intro spread (subject, title,
+subtitle, image | hero quote) and, with Q&A pages on, the article in columns.
+
+- **Features** button opens the editor (left panel on desktop, bottom sheet on phones):
+  drag cards by the grip to reorder (dnd-kit: pointer, touch and keyboard) or use the
+  arrows; **Add feature** appends the newest free post not in the magazine; open a card to
+  choose its **post** (every post, newest first), **name** (defaults to the guest parsed
+  from "w/Name" or "ft. Name", else the byline), **quote** (verbatim candidates: the post's
+  own pull quotes first, then sentences from the answers), **image** (thumbnails of the
+  post's images; GIFs pick one of six frames), **Q&A images 1 / 2** (Auto, None, or any
+  image), and the two **page colours**. Reset goes back to the four latest interviews.
+  Choices persist in this browser (`magazine-store.ts`); blanks are filled from the post.
+- Data: `app/api/tmsc-voices-magazine/` reads Substack's public API on the server
+  (cached an hour): `posts` (the whole archive via its cursor), `post/<slug>` (parsed),
+  `image?src&frame&w` (same-origin JPEG for WebGL; only Substack hosts; GIF frame via sharp;
+  a white "Work by …" strip at the bottom is cropped when found).
+- `substack-parse.ts` (pure): paragraphs with questions (bold or headings); an interview
+  starts at its first question ending in "?", otherwise the post is an essay and goes in
+  whole; pull quotes (paragraphs repeated inside longer ones) become quote candidates and
+  leave the article; "Transcript" labels and link-only lines are dropped; a paragraph split
+  after its first letter in the source is joined back; section dividers aren't images.
+- `feature-data.ts` resolves a feature + post into what the layouts print. The four
+  default interviews keep the hand-checked Q&A text (`editorial.json`) and hero quotes.
+- Covers list the features' names (and dates) in magazine order; "Four conversations"
+  counts them. Pages, Record, the timeline and the flip-through follow the number of
+  features (cover + 2 sheets per feature + back).
+
 ## Architecture
 
 ```

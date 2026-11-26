@@ -1,5 +1,6 @@
 import { fit, font, imageFill, imageFit, lines, right, type Ctx } from "./canvas-type";
-import { displayDate, INTERVIEWS, PUBLICATION_URL } from "./content";
+import { PUBLICATION_URL } from "./content";
+import { countLabel, drawGuestRows, rowHeight, type CoverGuest } from "./cover-guests";
 import type { CoverSetup } from "./setup";
 import { PAGE_PX } from "./data";
 import type { PageInk } from "./types";
@@ -11,15 +12,14 @@ import { drawArtworkCover } from "./layout-cover-artwork";
 const W = PAGE_PX.w;
 const H = PAGE_PX.h;
 const M = 92;
-const ROW_H = 150;
 
 /**
  * Three covers: type only on the cover color (white by default), a full-bleed image under the type, or an image set
  * into a color field. The type layout is the same in all three, so the masthead never moves.
  */
-export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | null) {
-  if (cover.style === "artwork") return drawArtworkCover(ctx, img);
-  if (cover.style === "orbit") return drawOrbitCover(ctx, cover);
+export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | null, guests: CoverGuest[]) {
+  if (cover.style === "artwork") return drawArtworkCover(ctx, img, guests);
+  if (cover.style === "orbit") return drawOrbitCover(ctx, cover, guests);
   const style = img ? cover.style : cover.style === "full" ? "on-color" : cover.style;
   ctx.fillStyle = cover.color;
   ctx.fillRect(0, 0, W, H);
@@ -37,10 +37,10 @@ export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | n
   ctx.fillText("Voices", M - 14, titleBase);
 
   font(ctx, 500, 64, -0.01);
-  ctx.fillText("Four conversations", M, titleBase + 120);
+  ctx.fillText(countLabel(guests.length), M, titleBase + 120);
 
-  // the four guests, newest first, each with the day it went out
-  const top = H - M - ROW_H * (INTERVIEWS.length - 1);
+  // the guests in magazine order, each with the day their post went out
+  const top = H - M - rowHeight(guests.length) * (guests.length - 1);
   if (img && style === "on-color") {
     const boxTop = titleBase + 200;
     const ink = ctx.fillStyle;
@@ -51,13 +51,7 @@ export function drawCover(ctx: Ctx, cover: CoverSetup, img: HTMLImageElement | n
     imageFit(ctx, img, M, boxTop + (ah - bh) / 2, aw * cover.scale, bh);
     ctx.fillStyle = ink;
   }
-  INTERVIEWS.forEach((it, i) => {
-    const y = top + i * ROW_H;
-    font(ctx, 700, 118, -0.02);
-    ctx.fillText(it.guest, M, y);
-    font(ctx, 500, 54);
-    right(ctx, displayDate(it.post_date), W - M, y);
-  });
+  drawGuestRows(ctx, guests, M, W - M, H - M);
 }
 
 export function drawBackCover(ctx: Ctx, page: PageInk) {

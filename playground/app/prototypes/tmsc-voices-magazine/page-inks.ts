@@ -1,9 +1,9 @@
-import { BACK_COVER, INK, SPREADS } from "./data";
+import { BACK_COVER, INK } from "./data";
 import type { PageInk } from "./types";
 
 /**
- * Page colors picked in the panel (user data). Type stays readable: black or white by the
- * background's luminance. A page left on its designed color keeps its designed ink.
+ * Page colors picked in the editor or the panel (user data). Type stays readable: black or
+ * white by the background's luminance. A page left on its designed color keeps its designed ink.
  */
 
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -24,14 +24,4 @@ export function pageInk(picked: unknown, designed: PageInk): PageInk {
   return { bg, ink: autoInk(bg) };
 }
 
-export type PageInks = { spreads: Record<1 | 2 | 3 | 4, { left: PageInk; right: PageInk }>; back: PageInk };
-
-const NAMES = { 1: "victor", 2: "thais", 3: "doug", 4: "justin" } as const;
-
-export function pageInks(v: Record<string, unknown>): PageInks {
-  const spread = (o: 1 | 2 | 3 | 4) => ({
-    left: pageInk(v[`${NAMES[o]}Left`], SPREADS[o].left),
-    right: pageInk(v[`${NAMES[o]}Right`], SPREADS[o].right),
-  });
-  return { spreads: { 1: spread(1), 2: spread(2), 3: spread(3), 4: spread(4) }, back: pageInk(v.backColor, BACK_COVER) };
-}
+export const backInk = (v: Record<string, unknown>) => pageInk(v.backColor, BACK_COVER);

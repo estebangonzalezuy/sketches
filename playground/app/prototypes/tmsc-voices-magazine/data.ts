@@ -46,10 +46,10 @@ export const BACK_COVER = { bg: INK.white, ink: INK.black };
 
 /** One spread per interview, 2–3 inks each. Keyed by interview order. */
 export const SPREADS: Record<1 | 2 | 3 | 4, SpreadTheme> = {
-  1: { left: { bg: INK.white, ink: INK.black }, right: { bg: INK.tomato, ink: INK.black }, heroQuote: 0 },
-  2: { left: { bg: INK.lilac, ink: INK.black }, right: { bg: INK.lime, ink: INK.black }, heroQuote: 0 },
-  3: { left: { bg: INK.green, ink: INK.white }, right: { bg: INK.white, ink: INK.green }, heroQuote: 1 },
-  4: { left: { bg: INK.black, ink: INK.white }, right: { bg: INK.periwinkle, ink: INK.black }, heroQuote: 2 },
+  1: { left: { bg: INK.white, ink: INK.black }, right: { bg: INK.tomato, ink: INK.black } },
+  2: { left: { bg: INK.lilac, ink: INK.black }, right: { bg: INK.lime, ink: INK.black } },
+  3: { left: { bg: INK.green, ink: INK.white }, right: { bg: INK.white, ink: INK.green } },
+  4: { left: { bg: INK.black, ink: INK.white }, right: { bg: INK.periwinkle, ink: INK.black } },
 };
 
 export const RECORD_FORMATS: Record<RecordFormat, { w: number; h: number; label: string }> = {

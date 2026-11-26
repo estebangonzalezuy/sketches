@@ -1,5 +1,5 @@
-import { font, type Ctx } from "./canvas-type";
-import { INTERVIEWS } from "./content";
+import type { Ctx } from "./canvas-type";
+import { drawGuestStack, type CoverGuest } from "./cover-guests";
 import { ASSET_BASE, PAGE_PX } from "./data";
 
 /**
@@ -17,7 +17,7 @@ const CROP = { x: 207, y: 368, w: 666, h: 614 };
 const W = PAGE_PX.w;
 const H = PAGE_PX.h;
 
-export function drawArtworkCover(ctx: Ctx, art: HTMLImageElement | null) {
+export function drawArtworkCover(ctx: Ctx, art: HTMLImageElement | null, guests: CoverGuest[]) {
   ctx.fillStyle = ARTWORK_BG;
   ctx.fillRect(0, 0, W, H);
   const w = 1000;
@@ -29,9 +29,5 @@ export function drawArtworkCover(ctx: Ctx, art: HTMLImageElement | null) {
   }
   // the creators, centred under the artwork
   ctx.fillStyle = ARTWORK_INK;
-  ctx.textAlign = "center";
-  font(ctx, 600, 70, -0.01);
-  const first = top + h + 190;
-  INTERVIEWS.forEach((it, i) => ctx.fillText(it.guest, W / 2, first + i * 98));
-  ctx.textAlign = "left";
+  drawGuestStack(ctx, guests, W / 2, top + h + 190);
 }
